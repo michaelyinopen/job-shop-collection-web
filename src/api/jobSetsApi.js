@@ -1,5 +1,8 @@
 import template from 'url-template';
 
+//const baseurl = "https://job-shop-collection-api.azurewebsites.net"; // todo: use environment variable
+const baseurl = process.env.PUBLIC_URL;
+
 // page token is optional parameter
 // returns promise of
 // {
@@ -7,7 +10,7 @@ import template from 'url-template';
 //   nextPageToken
 // }
 // data is an array of jobSetHeaderDto
-export const getJobSetsUrlTemplate = `api/job-sets{?pageToken}`;
+export const getJobSetsUrlTemplate = `${baseurl}/api/job-sets{?pageToken}`;
 export async function getJobSetsApiAsync(pageToken) {
   const url = template.parse(getJobSetsUrlTemplate).expand({ pageToken });
   const response = await fetch(url);
@@ -28,7 +31,7 @@ export async function getJobSetsApiAsync(pageToken) {
   return responseBody;
 };
 
-export const createJobSetUrlTemplate = `api/job-sets`;
+export const createJobSetUrlTemplate = `${baseurl}/api/job-sets`;
 export async function createJobSetApiAsync(jobSet) {
   const url = createJobSetUrlTemplate;
   const init = {
@@ -54,7 +57,7 @@ export async function createJobSetApiAsync(jobSet) {
 };
 
 
-export const getJobSetUrlTemplate = `api/job-sets/{id}`;
+export const getJobSetUrlTemplate = `${baseurl}/api/job-sets/{id}`;
 export async function getJobSetApiAsync(id) {
   const url = template.parse(getJobSetUrlTemplate).expand({ id });
   const response = await fetch(url);
@@ -73,7 +76,7 @@ export async function getJobSetApiAsync(id) {
   return responseBody;
 };
 
-export const updateJobSetUrlTemplate = `api/job-sets/{id}`;
+export const updateJobSetUrlTemplate = `${baseurl}/api/job-sets/{id}`;
 export async function updateJobSetApiAsync(id, jobSet, eTag) {
   const url =template.parse(updateJobSetUrlTemplate).expand({ id });
   const init = {
@@ -99,7 +102,7 @@ export async function updateJobSetApiAsync(id, jobSet, eTag) {
   return responseBody;
 };
 
-export const deleteJobSetUrlTemplate = `api/job-sets/{id}`;
+export const deleteJobSetUrlTemplate = `${baseurl}/api/job-sets/{id}`;
 export async function deleteJobSetApiAsync(id, eTag) {
   const url = template.parse(deleteJobSetUrlTemplate).expand({ id });
   const init = !eTag ?
