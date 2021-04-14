@@ -1,0 +1,50 @@
+name: Blob storage website CI
+
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+
+env:
+    REACT_APP_API_URL: "https://job-shop-collection-api.azurewebsites.net"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:            
+    - name: Checkout the repo
+      uses: actions/checkout@v1
+
+    - name: Login to Azure
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Install npm packages
+      run: npm install
+
+    - name: Build app
+      run: npm run build
+
+    - name: Test app
+      run: npm run test
+
+    - name: Upload to blob storage
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+            az storage blob upload-batch --account-name jobshopcollectionblob -s ./build -d '$web'
+
+#    - name: Purge CDN endpoint
+#      uses: azure/CLI@v1
+#      with:
+#        azcliversion: 2.0.72
+#        inlineScript: |
+#           az cdn endpoint purge --content-paths  "/*" --profile-name "CDN_PROFILE_NAME" --name "CDN_ENDPOINT" --resource-group "RESOURCE_GROUP"
+
+  # Azure logout 
+    - name: logout
+      run: |
+            az logout
