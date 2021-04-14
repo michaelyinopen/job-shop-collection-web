@@ -207,7 +207,7 @@ const Home = () => {
         <li><a href='https://facebook.github.io/react/'>React</a> for client-side code</li>
         <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for server-side code</li>
         <li><a href='https://material-ui.com/'>Material-ui</a> for layout and styling</li>
-        <li><a href={currentHostConstants?.hostLink}>{currentHostConstants?.hostName}</a> for hosting Web App and database</li>
+        <li><a href={currentHostConstants?.hostLink}>{currentHostConstants?.hostName}</a> for hosting static website, Web API and database</li>
         <li>{deploymentMethod}</li>
       </ul>
     </Container >
