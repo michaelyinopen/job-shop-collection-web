@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
         REACT_APP_API_URL: "https://job-shop-collection-api.azurewebsites.net"
+        REACT_APP_Host: "Azure"
     steps:            
     - name: Checkout the repo
       uses: actions/checkout@v1
