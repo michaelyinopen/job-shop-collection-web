@@ -1,7 +1,7 @@
 import template from 'url-template';
 
 //const baseurl = "https://job-shop-collection-api.azurewebsites.net"; // todo: use environment variable
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL ?? "";
 
 // page token is optional parameter
 // returns promise of

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { useMediaQuery, useTheme, Card, CardContent, CardMedia, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import Fab from '@material-ui/core/Fab';
 import Container from '@material-ui/core/Container';
-import { format } from 'date-fns';
 import * as fromRoutePaths from '../routePaths';
+import hostConstants from '../hostConstants';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -67,27 +67,8 @@ const Home = () => {
   const classes = useStyles();
   const theme = useTheme();
   const isSmallerTitle = useMediaQuery(theme.breakpoints.down('xs'));
-  const [lastDeployedDate, setLastDeployedDate] = useState("");
-  useEffect(() => {
-    const fetchLastDeployedDate = async () => {
-      try {
-        const response = await fetch(`https://api.github.com/repos/michaelyinopen/job-shop-collection/actions/workflows/master_JobShopCollection.yml/runs?per_page=1&status=success`);
-        if (!response.ok) {
-          console.log("Failed to get the last deployed date");
-          return;
-        }
-        let responseBody;
-        responseBody = await response.json();
-        const lastDeploymentDate = new Date(Date.parse(responseBody.workflow_runs[0].updated_at));
-        setLastDeployedDate(" on " + format(lastDeploymentDate, 'yyyy-MM-dd'));
-      }
-      catch (e) {
-        console.log("Failed to get the last deployed date");
-        return;
-      }
-    };
-    fetchLastDeployedDate();
-  });
+  const currentHostConstants = hostConstants[process.env.REACT_APP_HOST];
+  const deploymentMethod = currentHostConstants?.useDeploymentMethod?.();
   return (
     <Container className={classes.container}>
       <h1 className={clsx({ [classes.smallerTitle]: isSmallerTitle })}>Job Shop Collection</h1>
@@ -226,8 +207,8 @@ const Home = () => {
         <li><a href='https://facebook.github.io/react/'>React</a> for client-side code</li>
         <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for server-side code</li>
         <li><a href='https://material-ui.com/'>Material-ui</a> for layout and styling</li>
-        <li><a href='https://azure.microsoft.com/'>Azure</a> for hosting Web App and database</li>
-        <li>Continuous deployment with <a href='https://github.com/michaelyinopen/job-shop-collection/actions/'>Github Actions</a>{lastDeployedDate}</li>
+        <li><a href={currentHostConstants?.hostLink}>{currentHostConstants?.hostName}</a> for hosting Web App and database</li>
+        <li>{deploymentMethod}</li>
       </ul>
     </Container >
   );

@@ -21,7 +21,7 @@ test("Get Request returns a function", () => {
   expect(typeof (request)).toBe('function');
 });
 
-test("Sample success request", async (done) => {
+test("Sample success request", async () => {
   const apiData = { data: "api response data" };
   const mockBeginCallback = jest.fn();
   const mockSuccessCallback = jest.fn();
@@ -50,8 +50,6 @@ test("Sample success request", async (done) => {
   expect(mockSuccessCallback).toHaveBeenCalledWith(apiData, false);
 
   expect(mockFailedCallback).not.toHaveBeenCalled();
-
-  done();
 });
 
 describe("Success request detail", () => {
@@ -72,7 +70,7 @@ describe("Success request detail", () => {
     });
   });
 
-  test("Can call api request", async (done) => {
+  test("Can call api request", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -80,10 +78,9 @@ describe("Success request detail", () => {
       mockFailedCallback
     );
     await request(mockApiFunctionAsync);
-    done();
   });
 
-  test("Begin Callback called correctly", async (done) => {
+  test("Begin Callback called correctly", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -94,11 +91,9 @@ describe("Success request detail", () => {
 
     expect(mockBeginCallback).toHaveBeenCalledTimes(1);
     expect(mockBeginCallback).toHaveBeenCalledWith();
-
-    done();
   });
 
-  test("Api function called correctly", async (done) => {
+  test("Api function called correctly", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -109,11 +104,9 @@ describe("Success request detail", () => {
 
     expect(mockApiFunctionAsync).toHaveBeenCalledTimes(1);
     expect(mockApiFunctionAsync).toHaveBeenCalledWith();
-
-    done();
   });
 
-  test("Success Callback called correctly", async (done) => {
+  test("Success Callback called correctly", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -124,11 +117,9 @@ describe("Success request detail", () => {
 
     expect(mockSuccessCallback).toHaveBeenCalledTimes(1);
     expect(mockSuccessCallback).toHaveBeenCalledWith(apiData, false);
-
-    done();
   });
 
-  test("Failed Callback not called", async (done) => {
+  test("Failed Callback not called", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -138,12 +129,10 @@ describe("Success request detail", () => {
     await request(mockApiFunctionAsync);
 
     expect(mockFailedCallback).not.toHaveBeenCalled();
-
-    done();
   });
 });
 
-test("Sample faulty request", async (done) => {
+test("Sample faulty request", async () => {
   const errorMessage = "test error";
   const mockBeginCallback = jest.fn();
   const mockSuccessCallback = jest.fn();
@@ -174,8 +163,6 @@ test("Sample faulty request", async (done) => {
   expect(mockFailedCallback.mock.calls[0].length).toBe(2); // two arguments
   expect(mockFailedCallback.mock.calls[0][0].message).toBe(errorMessage);
   expect(mockFailedCallback.mock.calls[0][1]).toBe(false);
-
-  done();
 });
 
 describe("Faulty request detail", () => {
@@ -196,7 +183,7 @@ describe("Faulty request detail", () => {
     });
   });
 
-  test("Can call api request", async (done) => {
+  test("Can call api request", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -204,10 +191,9 @@ describe("Faulty request detail", () => {
       mockFailedCallback
     );
     await request(mockApiFunctionAsync);
-    done();
   });
 
-  test("Begin Callback called correctly", async (done) => {
+  test("Begin Callback called correctly", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -218,11 +204,9 @@ describe("Faulty request detail", () => {
 
     expect(mockBeginCallback).toHaveBeenCalledTimes(1);
     expect(mockBeginCallback).toHaveBeenCalledWith();
-
-    done();
   });
 
-  test("Api function called correctly", async (done) => {
+  test("Api function called correctly", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -233,11 +217,9 @@ describe("Faulty request detail", () => {
 
     expect(mockApiFunctionAsync).toHaveBeenCalledTimes(1);
     expect(mockApiFunctionAsync).toHaveBeenCalledWith();
-
-    done();
   });
 
-  test("Success Callback not called", async (done) => {
+  test("Success Callback not called", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -247,11 +229,9 @@ describe("Faulty request detail", () => {
     await request(mockApiFunctionAsync);
 
     expect(mockSuccessCallback).not.toHaveBeenCalled();
-
-    done();
   });
 
-  test("Failed Callback called correctly", async (done) => {
+  test("Failed Callback called correctly", async () => {
     const requestScope = createRequestScope();
     const request = requestScope.getRequest(
       mockBeginCallback,
@@ -264,12 +244,10 @@ describe("Faulty request detail", () => {
     expect(mockFailedCallback.mock.calls[0].length).toBe(2); // two arguments
     expect(mockFailedCallback.mock.calls[0][0].message).toBe(errorMessage);
     expect(mockFailedCallback.mock.calls[0][1]).toBe(false);
-
-    done();
   });
 });
 
-test("Sample Reuse request", async (done) => {
+test("Sample Reuse request", async () => {
   const apiData = { data: "api response data" };
   const mockBeginCallback = jest.fn();
   const mockSuccessCallback = jest.fn();
@@ -301,11 +279,9 @@ test("Sample Reuse request", async (done) => {
   expect(mockSuccessCallback).toHaveBeenNthCalledWith(2, apiData, false);
 
   expect(mockFailedCallback).not.toHaveBeenCalled();
-
-  done();
 });
 
-test("Sample get multiple requests from request scope", async (done) => {
+test("Sample get multiple requests from request scope", async () => {
   const apiData1 = { data: "api response data 1" };
   const mockBeginCallback1 = jest.fn();
   const mockSuccessCallback1 = jest.fn();
@@ -362,11 +338,9 @@ test("Sample get multiple requests from request scope", async (done) => {
   expect(mockSuccessCallback2).toHaveBeenCalledWith(apiData2, false);
 
   expect(mockFailedCallback2).not.toHaveBeenCalled();
-
-  done();
 });
 
-test("Test with callHistory side effect", async (done) => {
+test("Test with callHistory side effect", async () => {
   const apiData = { data: "api response data" };
   const callHistory = [];
   const mockBeginCallback = jest.fn(() => callHistory.push("begin"));
@@ -398,8 +372,6 @@ test("Test with callHistory side effect", async (done) => {
     "apiFunc end",
     "success",
   ]);
-
-  done();
 });
 
 //#region two requests
@@ -424,7 +396,7 @@ test("Test with callHistory side effect", async (done) => {
 // two requests 1, 2, -2x, -1  (2c 2x)
 // two requests 1, 2, -2x, -1x (2c 1x2x)
 
-test("2a", async (done) => {
+test("2a", async () => {
   // two requests 1, -1, 2, -2 (2a)
   const apiData = { data: "api response data" };
   const callHistory = [];
@@ -475,11 +447,9 @@ test("2a", async (done) => {
     "apiFunc end",
     "success",
   ]);
-
-  done();
 });
 
-test("2b", async (done) => {
+test("2b", async () => {
   // two requests 1, 2, -1, -2 (2b)
   // note: when first request returns, successCallback1 is called with second parameter(loading) true
   const callHistory = [];
@@ -565,11 +535,9 @@ test("2b", async (done) => {
     "apiFunc2 end",
     "success2",
   ]);
-
-  done();
 });
 
-test("2c", async (done) => {
+test("2c", async () => {
   // two requests 1, 2, -2, -1 (2c)
   const callHistory = [];
 
@@ -652,11 +620,9 @@ test("2c", async (done) => {
     "success2",
     "apiFunc1 end"
   ]);
-
-  done();
 });
 
-test("2a 1x", async (done) => {
+test("2a 1x", async () => {
   // two requests 1, -1x, 2, -2  (2a 1x)
   const callHistory = [];
 
@@ -741,11 +707,9 @@ test("2a 1x", async (done) => {
     "apiFunc2 end",
     "success2",
   ]);
-
-  done();
 });
 
-test("2a 2x", async (done) => {
+test("2a 2x", async () => {
   // two requests 1, -1, 2, -2x  (2a 2x)
   const callHistory = [];
 
@@ -830,11 +794,9 @@ test("2a 2x", async (done) => {
     "apiFunc2 end",
     "failed2",
   ]);
-
-  done();
 });
 
-test("2a 1x2x", async (done) => {
+test("2a 1x2x", async () => {
   // two requests 1, -1x, 2, -2x  (2a 1x2x)
   const callHistory = [];
 
@@ -921,11 +883,9 @@ test("2a 1x2x", async (done) => {
     "apiFunc2 end",
     "failed2",
   ]);
-
-  done();
 });
 
-test("2b 1x", async (done) => {
+test("2b 1x", async () => {
   // two requests 1, 2, -1x, -2  (2b 1x)
   // note: when first request returns, failedCallback1 is called with second parameter(loading) true
   const callHistory = [];
@@ -1013,11 +973,9 @@ test("2b 1x", async (done) => {
     "apiFunc2 end",
     "success2",
   ]);
-
-  done();
 });
 
-test("2b 2x", async (done) => {
+test("2b 2x", async () => {
   // two requests 1, 2, -1, -2x  (2b 2x)
   // note: when first request returns, successCallback1 is called with second parameter(loading) true
   const callHistory = [];
@@ -1105,11 +1063,9 @@ test("2b 2x", async (done) => {
     "apiFunc2 end",
     "failed2",
   ]);
-
-  done();
 });
 
-test("2b 1x2x", async (done) => {
+test("2b 1x2x", async () => {
   // two requests 1, 2, -1x, -2x  (2b 1x2x)
   // note: when first request returns, failedCallback1 is called with second parameter(loading) true
   const callHistory = [];
@@ -1199,11 +1155,9 @@ test("2b 1x2x", async (done) => {
     "apiFunc2 end",
     "failed2",
   ]);
-
-  done();
 });
 
-test("2c 1x", async (done) => {
+test("2c 1x", async () => {
   // two requests 1, 2, -2, -1x (2c 1x)
   const callHistory = [];
 
@@ -1286,11 +1240,9 @@ test("2c 1x", async (done) => {
     "success2",
     "apiFunc1 end"
   ]);
-
-  done();
 });
 
-test("2c 2x", async (done) => {
+test("2c 2x", async () => {
   // two requests 1, 2, -2x, -1 (2c 2x)
   const callHistory = [];
 
@@ -1375,11 +1327,9 @@ test("2c 2x", async (done) => {
     "failed2",
     "apiFunc1 end"
   ]);
-
-  done();
 });
 
-test("2c 1x2x", async (done) => {
+test("2c 1x2x", async () => {
   // two requests 1, 2, -2x, -1x (2c 1x2x)
   const callHistory = [];
 
@@ -1464,8 +1414,6 @@ test("2c 1x2x", async (done) => {
     "failed2",
     "apiFunc1 end"
   ]);
-
-  done();
 });
 //#endregion two requests
 
@@ -1477,7 +1425,7 @@ test("2c 1x2x", async (done) => {
 // - three requests: different order response: with some fails (non-last fail): (1,2x,3), (1,3,2x)
 
 //#region three successful requests
-test("(1,2,3)", async (done) => {
+test("(1,2,3)", async () => {
   // three requests 1, 2, 3, -1, -2, -3
   const callHistory = [];
 
@@ -1595,11 +1543,9 @@ test("(1,2,3)", async (done) => {
     "apiFunc3 end",
     "success3",
   ]);
-
-  done();
 });
 
-test("(1,3,2)", async (done) => {
+test("(1,3,2)", async () => {
   // three requests 1, 2, 3, -1, -3, -2
   const callHistory = [];
 
@@ -1715,11 +1661,9 @@ test("(1,3,2)", async (done) => {
     "success3",
     "apiFunc2 end",
   ]);
-
-  done();
 });
 
-test("(2,1,3)", async (done) => {
+test("(2,1,3)", async () => {
   // three requests 1, 2, 3, -2, -1, -3
   const callHistory = [];
 
@@ -1835,11 +1779,9 @@ test("(2,1,3)", async (done) => {
     "apiFunc3 end",
     "success3",
   ]);
-
-  done();
 });
 
-test("(2,3,1)", async (done) => {
+test("(2,3,1)", async () => {
   // three requests 1, 2, 3, -2, -3, -1
   const callHistory = [];
 
@@ -1955,11 +1897,9 @@ test("(2,3,1)", async (done) => {
     "success3",
     "apiFunc1 end",
   ]);
-
-  done();
 });
 
-test("(3,1,2)", async (done) => {
+test("(3,1,2)", async () => {
   // three requests 1, 2, 3, -3, -1, -2
   const callHistory = [];
 
@@ -2073,11 +2013,9 @@ test("(3,1,2)", async (done) => {
     "apiFunc1 end",
     "apiFunc2 end",
   ]);
-
-  done();
 });
 
-test("(3,2,1)", async (done) => {
+test("(3,2,1)", async () => {
   // three requests 1, 2, 3, -3, -2, -1
   const callHistory = [];
 
@@ -2191,13 +2129,11 @@ test("(3,2,1)", async (done) => {
     "apiFunc2 end",
     "apiFunc1 end",
   ]);
-
-  done();
 });
 //#endregion three successful requests
 
 //#region three requests with last fail 
-test("(1,2,3x)", async (done) => {
+test("(1,2,3x)", async () => {
   // three requests 1, 2, 3, -1, -2, -3x
   const callHistory = [];
 
@@ -2317,11 +2253,9 @@ test("(1,2,3x)", async (done) => {
     "apiFunc3 end",
     "failed3",
   ]);
-
-  done();
 });
 
-test("(3x,1,2)", async (done) => {
+test("(3x,1,2)", async () => {
   // three requests 1, 2, 3, -3x, -1, -2
   const callHistory = [];
 
@@ -2433,11 +2367,9 @@ test("(3x,1,2)", async (done) => {
     "apiFunc1 end",
     "apiFunc2 end",
   ]);
-
-  done();
 });
 
-test("(3x,1,2x)", async (done) => {
+test("(3x,1,2x)", async () => {
   // three requests 1, 2, 3, -3x, -1, -2x
   const callHistory = [];
 
@@ -2549,13 +2481,11 @@ test("(3x,1,2x)", async (done) => {
     "apiFunc1 end",
     "apiFunc2 end",
   ]);
-
-  done();
 });
 //#endregion three requests with last fail
 
 //#region three requests with non-last fail
-test("(1,2x,3)", async (done) => {
+test("(1,2x,3)", async () => {
   // three requests 1, 2, 3, -1, -2x, -3
   const callHistory = [];
 
@@ -2673,11 +2603,9 @@ test("(1,2x,3)", async (done) => {
     "apiFunc3 end",
     "success3",
   ]);
-
-  done();
 });
 
-test("(1,3,2x)", async (done) => {
+test("(1,3,2x)", async () => {
   // three requests 1, 2, 3, -1, -3, -2x
   const callHistory = [];
 
@@ -2790,13 +2718,11 @@ test("(1,3,2x)", async (done) => {
     "success3",
     "apiFunc2 end"
   ]);
-
-  done();
 });
 //#endregion three requests with non-last fail
 //#endregion three requests
 
-test("Sample use case", async (done) => {
+test("Sample use case", async () => {
   // three requests, the order of response is:
   // search  (pro)
   // search  (progr)
@@ -2910,6 +2836,4 @@ test("Sample use case", async (done) => {
   ]);
 
   expect(getState().keywordResults).toEqual(["agenda", "calendar", "docket"]);
-
-  done();
 });
