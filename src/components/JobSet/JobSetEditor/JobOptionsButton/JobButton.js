@@ -49,7 +49,7 @@ const JobButton = ({
   //#endregion onIconButtonClick
 
   //#region onMouseLeave
-  const handlePopperCloseThrottled = useCallback(
+  const handlePopperCloseThrottled = useCallback( // eslint-disable-line react-hooks/exhaustive-deps
     throttle(
       handlePopperClose,
       iconButtonPopperClosingWait,

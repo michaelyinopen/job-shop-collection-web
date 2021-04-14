@@ -1,4 +1,3 @@
-﻿
 export default function createReducer(initialState, handlers) {
   return function reducer(state = initialState, action, ...args) {
     if (handlers.hasOwnProperty(action.type)) {

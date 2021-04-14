@@ -6,7 +6,7 @@ const usePopperHandlers = ({ wait = popperWait } = {}) => {
   const [anchorElement, setAnchorElement] = useState(null);
   const [disableOpen, setDisableOpen] = useState(false);
   const [disableOpenTimer, setDisableOpenTimer] = useState();
-  const handlePopperOpenThrottled = useCallback(
+  const handlePopperOpenThrottled = useCallback( // eslint-disable-line react-hooks/exhaustive-deps
     throttle(
       currentTarget => {
         setAnchorElement(currentTarget);

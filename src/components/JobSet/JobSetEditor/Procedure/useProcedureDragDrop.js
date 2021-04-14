@@ -17,7 +17,7 @@ const useProcedureDragDrop = (
       isDragging: monitor.isDragging(),
     })
   })
-  const throttledHoverCallback = useCallback(
+  const throttledHoverCallback = useCallback( // eslint-disable-line react-hooks/exhaustive-deps
     throttle(
       item => {
         const { id: dragId } = item;

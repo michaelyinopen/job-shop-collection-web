@@ -6,6 +6,8 @@ React app of the Job Shop Collection website.
 2. Set environment variables
 ```
 $env:REACT_APP_API_URL = "https://job-shop-collection-api.azurewebsites.net"
+$env:REACT_APP_HOST = "Azure"
+$env:CI = $true
 ```
 3. Build the react app.
 ```
@@ -24,5 +26,8 @@ az ad sp create-for-rbac --sdk-auth --name "job-shop-collection-web-publisher" -
 
 # Environment variables
 - REACT_APP_API_URL
-- REACT_APP_HOST
+- REACT_APP_HOST\
 Used with `hostConstants.js` for  Home page's 'This application is built with' section.
+- CI\
+Set to true and warning will be treated as error.\
+Most CI servers set it automatically.
