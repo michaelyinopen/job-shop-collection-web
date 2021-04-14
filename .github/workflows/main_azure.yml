@@ -19,7 +19,7 @@ jobs:
     - name: Login to Azure
       uses: Azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Install npm packages
       run: npm install
