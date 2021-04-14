@@ -2,9 +2,9 @@ name: Blob storage website CI
 
 on:
     push:
-        branches: [ master ]
+        branches: [ main ]
     pull_request:
-        branches: [ master ]
+        branches: [ main ]
 
 env:
     REACT_APP_API_URL: "https://job-shop-collection-api.azurewebsites.net"
