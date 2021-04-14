@@ -6,36 +6,50 @@ on:
     pull_request:
         branches: [ main ]
 
-env:
-    REACT_APP_API_URL: "https://job-shop-collection-api.azurewebsites.net"
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+        REACT_APP_API_URL: "https://job-shop-collection-api.azurewebsites.net"
     steps:            
     - name: Checkout the repo
       uses: actions/checkout@v1
 
+    - name: Install npm packages
+      run: npm install
+
+    - name: Test app
+      run: npm run test
+
+    - name: Build app
+      run: npm run build
+      
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v2
+      with:
+        name: .build-app
+        path: ./build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:            
     - name: Login to Azure
       uses: Azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Install npm packages
-      run: npm install
-
-    - name: Build app
-      run: npm run build
-
-    - name: Test app
-      run: npm run test
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v2
+      with:
+        name: .build-app
 
     - name: Upload to blob storage
       uses: azure/CLI@v1
       with:
         azcliversion: 2.0.72
         inlineScript: |
-            az storage blob upload-batch --account-name jobshopcollectionblob -s ./build -d '$web'
+            az storage blob upload-batch --account-name jobshopcollectionblob -s . -d '$web'
 
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
@@ -44,7 +58,6 @@ jobs:
         inlineScript: |
            az cdn endpoint purge --content-paths  "/*" --profile-name "jobshopcollection" --name "jobshopcollection" --resource-group "JobShopCollectionResourceGroup"
 
-  # Azure logout 
-    - name: logout
+    - name: Logout of Azure
       run: |
             az logout
