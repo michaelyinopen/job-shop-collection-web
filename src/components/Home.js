@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     backgroundColor: theme.palette.background.default,
     paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(2),
     height: "100%"
   },
   examplesLink: {
@@ -67,8 +68,9 @@ const Home = () => {
   const classes = useStyles();
   const theme = useTheme();
   const isSmallerTitle = useMediaQuery(theme.breakpoints.down('xs'));
-  const currentHostConstants = hostConstants[process.env.REACT_APP_HOST];
-  const deploymentMethod = currentHostConstants?.useDeploymentMethod?.();
+  // const currentHostConstants = hostConstants[process.env.REACT_APP_HOST];
+  const currentHostConstants = hostConstants["Azure"];
+  const currentHostBuiltWiths = currentHostConstants?.useBuiltWiths?.();
   return (
     <Container className={classes.container}>
       <h1 className={clsx({ [classes.smallerTitle]: isSmallerTitle })}>Job Shop Collection</h1>
@@ -207,8 +209,11 @@ const Home = () => {
         <li><a href='https://facebook.github.io/react/'>React</a> for client-side code</li>
         <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for server-side code</li>
         <li><a href='https://material-ui.com/'>Material-ui</a> for layout and styling</li>
-        <li><a href={currentHostConstants?.hostLink}>{currentHostConstants?.hostName}</a> for hosting static website, Web API and database</li>
-        <li>{deploymentMethod}</li>
+        {currentHostBuiltWiths?.map(b=>(
+          <li>
+            {b}
+          </li>
+        ))}
       </ul>
     </Container >
   );

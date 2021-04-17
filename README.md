@@ -15,14 +15,12 @@ npm run-script build
 ```
 4. Right-click `build` folder and `Deploy to Static Webaite via Azure Storage...`
 
-## static index.html
-Need to use `<HashRouter>` and have ugly paths `http://www.example.com/#/other-page`
-
-## generate azure credential for github actions secret
+## Generate Azure credential for github actions secret
 In Azure CLI
 ```
 az ad sp create-for-rbac --sdk-auth --name "job-shop-collection-web-publisher" --role contributor --scopes /subscriptions/d1fef207-a33e-4536-bead-9ab97bbf6001/resourceGroups/JobShopCollectionResourceGroup/providers/Microsoft.Storage/storageAccounts/jobshopcollectionblob /subscriptions/d1fef207-a33e-4536-bead-9ab97bbf6001/resourceGroups/JobShopCollectionResourceGroup/providers/Microsoft.Cdn/profiles/jobshopcollection/endpoints/jobshopcollection
 ```
+Save the output json as `AZURE_CREDENTIALS` in Github repository secrets.
 
 # Environment variables
 - REACT_APP_API_URL
