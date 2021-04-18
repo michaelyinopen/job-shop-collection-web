@@ -34,6 +34,7 @@ jobs:
     needs: build
     steps:            
     - name: Login to Azure
+      id: login_azure
       uses: Azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -58,5 +59,6 @@ jobs:
            az cdn endpoint purge --content-paths  "/*" --profile-name "jobshopcollection" --name "jobshopcollection" --resource-group "JobShopCollectionResourceGroup"
 
     - name: Logout of Azure
-      run: |
-            az logout
+      if: ${{ always() && steps.login_azure.outcome == 'success' }}
+      continue-on-error: true
+      run: az logout
