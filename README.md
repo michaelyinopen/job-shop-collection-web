@@ -41,7 +41,7 @@ npm run-script build
 
 Check the files with Microsoft Azure Storage Explorer (installed).
 
-## Continuous Deployment by Github Actions
+### Continuous Deployment by Github Actions
 Github Actions workflow
 - Build React App
 - Login to Azure
