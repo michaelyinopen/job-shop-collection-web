@@ -38,7 +38,7 @@ jobs:
       with:
         name: .build-app
 
-    - name: npm install and build
+    - name: Upload
       env:
         remote_host: ${{ secrets.LINODE_HOST }}
         remote_port: ${{ secrets.LINODE_PORT }}
