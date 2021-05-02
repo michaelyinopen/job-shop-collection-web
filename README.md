@@ -8,7 +8,7 @@ cd job-shop-collection-web
 npm install
 npm start
 ```
-Run locally `job-shop-collection-web` to handle the API requests. Make sure the "proxy" in package.json matches the launch settings of API. 
+Run locally [job-shop-collection-api](https://github.com/michaelyinopen/job-shop-collection-api) to handle the API requests. Make sure the "proxy" in package.json matches the launch settings of API. 
 
 ## Environment variables
 - REACT_APP_API_URL
@@ -20,7 +20,7 @@ Most CI servers set it automatically.
 
 Do not need these environment variables when running locally.
 
-## Deployment on Azure
+## Hosted on Azure
 The React App is hosted with Azure Blob Storage Static Website.
 
 The Static Website is integrated with Azure CDN. An URL rewrite rule is configured for routing of SPA, check Blob Service | Azure CDN | The Endpoint | Rules Engine.
@@ -42,7 +42,7 @@ npm run-script build
 Check the files with Microsoft Azure Storage Explorer (installed).
 
 ### Continuous Deployment by Github Actions
-Github Actions workflow
+[This Github Action](https://github.com/michaelyinopen/job-shop-collection-web/actions/workflows/main_azure.yml) workflow
 - Build React App
 - Login to Azure
 - Upload to Blob Storage
@@ -56,3 +56,84 @@ az ad sp create-for-rbac --sdk-auth --name "job-shop-collection-web-publisher" -
 ```
 Save the output json as `AZURE_CREDENTIALS` in Github repository secrets.
 
+## Hosted on Linode
+The React app is hosted on a Linode server with domain job-shop-collection.michael-yin.net. On the same machine, a Nginx reverse proxy is setup to
+- server the react app
+- server SPA routes with index.html
+- proxy api requests to the api server
+
+### Setup server
+https://www.linode.com/docs/guides/getting-started/
+
+Host name job-shop-collection-web
+
+https://www.linode.com/docs/guides/securing-your-server/
+
+check back for firewall and Remove Unused Network-Facing Services
+
+https://www.linode.com/docs/guides/how-to-deploy-a-react-app-on-debian-10/
+
+Install Rsync
+```
+sudo apt install rsync
+```
+
+Do not need to install git and Node.
+
+https://www.linode.com/docs/guides/how-to-install-nginx-debian-10/
+
+Install Nginx
+```
+sudo apt install nginx
+```
+
+#### Configure Nginx
+/etc/nginx/sites-available/job-shop-collection.michael-yin.net
+```
+server {
+    listen 80;
+    listen [::]:80;
+    server_name  job-shop-collection.michael-yin.net;
+
+    root /var/www/job-shop-collection.michael-yin.net;
+    index index.html;
+
+    # Any route containing a file extension (e.g. /devicesfile.js)
+    location ~ ^.+\..+$ {
+      try_files $uri =404;
+    }
+
+    # Any route that doesn't have a file extension (e.g. /devices)
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+### Continuous Deployment by Github Actions
+
+Generate ssh key pair. e.g. on Windows CMD
+
+```
+ssh-keygen -m PEM -t rsa -b 4096
+```
+
+Copy public key to /home/michael/.ssh/authorized_keys of server
+```
+mkdir -p ~/.ssh
+```
+
+Copy private key to https://github.com/michaelyinopen/job-shop-collection-web/settings/secrets/actions as repository secret LINODE_SSH_PRIVATE_KEY.
+
+Set other Github repository secrets
+- LINODE_HOST\
+the public IP
+- LINODE_PORT\
+22
+- LINODE_USER
+- LINODE_DIRECTORY
+
+[This Github Action](https://github.com/michaelyinopen/job-shop-collection-web/actions/workflows/main_linode.yml) workflow
+
+- Build React App
+- Rsync copy files to Linode
