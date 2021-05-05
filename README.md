@@ -25,6 +25,8 @@ The React App is hosted with Azure Blob Storage Static Website.
 
 The Static Website is integrated with Azure CDN. An URL rewrite rule is configured for routing of SPA, check Blob Service | Azure CDN | The Endpoint | Rules Engine.
 
+The website can be visited on [jobshopcollection.azureedge.net](http://jobshopcollection.azureedge.net).
+
 ### Manually deploy with VS Code Azure Storage extension
 1. Install the extension `Azure Storage` in VS Code
 2. Set environment variables
@@ -55,6 +57,13 @@ In Azure CLI
 az ad sp create-for-rbac --sdk-auth --name "job-shop-collection-web-publisher" --role contributor --scopes /subscriptions/d1fef207-a33e-4536-bead-9ab97bbf6001/resourceGroups/JobShopCollectionResourceGroup/providers/Microsoft.Storage/storageAccounts/jobshopcollectionblob /subscriptions/d1fef207-a33e-4536-bead-9ab97bbf6001/resourceGroups/JobShopCollectionResourceGroup/providers/Microsoft.Cdn/profiles/jobshopcollection/endpoints/jobshopcollection
 ```
 Save the output json as `AZURE_CREDENTIALS` in Github repository secrets.
+
+### Domain azure.job-shop-collection.michael-yin.net
+Using a domain michael-yin.net at Google Domains. Configure the DNS by adding a CNAME record with name `azure.job-shop-collection` and Data `jobshopcollection.azureedge.net.`.
+
+At Blob Service | Azure CDN | The Endpoint | Custom Domains, add a hostname `azure.job-shop-collection.michael-yin.net`, with custom domain HTTPS configured by Azure.
+
+The website can be visited on [azure.job-shop-collection.michael-yin.net](http://azure.job-shop-collection.michael-yin.net).
 
 ## Hosted on Linode
 The React app is hosted on a Linode server with domain job-shop-collection.michael-yin.net. On the same machine, a Nginx reverse proxy is setup to
@@ -137,3 +146,14 @@ the public IP
 
 - Build React App
 - Rsync copy files to Linode
+
+### Domain job-shop-collection.michael-yin.net
+Using a domain michael-yin.net at Google Domains. Configure the DNS by adding
+- an `A` record with name `job-shop-collection` and Data \<the web server's IPv4 address>.
+- an `AAAA` record with name `job-shop-collection` and Data \<the web server's IPv6 address>.
+
+The website can be visited on [job-shop-collection.michael-yin.net](http://job-shop-collection.michael-yin.net).
+
+// todo reverse proxy for calls to api
+// todo Configure ASP.NET Core to work with proxy servers
+// todo https
