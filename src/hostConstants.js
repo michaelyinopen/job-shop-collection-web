@@ -65,7 +65,7 @@ const useBuiltWithsLinode = () => {
     useEffect(() => {
         const fetchApiLastDeployedDate = async () => {
             try {
-                const response = await fetch(`https://api.github.com/repos/michaelyinopen/job-shop-collection-api/actions/workflows/main_azure.yml/runs?per_page=1&status=success`);
+                const response = await fetch(`https://api.github.com/repos/michaelyinopen/job-shop-collection-api/actions/workflows/main_linode.yml/runs?per_page=1&status=success`);
                 if (!response.ok) {
                     console.log("Failed to get api last deployed date");
                     return;
