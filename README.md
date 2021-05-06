@@ -98,8 +98,9 @@ sudo apt install nginx
 
 #### Configure Nginx
 /etc/nginx/sites-available/job-shop-collection.michael-yin.net
-```
-server {
+<details>
+<Summary>Content is updated again when configuring reverse proxy</summary>
+<pre><code>server {
     listen 80;
     listen [::]:80;
     server_name  job-shop-collection.michael-yin.net;
@@ -116,8 +117,8 @@ server {
     location / {
         try_files $uri $uri/ /index.html;
     }
-}
-```
+}</code></pre>
+</details>
 
 ### Continuous Deployment by Github Actions
 
@@ -154,6 +155,36 @@ Using a domain michael-yin.net at Google Domains. Configure the DNS by adding
 
 The website can be visited on [job-shop-collection.michael-yin.net](http://job-shop-collection.michael-yin.net).
 
-// todo reverse proxy for calls to api
-// todo Configure ASP.NET Core to work with proxy servers
+### Reverse proxy api requests
+Update /etc/nginx/sites-available/job-shop-collection.michael-yin.net
+```
+upstream api_server {
+    server 172.105.169.200;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name  job-shop-collection.michael-yin.net;
+
+    root /var/www/job-shop-collection.michael-yin.net;
+    index index.html;
+
+    # Any route containing a file extension (e.g. /devicesfile.js)
+    location ~ ^.+\..+$ {
+      try_files $uri =404;
+    }
+
+    # Proxy api request to upstream api
+    location /api {
+        proxy_pass http://api_server/api;
+    }
+
+    # Any route that doesn't have a file extension (e.g. /devices)
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+``` 
+
 // todo https
