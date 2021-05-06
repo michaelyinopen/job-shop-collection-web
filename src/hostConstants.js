@@ -121,8 +121,8 @@ const linodeConstants = {
 }
 
 const hostConstants = {
-    Azure: azureConstants,
-    Linode: linodeConstants
+    azure: azureConstants,
+    linode: linodeConstants
 };
 
 export default hostConstants;

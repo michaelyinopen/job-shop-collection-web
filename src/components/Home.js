@@ -68,8 +68,7 @@ const Home = () => {
   const classes = useStyles();
   const theme = useTheme();
   const isSmallerTitle = useMediaQuery(theme.breakpoints.down('xs'));
-  // const currentHostConstants = hostConstants[process.env.REACT_APP_HOST];
-  const currentHostConstants = hostConstants["Azure"];
+  const currentHostConstants = hostConstants[process.env.REACT_APP_HOST];
   const currentHostBuiltWiths = currentHostConstants?.useBuiltWiths?.();
   return (
     <Container className={classes.container}>

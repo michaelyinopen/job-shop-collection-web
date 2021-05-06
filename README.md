@@ -32,7 +32,7 @@ The website can be visited on [jobshopcollection.azureedge.net](http://jobshopco
 2. Set environment variables
 ```
 $env:REACT_APP_API_URL = "https://job-shop-collection-api.azurewebsites.net"
-$env:REACT_APP_HOST = "Azure"
+$env:REACT_APP_HOST = "azure"
 $env:CI = $true
 ```
 3. Build the react app.
