@@ -187,4 +187,15 @@ server {
 }
 ``` 
 
-// todo https
+### Https
+The website uses free SSL certificate issurd by Let's Encrypt.\
+Follow instructions in https://certbot.eff.org/lets-encrypt/debianbuster-nginx.
+
+```
+sudo apt install snapd
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo certbot --nginx
+```
+/etc/nginx/sites-available/job-shop-collection.michael-yin.net will be updated with blocks managed by Certbot.
