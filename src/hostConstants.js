@@ -105,8 +105,8 @@ const useBuiltWithsLinode = () => {
     }, []);
     return [
         (<>
-            Web API hosted on a Debian on <a href="https://www.linode.com/">Linode</a><br/>
-            <a href="https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu?view=sql-server-ver15">SQL Server 2019 Express</a> database hosted on a Ubuntu on <a href="https://www.linode.com/">Linode</a><br/>
+            Web API hosted on a <a href="https://www.linode.com/">Linode</a><br/>
+            <a href="https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu?view=sql-server-ver15">SQL Server 2019 Express</a> database hosted on another <a href="https://www.linode.com/">Linode</a><br/>
             Continuously deployed {apiLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-api/actions/workflows/main_linode.yml'>this Github Actions workflow</a>
         </>),
         (<>
