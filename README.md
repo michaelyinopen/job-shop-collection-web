@@ -1,5 +1,5 @@
 # job-shop-collection-web
-React app of the Job Shop Collection website.
+React app of the [Job Shop Collection website](https://job-shop-collection.michael-yin.net).
 
 ## How to run locally
 ```
@@ -21,11 +21,11 @@ Most CI servers set it automatically.
 Do not need these environment variables when running locally.
 
 ## Hosted on Azure
+The website can be visited on [azure.job-shop-collection.michael-yin.net](https://azure.job-shop-collection.michael-yin.net).
+
 The React App is hosted with Azure Blob Storage Static Website.
 
 The Static Website is integrated with Azure CDN. An URL rewrite rule is configured for routing of SPA, check Blob Service | Azure CDN | The Endpoint | Rules Engine.
-
-The website can be visited on [jobshopcollection.azureedge.net](http://jobshopcollection.azureedge.net).
 
 ### Manually deploy with VS Code Azure Storage extension
 1. Install the extension `Azure Storage` in VS Code
@@ -63,13 +63,13 @@ Using a domain michael-yin.net at Google Domains. Configure the DNS by adding a 
 
 At Blob Service | Azure CDN | The Endpoint | Custom Domains, add a hostname `azure.job-shop-collection.michael-yin.net`, with custom domain HTTPS configured by Azure.
 
-The website can be visited on [azure.job-shop-collection.michael-yin.net](http://azure.job-shop-collection.michael-yin.net).
-
 ## Hosted on Linode
+The website can be visited on [job-shop-collection.michael-yin.net](https://job-shop-collection.michael-yin.net).
+
 The React app is hosted on a Linode server with domain job-shop-collection.michael-yin.net. On the same machine, a Nginx reverse proxy is setup to
-- server the react app
-- server SPA routes with index.html
+- server the react app and static files
 - proxy api requests to the api server
+- server SPA routes with index.html
 
 ### Setup server
 https://www.linode.com/docs/guides/getting-started/
