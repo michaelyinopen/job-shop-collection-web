@@ -23,8 +23,14 @@
       "react-app",
       "react-app/jest"
     ],
-    "rules":{
-      "semi": ["warn", "never"]
+    "rules": {
+      "semi": [
+        "warn",
+        "never"
+      ],
+      "import/no-default-export": [
+        "warn"
+      ]
     }
   },
   "browserslist": {
@@ -38,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-plugin-import": "^2.23.4"
   }
 }
