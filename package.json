@@ -30,6 +30,13 @@
       ],
       "import/no-default-export": [
         "warn"
+      ],
+      "react/jsx-filename-extension": [
+        "warn",
+        {
+          "allow": "as-needed",
+          "extensions": [".tsx", ".jsx"]
+        }
       ]
     }
   },
