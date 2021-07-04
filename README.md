@@ -199,3 +199,8 @@ sudo ln -s /snap/bin/certbot /usr/bin/certbot
 sudo certbot --nginx
 ```
 /etc/nginx/sites-available/job-shop-collection.michael-yin.net will be updated with blocks managed by Certbot.
+
+## Useful for testing the built files
+
+npm install http-server --save-dev
+npm run start-production

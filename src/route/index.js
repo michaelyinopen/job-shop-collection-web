@@ -1,0 +1,1 @@
+export * as routePaths from './routePaths'
