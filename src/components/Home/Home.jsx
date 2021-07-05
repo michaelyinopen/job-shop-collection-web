@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 0
   },
   sectionHeader: {
-    fontWeight: 'bold'
+    fontWeight: theme.typography.fontWeightBold
   },
   keyFeatures: {
     display: "flex",
