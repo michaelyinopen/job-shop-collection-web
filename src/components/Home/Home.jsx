@@ -203,12 +203,12 @@ export const Home = () => {
       </Typography>
       <p>
         The Job Shop Problem is a scheduling problem, in which
-        <ul>
-          <li>Multiple jobs are processed on several machines</li>
-          <li>Each job consists of a sequence of tasks, which must be performed in a given order</li>
-          <li>Each task must be processed on a specific machine</li>
-        </ul>
       </p>
+      <ul>
+        <li>Multiple jobs are processed on several machines</li>
+        <li>Each job consists of a sequence of tasks, which must be performed in a given order</li>
+        <li>Each task must be processed on a specific machine</li>
+      </ul>
       <p>
         The solution of the problem is a schedule, which describes clearly how the tasks are scheduled on the machines.<br />
         This schedule provides visibility and control over the production process and ultimately boost production efficiency.

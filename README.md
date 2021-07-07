@@ -200,7 +200,39 @@ sudo certbot --nginx
 ```
 /etc/nginx/sites-available/job-shop-collection.michael-yin.net will be updated with blocks managed by Certbot.
 
-## Useful for testing the built files
+### http2
+Manually edited these two lines to support http2
+```
+    listen [::]:443 ssl http2 ipv6only=on; # managed by Certbot
+    listen 443 ssl http2; # managed by Certbot
+```
 
+### Cache control
+Added these sections for cache control.
+```
+    location ~* \.(js|css|jpg|jpeg|png|gif|js|css|ico|swf|mp4)$ {
+      try_files $uri =404;
+      expires 1y;
+      etag off;
+      if_modified_since off;
+      add_header Cache-Control "public, no-transform";
+    }
+
+    location ~* \.(html)$ {
+      try_files $uri =404;
+      etag on;
+      add_header Cache-Control "no-cache";
+    }
+```
+
+## Useful for testing the built files
+```
 npm install http-server --save-dev
 npm run start-production
+```
+
+## Useful for viewing the bundles
+```
+npm run build -- --stats
+npx webpack-bundle-analyzer ./build/bundle-stats.json
+```
