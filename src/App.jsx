@@ -6,6 +6,7 @@ import { routePaths } from './route'
 
 import { Layout } from './components/Layout'
 import { Home } from './components/Home'
+import { About } from './components/About'
 import { PageNotFound } from './components/PageNotFound'
 
 
@@ -17,6 +18,7 @@ export function App() {
         <Layout>
           <Switch>
             <Route exact path={routePaths.home} component={Home} />
+            <Route exact path={routePaths.about} component={About} />
             <Route component={PageNotFound} />
           </Switch>
         </Layout>

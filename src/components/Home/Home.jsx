@@ -18,9 +18,6 @@ const useStyles = makeStyles(theme => ({
     marginBlockEnd: 0,
     marginBottom: 0
   },
-  sectionHeader: {
-    fontWeight: theme.typography.fontWeightBold
-  },
   keyFeatures: {
     display: "flex",
     flexDirection: "column",
@@ -92,7 +89,6 @@ export const Home = () => {
         variant="h6"
         component="h2"
         gutterBottom
-        className={classes.sectionHeader}
       >
         Key Features
       </Typography>
@@ -197,7 +193,6 @@ export const Home = () => {
         variant="h6"
         component="h2"
         gutterBottom
-        className={classes.sectionHeader}
       >
         About The Job Shop Scheduling Problem
       </Typography>
@@ -227,7 +222,6 @@ export const Home = () => {
         variant="h6"
         component="h2"
         gutterBottom
-        className={classes.sectionHeader}
       >
         This application is built with
       </Typography>

@@ -1,4 +1,4 @@
-import {  createMuiTheme, responsiveFontSizes } from '@material-ui/core'
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core'
 
 export const theme = responsiveFontSizes(
   createMuiTheme({
@@ -31,6 +31,11 @@ export const theme = responsiveFontSizes(
       MuiFab: {
         root: {
           margin: 16
+        }
+      },
+      MuiTypography: {
+        h6: {
+          fontWeight: 700,
         }
       }
     }
