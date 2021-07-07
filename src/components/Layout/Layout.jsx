@@ -3,12 +3,12 @@ import { AppBar } from './AppBar'
 
 const useStyles = makeStyles(theme => ({
   root: {
-    height: "100%",
+    height: '100%',
     display: 'flex',
     flexDirection: 'column'
   },
   container: {
-    flex: '1 1 auto',
+    flex: 1,
     position: 'relative',
     backgroundColor: 'white'
   },

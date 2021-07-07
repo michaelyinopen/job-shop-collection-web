@@ -6,9 +6,10 @@ import type { ContainerProps } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   pageContainer: {
+    height: '100%',
     backgroundColor: theme.palette.background.default,
     paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(4),
+    paddingBottom: theme.spacing(4)
   }
 }))
 

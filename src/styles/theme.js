@@ -28,6 +28,19 @@ export const theme = responsiveFontSizes(
       }
     },
     overrides: {
+      MuiCssBaseline: {
+        '@global': {
+          html: {
+            height: '100%',
+          },
+          body: {
+            height: '100%',
+          },
+          '#root': {
+            height: '100%',
+          },
+        },
+      },
       MuiFab: {
         root: {
           margin: 16
