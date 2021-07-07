@@ -1,6 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles'
 import { Container } from '@material-ui/core'
 
+import type { FunctionComponent } from 'react'
+import type { ContainerProps } from '@material-ui/core'
+
 const useStyles = makeStyles(theme => ({
   pageContainer: {
     backgroundColor: theme.palette.background.default,
@@ -9,8 +12,8 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export const PageContainer = props => {
-  const classes = useStyles(props)
+export const PageContainer: FunctionComponent<ContainerProps> = (props) => {
+  const classes = useStyles()
   return (
     <Container className={classes.pageContainer} {...props} />
   )

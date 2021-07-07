@@ -1,5 +1,6 @@
-import { useState, useEffect, ReactNode } from 'react'
+import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
+import type { ReactNode } from 'react'
 
 export type Hosts = "azure" | "linode"
 

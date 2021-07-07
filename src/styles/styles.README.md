@@ -32,3 +32,16 @@ Sample of transition
     padding: '6px 0 8px',
   },
 ```
+
+Uses `import { ClassKeyOfStyles } from '@material-ui/styles/withStyles'`
+which is internal API of MUI. This type can infer the ClassKey from the style function.
+```
+export type ClassKeyOfStyles<StylesOrClassKey> = StylesOrClassKey extends string
+  ? StylesOrClassKey
+  : StylesOrClassKey extends StyleRulesCallback<any, any, infer ClassKey>
+  ? ClassKey
+  : StylesOrClassKey extends StyleRules<any, infer ClassKey>
+  ? ClassKey
+  : never;
+```
+Example see `components\Layout\LabeledIconButton.tsx` that allows overriding classes of MuiButton. If overriding is not required, simply use e.g. `styles/PageContainer.jsx`.
