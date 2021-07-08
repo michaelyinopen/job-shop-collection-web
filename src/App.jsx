@@ -1,3 +1,7 @@
+
+import { Provider } from 'react-redux'
+import { store } from './store'
+
 import { CssBaseline, ThemeProvider } from '@material-ui/core'
 import { theme } from './styles'
 
@@ -12,17 +16,19 @@ import { PageNotFound } from './components/PageNotFound'
 
 export function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter>
-        <Layout>
-          <Switch>
-            <Route exact path={routePaths.home} component={Home} />
-            <Route exact path={routePaths.about} component={About} />
-            <Route component={PageNotFound} />
-          </Switch>
-        </Layout>
-      </BrowserRouter>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter>
+          <Layout>
+            <Switch>
+              <Route exact path={routePaths.home} component={Home} />
+              <Route exact path={routePaths.about} component={About} />
+              <Route component={PageNotFound} />
+            </Switch>
+          </Layout>
+        </BrowserRouter>
+      </ThemeProvider>
+    </Provider>
   )
 }
