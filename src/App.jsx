@@ -13,7 +13,6 @@ import { Home } from './components/Home'
 import { About } from './components/About'
 import { PageNotFound } from './components/PageNotFound'
 
-
 export function App() {
   return (
     <Provider store={store}>

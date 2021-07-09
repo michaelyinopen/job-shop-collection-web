@@ -13,7 +13,13 @@ class ApiFailure implements Failure{
   }
 }
 
-type JobSetHeaderDto = object //todo
+export type JobSetHeaderDto = {
+  id: number,
+  title?: string,
+  description?: string,
+  isLocked: boolean
+  eTag?: string
+}
 
 type GetJobSetsResponse = {
   data: JobSetHeaderDto[],
