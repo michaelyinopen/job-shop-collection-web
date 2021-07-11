@@ -4,7 +4,7 @@ import { produce, isDraft, isDraftable, freeze } from "immer"
 // allow additional parameters
 // also wrapped with immer's produce
 // input state can be an immer draft
-export function createReducer(initialState, handlers) {
+export function createCustomReducer(initialState, handlers) {
   const frozenInitialState = freeze(initialState, true)
   return function reducer(state = frozenInitialState, action, ...args) {
     if (!handlers.hasOwnProperty(action.type)) {

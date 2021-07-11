@@ -9,5 +9,13 @@ import { App } from './App'
 // })
 
 test('can render App', () => {
+  // disable console.error, because MUI CardMedia has error unstable_flushDiscreteUpdates
+  // and clutters the console
+  const originalError = console.error
+  console.error = jest.fn()
+
   render(<App />)
+
+  
+  console.error = originalError
 })

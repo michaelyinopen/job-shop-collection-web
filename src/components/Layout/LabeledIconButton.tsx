@@ -41,15 +41,16 @@ export const LabeledIconButton: FunctionComponent<Props> = memo((props) => {
   const {
     icon,
     label,
-    ...otherProps
+    ...buttonProps
   } = props
 
   const classes = useStyles(props)
+  const { wrapper, ...buttonClasses } = classes
 
   return (
     <Button
-      classes={classes}
-      {...otherProps}
+      classes={buttonClasses}
+      {...buttonProps}
     >
       <span className={classes.wrapper}>
         {icon}
