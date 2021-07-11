@@ -1,10 +1,10 @@
-interface IOkResult<T> {
-  isOk(): true
-  ok(): T
+interface ISuccessResult<T> {
+  kind: "success"
+  success(): T
 }
 
 interface IFailureResult<F extends Failure> {
-  isOk(): false
+  kind: "failure"
   failure(): F
 }
 
@@ -12,28 +12,26 @@ export type Failure = {
   failureType: string
 }
 
-export type Result<T, F extends Failure> = IOkResult<T> | IFailureResult<F>
+export type Result<T, F extends Failure> = ISuccessResult<T> | IFailureResult<F>
 
-export class OkResult<T> implements IOkResult<T> {
+export class SuccessResult<T> implements ISuccessResult<T> {
+  kind = "success" as const
   private value: T
 
   constructor(v: T) {
     this.value = v
   }
 
-  isOk = () => true as const
-
-  ok = () => this.value
+  success = () => this.value
 }
 
 export class FailureResult<F extends Failure> implements IFailureResult<F> {
+  kind = "failure" as const
   private value: F
 
   constructor(v: F) {
     this.value = v
   }
-
-  isOk = () => false as const
 
   failure = () => this.value
 }

@@ -33,3 +33,5 @@ export const jobSetsMetaReducer = createReducer(jobSetsMetaInitialState, (builde
       state.loadFailedMessage = action.payload.failedMessage
     })
 })
+
+export const jobSetsIsLoadingSelector = (state: JobSetsMetaState) =>state.isLoading

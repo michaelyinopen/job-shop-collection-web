@@ -12,6 +12,7 @@ import { Layout } from './components/Layout'
 import { Home } from './components/Home'
 import { About } from './components/About'
 import { PageNotFound } from './components/PageNotFound'
+import { JobSets } from './components/JobSets'
 
 export function App() {
   return (
@@ -23,6 +24,7 @@ export function App() {
             <Switch>
               <Route exact path={routePaths.home} component={Home} />
               <Route exact path={routePaths.about} component={About} />
+              <Route exact path={routePaths.jobSets} component={JobSets} />
               <Route component={PageNotFound} />
             </Switch>
           </Layout>

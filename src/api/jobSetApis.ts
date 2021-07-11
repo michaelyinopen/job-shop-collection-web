@@ -1,5 +1,5 @@
 import template from 'url-template'
-import { OkResult, FailureResult } from '../utility'
+import { SuccessResult, FailureResult } from '../utility'
 import type { Result, Failure } from '../utility'
 
 const API_URL = process.env.REACT_APP_API_URL ?? ""
@@ -43,5 +43,5 @@ export async function getJobSetsApiAsync(pageToken?: number): Promise<Result<Get
   if (!responseBody.data) {
     return new FailureResult(new ApiFailure("Missing data field in api response."))
   }
-  return new OkResult(responseBody as GetJobSetsResponse)
+  return new SuccessResult(responseBody as GetJobSetsResponse)
 }

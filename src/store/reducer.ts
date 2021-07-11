@@ -1,14 +1,19 @@
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { combineReducers, createSelector } from '@reduxjs/toolkit'
+import type { RootState } from './store'
 
-type State = string
+import * as fromJobSets from '../components/JobSets'
 
-const initialState = "initial state"
+export const reducer = combineReducers({
+  jobSets: fromJobSets.jobSetsReducer,
+  jobSetsMeta: fromJobSets.jobSetsMetaReducer
+})
 
-export function reducer(
-  state: State = initialState,
-  action: PayloadAction
-): State {
-  return "store state"
-}
+export const jobSetsIsLoadingSelector = createSelector(
+  (state: RootState) => state.jobSetsMeta,
+  fromJobSets.jobSetsIsLoadingSelector
+)
 
-export const stateSelector = (state: State) => state
+export const jobSetIdsSelector = createSelector(
+  (state: RootState) => state.jobSets,
+  fromJobSets.jobSetIdsSelector
+)

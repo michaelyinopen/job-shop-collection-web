@@ -13,7 +13,7 @@ export const getJobSetsSucceeded = createAction(
   })
 )
 
-export const getJobSetsFailed =createAction(
+export const getJobSetsFailed = createAction(
   'jobSets/getJobSetsFailed',
   (failedMessage: string) => ({
     payload: {

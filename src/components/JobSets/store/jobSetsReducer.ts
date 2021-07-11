@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit'
-import type { EntityState } from '@reduxjs/toolkit'
+import type { EntityState, EntityId } from '@reduxjs/toolkit'
 import { getJobSetsSucceeded } from './actions'
 import { createCustomReducer } from '../../../utility'
 import type { JobSetHeaderDto } from '../../../api'
@@ -73,7 +73,7 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
           jobSetHeader)
         state.entities[jobSetHeader.id] = newEntity
       }
-      
+
       state.ids = hasCreated
         ? jobSetHeaders.map(jsh => jsh.id)
         : hasRemoved
@@ -81,3 +81,10 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
           : state.ids
     })
 })
+
+export const jobSetIdsSelector = (state: EntityState<JobSetState>) => state.ids as number[]
+
+// do i need the following?
+export const jobSetsSelector =
+  (state: EntityState<JobSetState>) => state.ids.map((id: EntityId) => state.entities[id])
+
