@@ -84,7 +84,23 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
 
 export const jobSetIdsSelector = (state: EntityState<JobSetState>) => state.ids as number[]
 
-// do i need the following?
-export const jobSetsSelector =
-  (state: EntityState<JobSetState>) => state.ids.map((id: EntityId) => state.entities[id])
+export type JobSetHeader = {
+  id: number,
+  title?: string,
+  description?: string,
+  isLocked: boolean,
+  eTag?: string
+}
+
+export const jobSetHeadersSelector =
+  (state: EntityState<JobSetState>) => state.ids.map((id: EntityId) => {
+    const entity = state.entities[id]!
+    return {
+      id: entity.id,
+      title: entity.title,
+      description: entity.description,
+      isLocked: entity.isLocked,
+      eTag: entity.eTag,
+    }
+  })
 

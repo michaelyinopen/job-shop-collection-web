@@ -13,7 +13,7 @@ export const JobSets = () => {
   const jobSetIds = useAppSelector(jobSetIdsSelector)
   return (
     <JobSetsPageContainer>
-      <h1>JobSets Page</h1>
+      {/* <JobSetToolbarTitle /> */}
       <div>{JSON.stringify(jobSetIds)}</div>
     </JobSetsPageContainer>
   )

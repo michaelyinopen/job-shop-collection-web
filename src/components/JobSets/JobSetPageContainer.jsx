@@ -1,3 +1,4 @@
+import { Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { PageContainer } from "../../styles"
 
@@ -16,7 +17,9 @@ export const JobSetsPageContainer = ({ children }) => {
   const classes = usePageContainerStyles()
   return (
     <PageContainer classes={{ pageContainer: classes.pageContainer }}>
-      {children}
+      <Paper>
+        {children}
+      </Paper>
     </PageContainer>
   )
 }
