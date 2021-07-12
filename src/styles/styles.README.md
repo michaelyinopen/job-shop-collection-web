@@ -44,4 +44,4 @@ export type ClassKeyOfStyles<StylesOrClassKey> = StylesOrClassKey extends string
   ? ClassKey
   : never;
 ```
-Example see `components\Layout\LabeledIconButton.tsx` that allows overriding classes of MuiButton. If overriding is not required, simply use e.g. `styles/PageContainer.jsx`.
+Example see `components\Layout\LabeledIconButton.tsx` that allows overriding classes of MuiButton. If only className is required, simply use e.g. `styles/PageContainer.jsx`.
