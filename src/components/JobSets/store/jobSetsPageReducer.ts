@@ -97,3 +97,6 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
       state.rowsPerPage = payload
     })
 })
+
+export const jobSetsPageHasSelectedSelector = (state: JobSetsPageState) => state.selectedItemIds.length > 0
+export const jobSetsPageSelectedItemIdsSelector = (state: JobSetsPageState) => state.selectedItemIds

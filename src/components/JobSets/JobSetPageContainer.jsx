@@ -2,7 +2,7 @@ import { Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { PageContainer } from "../../styles"
 
-const usePageContainerStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   pageContainer: {
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
@@ -14,7 +14,7 @@ const usePageContainerStyles = makeStyles(theme => ({
 }))
 
 export const JobSetsPageContainer = ({ children }) => {
-  const classes = usePageContainerStyles()
+  const classes = useStyles()
   return (
     <PageContainer classes={{ pageContainer: classes.pageContainer }}>
       <Paper>

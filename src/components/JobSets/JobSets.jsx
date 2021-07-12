@@ -1,20 +1,25 @@
 import { useEffect } from "react"
-import { useAppDispatch, useAppSelector, jobSetIdsSelector } from '../../store'
-import { getJobSets } from './store'
+import { useAppDispatch, useAppSelector, jobSetHeadersSelector } from '../../store'
+import { getJobSets, setItems } from './store'
 
 import { JobSetsPageContainer } from './JobSetPageContainer'
-
+import { JobSetsToolbarTitle } from './JobSetsToolbarTitle'
 
 export const JobSets = () => {
   const dispatch = useAppDispatch()
   useEffect(() => {
     dispatch(getJobSets())
   }, [dispatch])
-  const jobSetIds = useAppSelector(jobSetIdsSelector)
+
+  const jobSetHeaders = useAppSelector(jobSetHeadersSelector)
+  useEffect(() => {
+    dispatch(setItems(jobSetHeaders))
+  }, [dispatch, jobSetHeaders])
+
   return (
     <JobSetsPageContainer>
-      {/* <JobSetToolbarTitle /> */}
-      <div>{JSON.stringify(jobSetIds)}</div>
+      <JobSetsToolbarTitle />
+      <div>{JSON.stringify(jobSetHeaders)}</div>
     </JobSetsPageContainer>
   )
 }

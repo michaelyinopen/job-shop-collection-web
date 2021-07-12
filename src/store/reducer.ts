@@ -9,19 +9,28 @@ export const reducer = combineReducers({
   jobSetsPage: fromJobSets.jobSetsPageReducer
 })
 
+const jobSetsSelector = (state: RootState) => state.jobSets
 export const jobSetIdsSelector = createSelector(
-  (state: RootState) => state.jobSets,
+  jobSetsSelector,
   fromJobSets.jobSetIdsSelector
 )
-
 export const jobSetHeadersSelector = createSelector(
-  (state: RootState) => state.jobSets,
+  jobSetsSelector,
   fromJobSets.jobSetHeadersSelector
 )
 
+const jobSetsMetaSelector = (state: RootState) => state.jobSetsMeta
 export const jobSetsIsLoadingSelector = createSelector(
-  (state: RootState) => state.jobSetsMeta,
+  jobSetsMetaSelector,
   fromJobSets.jobSetsIsLoadingSelector
 )
 
-export const jobSetsPageSelector = (state: RootState) => state.jobSetsPage
+const jobSetsPageSelector = (state: RootState) => state.jobSetsPage
+export const jobSetsPageHasSelectedSelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPageHasSelectedSelector
+)
+export const jobSetsPageSelectedItemIdsSelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPageSelectedItemIdsSelector
+)

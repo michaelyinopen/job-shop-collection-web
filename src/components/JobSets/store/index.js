@@ -11,6 +11,8 @@ export {
 
 export {
   jobSetsPageReducer,
+  jobSetsPageHasSelectedSelector,
+  jobSetsPageSelectedItemIdsSelector,
 } from './jobSetsPageReducer'
 
 export {
