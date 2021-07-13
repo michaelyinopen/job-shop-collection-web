@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import {
@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
   IconButton,
-  CircularProgress,
   useTheme,
   useMediaQuery,
 } from '@material-ui/core'
@@ -26,9 +25,12 @@ import { routePaths } from '../../route'
 import {
   useAppDispatch,
   useAppSelector,
-  jobSetIdsSelector,
-  jobSetsPageHasSelectedSelector
+  jobSetsPageHasSelectedSelector,
+  jobSetsIsLoadingSelector,
+  jobSetsFailedMessageSelector,
 } from '../../store'
+import { ProgressOverlay } from '../../styles'
+import { getJobSets } from './store'
 
 const useStyles = makeStyles(theme => ({
   tableTitle: { // move
@@ -103,25 +105,23 @@ const useStyles = makeStyles(theme => ({
 }))
 //const ToolbarDeleteButton 
 
-const JobSetsSelectedToolbar = () => <div />
+const JobSetsSelectedToolbar = () => {
+  const selectedCount = 1
+  const seletedItemIds = [12]
 
-// const JobSetsSelectedToolbar = ({
-//   selectedCount,
-//   selected,
-//   reloadCallback
-// }) => {
-//   return (
-//     <React.Fragment>
-//       <Typography color="inherit" variant="subtitle1">
-//         {selectedCount} selected
-//       </Typography>
-//       <ToolbarDeleteButtonContainer
-//         selected={selected}
-//         reloadCallback={reloadCallback}
-//       />
-//     </React.Fragment>
-//   );
-// }
+  return (
+    <>
+      <Typography color="inherit" variant="subtitle1">
+        {selectedCount} selected
+      </Typography>
+      {JSON.stringify(seletedItemIds)}
+      {/* <ToolbarDeleteButtonContainer
+        selected={selected}
+        reloadCallback={reloadCallback}
+      /> */}
+    </>
+  )
+}
 
 const NewJobSetLink = forwardRef((props, ref) => (
   <Link innerRef={ref} to={routePaths.newJobSet} {...props} />
@@ -131,17 +131,6 @@ const useJobSetsTitleStyles = makeStyles(theme => ({
   tableTitle: {
     marginRight: theme.spacing(3),
     fontWeight: theme.typography.fontWeightRegular
-  },
-  withProgressWrapper: {
-    position: 'relative',
-  },
-  progressOnButton: {
-    position: 'absolute',
-    zIndex: 1,
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    display: 'flex'
   },
   createJobSetButton: {
     marginTop: theme.spacing(1),
@@ -157,22 +146,24 @@ const JobSetsTitle = () => {
   const theme = useTheme()
   const isExtraSmallScreen = useMediaQuery(theme.breakpoints.down('xs'))
 
-  //todo
-  const reloadCallback = () => { }
-  const isLoading = false
-  const failedMessage = null
+  const dispatch = useAppDispatch()
+  const reloadCallback = useCallback(() => {
+    dispatch(getJobSets())
+  }, [dispatch])
+
+  const isLoading = useAppSelector(jobSetsIsLoadingSelector)
+  const failedMessage = useAppSelector(jobSetsFailedMessageSelector)
 
   return (
     <>
       <Typography variant="h6" className={classes.tableTitle}>
         Job Sets
       </Typography>
-      <div className={classes.withProgressWrapper}>
+      <ProgressOverlay isLoading={isLoading}>
         <IconButton onClick={reloadCallback}>
           <RefreshIcon />
         </IconButton>
-        {isLoading ? <div className={classes.progressOnButton}><CircularProgress /></div> : null}
-      </div>
+      </ProgressOverlay>
       <Typography color="error">
         {failedMessage}
       </Typography>
@@ -203,7 +194,8 @@ const useJobSetToolbarTitleStyles = makeStyles(theme => ({
 
 export const JobSetsToolbarTitle = () => {
   const classes = useJobSetToolbarTitleStyles()
-  const hasSelected = useAppSelector(jobSetsPageHasSelectedSelector)
+  // const hasSelected = useAppSelector(jobSetsPageHasSelectedSelector)
+  const hasSelected = true
   return (
     <Toolbar
       className={clsx(

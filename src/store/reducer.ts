@@ -24,6 +24,10 @@ export const jobSetsIsLoadingSelector = createSelector(
   jobSetsMetaSelector,
   fromJobSets.jobSetsIsLoadingSelector
 )
+export const jobSetsFailedMessageSelector = createSelector(
+  jobSetsMetaSelector,
+  fromJobSets.jobSetsFailedMessageSelector
+)
 
 const jobSetsPageSelector = (state: RootState) => state.jobSetsPage
 export const jobSetsPageHasSelectedSelector = createSelector(

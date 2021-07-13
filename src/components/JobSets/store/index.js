@@ -7,6 +7,7 @@ export {
 export {
   jobSetsMetaReducer,
   jobSetsIsLoadingSelector,
+  jobSetsFailedMessageSelector
 } from './jobSetsMetaReducer'
 
 export {

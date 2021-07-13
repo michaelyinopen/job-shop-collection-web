@@ -35,3 +35,4 @@ export const jobSetsMetaReducer = createReducer(jobSetsMetaInitialState, (builde
 })
 
 export const jobSetsIsLoadingSelector = (state: JobSetsMetaState) =>state.isLoading
+export const jobSetsFailedMessageSelector = (state: JobSetsMetaState) =>state.loadFailedMessage
