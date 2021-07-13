@@ -1,5 +1,4 @@
-import { forwardRef, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback } from 'react'
 import clsx from 'clsx'
 import {
   Toolbar,
@@ -13,7 +12,7 @@ import { lighten, makeStyles } from '@material-ui/core/styles'
 import {
   Add as AddIcon,
   // Check as CheckIcon,
-  // Delete as DeleteIcon,
+  Delete as DeleteIcon,
   // Edit as EditIcon,
   // Forward as ForwardIcon,
   // MoreVert as MoreVertIcon,
@@ -21,11 +20,12 @@ import {
   Refresh as RefreshIcon,
   // ReportProblem as ReportProblemIcon,
 } from '@material-ui/icons'
-import { routePaths } from '../../route'
+import { NewJobSetLink } from '../../route'
 import {
   useAppDispatch,
   useAppSelector,
   jobSetsPageHasSelectedSelector,
+  jobSetsPageSelectedItemIdsSelector,
   jobSetsIsLoadingSelector,
   jobSetsFailedMessageSelector,
 } from '../../store'
@@ -103,29 +103,36 @@ const useStyles = makeStyles(theme => ({
   //   width: '100%',
   // },
 }))
-//const ToolbarDeleteButton 
+
+const useJobSetsSelectedToolbarStyles = makeStyles(theme => ({
+  toolbarSeparator: {
+    flex: 1
+  },
+}))
 
 const JobSetsSelectedToolbar = () => {
-  const selectedCount = 1
-  const seletedItemIds = [12]
+  const classes = useJobSetsSelectedToolbarStyles()
+
+  const seletedItemIds = useAppSelector(jobSetsPageSelectedItemIdsSelector)
+
+  // todo
+  const isDeleting = false
+  const deleteSelectedCallback = ()=>{console.log("deleteSelected")}
 
   return (
     <>
       <Typography color="inherit" variant="subtitle1">
-        {selectedCount} selected
+        {seletedItemIds.length} selected
       </Typography>
-      {JSON.stringify(seletedItemIds)}
-      {/* <ToolbarDeleteButtonContainer
-        selected={selected}
-        reloadCallback={reloadCallback}
-      /> */}
+      <div className={classes.toolbarSeparator} />
+      <ProgressOverlay isLoading={isDeleting}>
+        <IconButton onClick={deleteSelectedCallback}>
+          <DeleteIcon />
+        </IconButton>
+      </ProgressOverlay>
     </>
   )
 }
-
-const NewJobSetLink = forwardRef((props, ref) => (
-  <Link innerRef={ref} to={routePaths.newJobSet} {...props} />
-))
 
 const useJobSetsTitleStyles = makeStyles(theme => ({
   tableTitle: {
@@ -184,7 +191,8 @@ const useJobSetToolbarTitleStyles = makeStyles(theme => ({
   toolbar: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
-    display: "flex",
+    display: 'flex',
+    borderRadius: '4px 4px 0 0'
   },
   toolbarHighlight: {
     color: theme.palette.text.primary,
@@ -194,7 +202,7 @@ const useJobSetToolbarTitleStyles = makeStyles(theme => ({
 
 export const JobSetsToolbarTitle = () => {
   const classes = useJobSetToolbarTitleStyles()
-  // const hasSelected = useAppSelector(jobSetsPageHasSelectedSelector)
+  // const hasSelected = useAppSelector(jobSetsPageHasSelectedSelector) //todo
   const hasSelected = true
   return (
     <Toolbar

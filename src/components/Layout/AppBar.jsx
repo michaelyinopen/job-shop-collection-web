@@ -14,7 +14,7 @@ import ListIcon from '@material-ui/icons/List'
 import InfoIcon from '@material-ui/icons/Info'
 import GitHubIcon from '@material-ui/icons/GitHub'
 
-import { HomeLink, JobSetsLink, AboutLink } from './Links'
+import { HomeLink, JobSetsLink, AboutLink } from '../../route'
 import { LabeledIconButton } from './LabeledIconButton'
 
 const useStyles = makeStyles(theme => ({
