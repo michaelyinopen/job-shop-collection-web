@@ -5,48 +5,27 @@ import {
   takeLeading_End,
   takeEvery_Add,
   takeEvery_Remove,
-  takeLatest_Add,
+  takeLatest_SetLatestNumber,
   takeLatest_Destroy,
   reduxThunkLoadingActionTypes
 } from './actions'
-
-const reducerPropName = "@@redux-thunk-loading"
-type ReduxThunkLoadingInState = {
-  "@@redux-thunk-loading": ReduxThunkLoadingState
-}
-type StateWithReduxThunkLoading<State extends object>
-  = State & ReduxThunkLoadingInState
-
-type ThunkLoadingTakeLeadingState = {
-  takeLeading_isLoading: true
-}
-function isTakeLeading(state): state is ThunkLoadingTakeLeadingState {
-  return (state as ThunkLoadingTakeLeadingState).takeLeading_isLoading !== undefined
-}
-
-type ThunkLoadingTakeEveryState = {
-  takeEvery_loadingCount: number
-}
-function isTakeEvery(state): state is ThunkLoadingTakeEveryState {
-  return (state as ThunkLoadingTakeEveryState).takeEvery_loadingCount !== undefined
-}
-
-type ThunkLoadingTakeLatestState = {
-  takeLatest_latestNumber: number
-}
-function isTakeLatest(state): state is ThunkLoadingTakeLatestState {
-  return (state as ThunkLoadingTakeLatestState).takeLatest_latestNumber !== undefined
-}
-
-type ThunkLoadingState = ThunkLoadingTakeLeadingState | ThunkLoadingTakeEveryState | ThunkLoadingTakeLatestState
-
-type ReduxThunkLoadingState = {
-  [key: string]: ThunkLoadingState
-}
+import {
+  isTakeLeading,
+  isTakeEvery,
+  isTakeLatest,
+} from './types'
+import type {
+  ReduxThunkLoadingState,
+  StateWithReduxThunkLoading
+} from './types'
 
 const reduxThunkLoadingInitialState: ReduxThunkLoadingState = {}
 
-function reduxThunkLoadingReducer(
+/**
+ * Add to root reducer with combineReducers
+ * The key MUST be reduxThunkLoading
+ */
+export function reduxThunkLoadingReducer(
   state = reduxThunkLoadingInitialState,
   action: { type: string }
 ) {
@@ -58,9 +37,8 @@ function reduxThunkLoadingReducer(
   return produce(state, draftState => {
     // takeLeading
     if (type === takeLeading_Start.type) {
-      const target = draftState[name]
-      if (isTakeLeading(target)) {
-        target.takeLeading_isLoading = true
+      if (draftState[name] === undefined) {
+        draftState[name] = { takeLeading_isLoading: true }
       }
     }
     else if (type === takeLeading_End.type) {
@@ -72,7 +50,10 @@ function reduxThunkLoadingReducer(
     // takeEvery
     else if (type === takeEvery_Add.type) {
       const target = draftState[name]
-      if (isTakeEvery(target)) {
+      if (draftState[name] === undefined) {
+        draftState[name] = { takeEvery_loadingCount = 1 }
+      }
+      else if (isTakeEvery(target)) {
         target.takeEvery_loadingCount = target.takeEvery_loadingCount + 1
       }
     }
@@ -89,10 +70,14 @@ function reduxThunkLoadingReducer(
     }
 
     // takeLatest
-    else if (type === takeLatest_Add.type) {
+    else if (type === takeLatest_SetLatestNumber.type) {
+      const { payload: { latestNumber } } = action as ReturnType<typeof takeLatest_SetLatestNumber>
       const target = draftState[name]
+      if (draftState[name] === undefined) {
+        draftState[name] = { takeLatest_latestNumber: latestNumber }
+      }
       if (isTakeLatest(target)) {
-        target.takeLatest_latestNumber = target.takeLatest_latestNumber + 1
+        target.takeLatest_latestNumber = latestNumber
       }
     }
     else if (type === takeLatest_Destroy.type) {
@@ -103,11 +88,13 @@ function reduxThunkLoadingReducer(
   })
 }
 
-export function reduxThunkLoadingReduce<State extends object>(state: State, action: { type: string })
-  : StateWithReduxThunkLoading<State> {
-  const prevLoadingState = state[reducerPropName]
-  const nextLoadingState = reduxThunkLoadingReducer(prevLoadingState, action)
-  return prevLoadingState === nextLoadingState
-    ? state as StateWithReduxThunkLoading<State>
-    : Object.assign({}, state, { "@@redux-thunk-loading": nextLoadingState })
+export const isLoadingSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
+  return state.reduxThunkLoading[name] !== undefined
+}
+
+export const latestNumberSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
+  const target = state.reduxThunkLoading[name]
+  return isTakeLatest(target)
+    ? target.takeLatest_latestNumber
+    : undefined
 }
