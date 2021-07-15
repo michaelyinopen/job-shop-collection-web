@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { reducer } from './reducer'
-import { reduxThunkLoading } from '../utility/redux-thunk-loading/reduxThunkLoading' //todo fix
+import { reduxThunkLoading } from '../utility/redux-thunk-loading'
 
 export const store = configureStore({
   reducer,

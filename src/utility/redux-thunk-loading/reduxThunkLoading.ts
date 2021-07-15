@@ -1,4 +1,3 @@
-
 import { isLoadingThunkAction } from './types'
 import type {
   StateWithReduxThunkLoading,

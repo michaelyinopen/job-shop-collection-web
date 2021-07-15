@@ -2,7 +2,7 @@ import { combineReducers, createSelector } from '@reduxjs/toolkit'
 import type { RootState } from './store'
 
 import * as fromJobSets from '../components/JobSets'
-import { reduxThunkLoadingReducer } from '../utility/redux-thunk-loading/reducer' //todo fix
+import { reduxThunkLoadingReducer } from '../utility/redux-thunk-loading'
 
 export const reducer = combineReducers({
   jobSets: fromJobSets.jobSetsReducer,

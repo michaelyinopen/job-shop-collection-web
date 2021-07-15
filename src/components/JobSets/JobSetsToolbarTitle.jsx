@@ -117,7 +117,7 @@ const JobSetsSelectedToolbar = () => {
 
   // todo
   const isDeleting = false
-  const deleteSelectedCallback = ()=>{console.log("deleteSelected")}
+  const deleteSelectedCallback = () => { console.log("deleteSelected") }
 
   return (
     <>
