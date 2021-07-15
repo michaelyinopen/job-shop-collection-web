@@ -84,7 +84,8 @@ export function isLoadingThunkAction<
   TExtraThunkArg = unknown
 >(action: any): action is LoadingThunkAction<TReturnType, TState, TExtraThunkArg> {
   const loadingThunk = action as LoadingThunkAction<TReturnType, TState, TExtraThunkArg>
-  return loadingThunk.name !== undefined
+  return loadingThunk
+    && loadingThunk.name !== undefined
     && loadingThunk.takeType !== undefined
     && loadingThunk.thunk !== undefined
 }

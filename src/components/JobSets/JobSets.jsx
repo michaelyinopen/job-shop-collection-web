@@ -14,7 +14,6 @@ export const JobSets = () => {
   const jobSetHeaders = useAppSelector(jobSetHeadersSelector)
   useEffect(() => {
     dispatch(setItems(jobSetHeaders))
-    dispatch()
   }, [dispatch, jobSetHeaders])
 
   return (

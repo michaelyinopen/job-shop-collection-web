@@ -5,7 +5,7 @@ import type {
 } from './types'
 import { loadingCo } from './loadingCo'
 
-const createReduxThunkLoading = <
+let createReduxThunkLoading = <
   TState extends StateWithReduxThunkLoading,
   TExtraThunkArg = undefined
 >(extraArgument?: TExtraThunkArg): LoadingThunkMiddleware<TState, TExtraThunkArg> => store => next => action => {
@@ -20,4 +20,4 @@ const createReduxThunkLoading = <
 }
 
 export const reduxThunkLoading =
-  Object.assign({}, createReduxThunkLoading, { withExtraArgument: createReduxThunkLoading })
+  Object.assign(createReduxThunkLoading, { withExtraArgument: createReduxThunkLoading })

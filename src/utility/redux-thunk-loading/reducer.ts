@@ -51,7 +51,7 @@ export function reduxThunkLoadingReducer(
     else if (type === takeEvery_Add.type) {
       const target = draftState[name]
       if (draftState[name] === undefined) {
-        draftState[name] = { takeEvery_loadingCount = 1 }
+        draftState[name] = { takeEvery_loadingCount: 1 }
       }
       else if (isTakeEvery(target)) {
         target.takeEvery_loadingCount = target.takeEvery_loadingCount + 1
