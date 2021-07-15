@@ -4,7 +4,7 @@ import { reduxThunkLoading } from '../utility/redux-thunk-loading/reduxThunkLoad
 
 export const store = configureStore({
   reducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(reduxThunkLoading),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(reduxThunkLoading()),
 })
 
 export type AppDispatch = typeof store.dispatch

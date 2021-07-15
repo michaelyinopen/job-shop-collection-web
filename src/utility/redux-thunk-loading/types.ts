@@ -29,72 +29,71 @@ export type StateWithReduxThunkLoading<TState = {}> = TState & {
 }
 //#endregion State
 
-export interface LoadingThunkDispatch<
-  TState,
-  TExtraThunkArg
-  > {
+export type LoadingThunkDispatch<
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
+  > =
   <TReturnType>(
-    loadingThunkAction: LoadingThunkAction<TReturnType, TState, TExtraThunkArg>,
-  ): TReturnType
-}
+    loadingThunkAction: LoadingThunkAction<TReturnType, TState, TExtraThunkArg>
+  ) => TReturnType
 
+//#region Action
 export type TakeType = "leading" | "every" | "latest"
 
 export type LoadingThunkTakeLeadingOrEvery<
   TReturnType,
-  TState,
-  TExtraThunkArg
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
   > = {
     name: string,
     takeType: "leading" | "every"
     thunk: <TAppDispatch>(
       dispatch: TAppDispatch, // do not know the type of dispatch, because there might be other middlewares
       getState: () => TState,
-      extraArgument: TExtraThunkArg,
+      extraArgument?: TExtraThunkArg,
     ) => TReturnType
   }
 
 export type LoadingThunkTakeLatest<
   TReturnType,
-  TState,
-  TExtraThunkArg
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
   > = {
     name: string,
     takeType: "latest"
     thunk: <TAppDispatch>( // must be generator function
       dispatch: TAppDispatch, // do not know the type of dispatch, because there might be other middlewares
       getState: () => TState,
-      extraArgument: TExtraThunkArg,
+      extraArgument?: TExtraThunkArg,
     ) => Generator<unknown, TReturnType, unknown>
   }
 
 // takeType: "leading" | "every" can have any kind of function as thunk
 // takeType: "latest" must have generator function as thunk
-export type LoadingThunkAction<TReturnType, TState, TExtraThunkArg> =
+export type LoadingThunkAction<
+  TReturnType,
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
+  > =
   LoadingThunkTakeLatest<TReturnType, TState, TExtraThunkArg>
   | LoadingThunkTakeLeadingOrEvery<TReturnType, TState, TExtraThunkArg>
 
-export function isLoadingThunkAction<TReturnType = any, TState = unknown, TExtraThunkArg = unknown>(action)
-  : action is LoadingThunkAction<TReturnType, TState, TExtraThunkArg> {
+export function isLoadingThunkAction<
+  TReturnType = any,
+  TState extends StateWithReduxThunkLoading = StateWithReduxThunkLoading,
+  TExtraThunkArg = unknown
+>(action: any): action is LoadingThunkAction<TReturnType, TState, TExtraThunkArg> {
   const loadingThunk = action as LoadingThunkAction<TReturnType, TState, TExtraThunkArg>
   return loadingThunk.name !== undefined
     && loadingThunk.takeType !== undefined
     && loadingThunk.thunk !== undefined
 }
+//#endregion Action
 
 export type LoadingThunkMiddleware<
-  TState extends StateWithReduxThunkLoading = StateWithReduxThunkLoading,
+  TState extends StateWithReduxThunkLoading,
   TExtraThunkArg = undefined
   > = Middleware<
     LoadingThunkDispatch<TState, TExtraThunkArg>,
     TState
   >
-
-export type LoadingThunkMiddlewareWithExtraArgument = LoadingThunkMiddleware & {
-  withExtraArgument<
-    TState extends StateWithReduxThunkLoading = StateWithReduxThunkLoading,
-    TExtraThunkArg = undefined
-  >(
-    extraArgument: TExtraThunkArg,
-  ): LoadingThunkMiddleware<TState, TExtraThunkArg>
-}
