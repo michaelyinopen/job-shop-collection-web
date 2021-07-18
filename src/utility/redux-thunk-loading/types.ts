@@ -13,11 +13,12 @@ type ThunkLoadingTakeEveryState = {
 export function isTakeEvery(state): state is ThunkLoadingTakeEveryState {
   return (state as ThunkLoadingTakeEveryState)?.takeEvery_loadingCount !== undefined
 }
+// todo rename to takeLatest_latestGeneratorNumber
 type ThunkLoadingTakeLatestState = {
-  takeLatest_latestNumber: number
+  takeLatest_latestHandlerNumber: number
 }
 export function isTakeLatest(state): state is ThunkLoadingTakeLatestState {
-  return (state as ThunkLoadingTakeLatestState)?.takeLatest_latestNumber !== undefined
+  return (state as ThunkLoadingTakeLatestState)?.takeLatest_latestHandlerNumber !== undefined
 }
 type ThunkLoadingState = ThunkLoadingTakeLeadingState | ThunkLoadingTakeEveryState | ThunkLoadingTakeLatestState
 export type ReduxThunkLoadingState = {
@@ -33,29 +34,27 @@ export type LoadingThunkDispatch<
   TState extends StateWithReduxThunkLoading,
   TExtraThunkArg = undefined
   > =
-  <TReturnType>(
-    loadingThunkAction: LoadingThunkAction<TReturnType, TState, TExtraThunkArg>
-  ) => TReturnType
+  (
+    loadingThunkAction: LoadingThunkAction<TState, TExtraThunkArg>
+  ) => any
 
 //#region Action
 export type TakeType = "leading" | "every" | "latest"
 
 export type LoadingThunkTakeLeadingOrEvery<
-  TReturnType,
   TState extends StateWithReduxThunkLoading,
   TExtraThunkArg = undefined
   > = {
     name: string,
-    takeType: "leading" | "every"
+    takeType?: "leading" | "every"
     thunk: <TAppDispatch>(
       dispatch: TAppDispatch, // do not know the type of dispatch, because there might be other middlewares
       getState: () => TState,
       extraArgument?: TExtraThunkArg,
-    ) => TReturnType
+    ) => any
   }
 
 export type LoadingThunkTakeLatest<
-  TReturnType,
   TState extends StateWithReduxThunkLoading,
   TExtraThunkArg = undefined
   > = {
@@ -65,28 +64,26 @@ export type LoadingThunkTakeLatest<
       dispatch: TAppDispatch, // do not know the type of dispatch, because there might be other middlewares
       getState: () => TState,
       extraArgument?: TExtraThunkArg,
-    ) => Generator<unknown, TReturnType, unknown>
+    ) => Generator<unknown, any, unknown>
   }
 
 // takeType: "leading" | "every" can have any kind of function as thunk
 // takeType: "latest" must have generator function as thunk
+// YThe generator function can only yield a function, promise, generator, array(of yieldable), or object(of yieldable)
 export type LoadingThunkAction<
-  TReturnType,
   TState extends StateWithReduxThunkLoading,
   TExtraThunkArg = undefined
   > =
-  LoadingThunkTakeLatest<TReturnType, TState, TExtraThunkArg>
-  | LoadingThunkTakeLeadingOrEvery<TReturnType, TState, TExtraThunkArg>
+  LoadingThunkTakeLatest<TState, TExtraThunkArg>
+  | LoadingThunkTakeLeadingOrEvery<TState, TExtraThunkArg>
 
 export function isLoadingThunkAction<
-  TReturnType = any,
   TState extends StateWithReduxThunkLoading = StateWithReduxThunkLoading,
   TExtraThunkArg = unknown
->(action: any): action is LoadingThunkAction<TReturnType, TState, TExtraThunkArg> {
-  const loadingThunk = action as LoadingThunkAction<TReturnType, TState, TExtraThunkArg>
+>(action: any): action is LoadingThunkAction<TState, TExtraThunkArg> {
+  const loadingThunk = action as LoadingThunkAction<TState, TExtraThunkArg>
   return loadingThunk
     && loadingThunk.name !== undefined
-    && loadingThunk.takeType !== undefined
     && loadingThunk.thunk !== undefined
 }
 //#endregion Action

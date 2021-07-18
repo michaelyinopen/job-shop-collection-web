@@ -74,10 +74,10 @@ export function reduxThunkLoadingReducer(
       const { payload: { latestNumber } } = action as ReturnType<typeof takeLatest_SetLatestNumber>
       const target = draftState[name]
       if (draftState[name] === undefined) {
-        draftState[name] = { takeLatest_latestNumber: latestNumber }
+        draftState[name] = { takeLatest_latestHandlerNumber: latestNumber }
       }
       if (isTakeLatest(target)) {
-        target.takeLatest_latestNumber = latestNumber
+        target.takeLatest_latestHandlerNumber = latestNumber
       }
     }
     else if (type === takeLatest_Destroy.type) {
@@ -95,6 +95,6 @@ export const isLoadingSelector = (name: string) => (state: StateWithReduxThunkLo
 export const latestNumberSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
   const target = state.reduxThunkLoading[name]
   return isTakeLatest(target)
-    ? target.takeLatest_latestNumber
+    ? target.takeLatest_latestHandlerNumber
     : undefined
 }

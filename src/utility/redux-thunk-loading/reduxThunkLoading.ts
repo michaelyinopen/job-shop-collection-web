@@ -10,9 +10,12 @@ let createReduxThunkLoading = <
   TExtraThunkArg = undefined
 >(extraArgument?: TExtraThunkArg): LoadingThunkMiddleware<TState, TExtraThunkArg> => store => next => action => {
   if (isLoadingThunkAction(action)) {
-    return loadingCo({
-      store,
-      action,
+    return loadingCo(
+      action.thunk,{
+      dispatch: store.dispatch,
+      getState: store.getState,
+      name: action.name,
+      takeType: action.takeType,
       extraArgument
     })
   }

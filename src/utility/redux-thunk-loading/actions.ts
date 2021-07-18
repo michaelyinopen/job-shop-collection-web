@@ -30,13 +30,13 @@ const takeEvery_Remove = (name: string) => ({
 takeEvery_Remove.type = takeEvery_Remove_type
 export { takeEvery_Remove }
 
-const takeLatest_SetLatestNumber_type = '@@redux-thunk-loading/takeLatest_SetLatestNumber'
-const takeLatest_SetLatestNumber = (name: string, latestNumber: number) => ({
-  type: takeLatest_SetLatestNumber_type,
+const takeLatest_SetLatestHandlerNumber_type = '@@redux-thunk-loading/takeLatest_SetLatestHandlerNumber'
+const takeLatest_SetLatestHandlerNumber = (name: string, latestNumber: number) => ({
+  type: takeLatest_SetLatestHandlerNumber_type,
   payload: { name, latestNumber }
 })
-takeLatest_SetLatestNumber.type = takeLatest_SetLatestNumber_type
-export { takeLatest_SetLatestNumber }
+takeLatest_SetLatestHandlerNumber.type = takeLatest_SetLatestHandlerNumber_type
+export { takeLatest_SetLatestHandlerNumber }
 
 const takeLatest_Destroy_type = '@@redux-thunk-loading/takeLatest_Destroy'
 const takeLatest_Destroy = (name: string) => ({
@@ -51,6 +51,6 @@ export const reduxThunkLoadingActionTypes = [
   takeLeading_End,
   takeEvery_Add,
   takeEvery_Remove,
-  takeLatest_SetLatestNumber,
+  takeLatest_SetLatestHandlerNumber,
   takeLatest_Destroy
 ].map(a => a.type)
