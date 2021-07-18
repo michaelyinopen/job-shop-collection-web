@@ -64,7 +64,7 @@ export type LoadingThunkTakeLatest<
       dispatch: TAppDispatch, // do not know the type of dispatch, because there might be other middlewares
       getState: () => TState,
       extraArgument?: TExtraThunkArg,
-    ) => Generator<unknown, any, unknown>
+    ) => Generator
   }
 
 // takeType: "leading" | "every" can have any kind of function as thunk

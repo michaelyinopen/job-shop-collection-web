@@ -88,11 +88,11 @@ export function reduxThunkLoadingReducer(
   })
 }
 
-export const isLoadingSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
+export const createIsLoadingSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
   return state.reduxThunkLoading[name] !== undefined
 }
 
-export const latestNumberSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
+export const createLatestExecutionNumberSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
   const target = state.reduxThunkLoading[name]
   return isTakeLatest(target)
     ? target.takeLatest_latestHandlerNumber

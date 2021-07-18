@@ -1,8 +1,7 @@
 export { reduxThunkLoading } from './reduxThunkLoading'
 export {
   reduxThunkLoadingReducer,
-  isLoadingSelector,
-  latestNumberSelector,
+  createIsLoadingSelector,
 } from './reducer'
 
 export type {
