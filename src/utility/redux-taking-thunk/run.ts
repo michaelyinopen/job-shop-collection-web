@@ -3,7 +3,7 @@ import {
   takeEvery_Add,
   takeEvery_Remove,
   takeLatest_Destroy,
-  takeLatest_SetLatestHandlerNumber,
+  takeLatest_SetLatestExecutionNumber,
   takeLeading_End,
   takeLeading_Start
 } from './actions'
@@ -13,9 +13,9 @@ import {
 } from './reducer'
 import { defaultTakeType } from './types'
 import type {
-  LoadingThunkTakeLatest,
-  LoadingThunkTakeLeadingOrEvery,
-  StateWithReduxThunkLoading
+  TakingThunkTakeLatestAction,
+  TakingThunkTakeLeadingOrEveryAction,
+  StateWithReduxTakingThunk
 } from './types'
 
 function isPromise(obj) {
@@ -69,16 +69,16 @@ async function runGenerator(generator: Generator | AsyncGenerator): Promise<any>
 }
 
 type RunTakeLeadingOrEveryArg<
-  TState extends StateWithReduxThunkLoading,
+  TState extends StateWithReduxTakingThunk,
   TExtraThunkArg = undefined
-  > = LoadingThunkTakeLeadingOrEvery<TState, TExtraThunkArg> & {
+  > = TakingThunkTakeLeadingOrEveryAction<TState, TExtraThunkArg> & {
     dispatch: Dispatch<AnyAction>,
     getState: () => TState,
     extraArgument?: TExtraThunkArg
   }
 
 async function runTakeLeadingOrEvery<
-  TState extends StateWithReduxThunkLoading,
+  TState extends StateWithReduxTakingThunk,
   TExtraThunkArg = undefined
 >(runTakeLatestArg: RunTakeLeadingOrEveryArg<TState, TExtraThunkArg>) {
   const takeType = runTakeLatestArg.takeType ?? defaultTakeType
@@ -121,16 +121,16 @@ async function runTakeLeadingOrEvery<
 }
 
 type RunTakeLatestArg<
-  TState extends StateWithReduxThunkLoading,
+  TState extends StateWithReduxTakingThunk,
   TExtraThunkArg = undefined
-  > = LoadingThunkTakeLatest<TState, TExtraThunkArg> & {
+  > = TakingThunkTakeLatestAction<TState, TExtraThunkArg> & {
     dispatch: Dispatch<AnyAction>,
     getState: () => TState,
     extraArgument?: TExtraThunkArg
   }
 
 async function runTakeLatest<
-  TState extends StateWithReduxThunkLoading,
+  TState extends StateWithReduxTakingThunk,
   TExtraThunkArg = undefined
 >(runTakeLatestArg: RunTakeLatestArg<TState, TExtraThunkArg>) {
   const {
@@ -151,7 +151,7 @@ async function runTakeLatest<
     return (latestExecutionNumber ?? 0) + 1
   }()
 
-  dispatch(takeLatest_SetLatestHandlerNumber(name, executionNumber))
+  dispatch(takeLatest_SetLatestExecutionNumber(name, executionNumber))
 
   function getIsExecutionNumberLatest(): boolean {
     // captures executionNumber, latestExecutionNumberSelector, (name), and getState
@@ -211,7 +211,7 @@ async function runTakeLatest<
 }
 
 export async function run<
-  TState extends StateWithReduxThunkLoading,
+  TState extends StateWithReduxTakingThunk,
   TExtraThunkArg = undefined
 >(runArg: RunTakeLeadingOrEveryArg<TState, TExtraThunkArg> | RunTakeLatestArg<TState, TExtraThunkArg>) {
   if (runArg.takeType === "latest") {

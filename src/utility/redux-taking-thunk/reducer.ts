@@ -5,9 +5,9 @@ import {
   takeLeading_End,
   takeEvery_Add,
   takeEvery_Remove,
-  takeLatest_SetLatestNumber,
+  takeLatest_SetLatestExecutionNumber,
   takeLatest_Destroy,
-  reduxThunkLoadingActionTypes
+  reduxTakingThunkActionTypes
 } from './actions'
 import {
   isTakeLeading,
@@ -15,22 +15,22 @@ import {
   isTakeLatest,
 } from './types'
 import type {
-  ReduxThunkLoadingState,
-  StateWithReduxThunkLoading
+  ReduxTakingThunkState,
+  StateWithReduxTakingThunk
 } from './types'
 
-const reduxThunkLoadingInitialState: ReduxThunkLoadingState = {}
+const reduxTakingThunkInitialState: ReduxTakingThunkState = {}
 
 /**
  * Add to root reducer with combineReducers
- * The key MUST be reduxThunkLoading
+ * The key MUST be reduxTakingThunk
  */
-export function reduxThunkLoadingReducer(
-  state = reduxThunkLoadingInitialState,
+export function reduxTakingThunkReducer(
+  state = reduxTakingThunkInitialState,
   action: { type: string }
 ) {
   const { type } = action
-  if (!reduxThunkLoadingActionTypes.includes(type)) {
+  if (!reduxTakingThunkActionTypes.includes(type)) {
     return state
   }
   const { payload: { name } } = action as any
@@ -70,14 +70,14 @@ export function reduxThunkLoadingReducer(
     }
 
     // takeLatest
-    else if (type === takeLatest_SetLatestNumber.type) {
-      const { payload: { latestNumber } } = action as ReturnType<typeof takeLatest_SetLatestNumber>
+    else if (type === takeLatest_SetLatestExecutionNumber.type) {
+      const { payload: { executionNumber } } = action as ReturnType<typeof takeLatest_SetLatestExecutionNumber>
       const target = draftState[name]
       if (draftState[name] === undefined) {
-        draftState[name] = { takeLatest_latestHandlerNumber: latestNumber }
+        draftState[name] = { takeLatest_latestExecutionNumber: executionNumber }
       }
       if (isTakeLatest(target)) {
-        target.takeLatest_latestHandlerNumber = latestNumber
+        target.takeLatest_latestExecutionNumber = executionNumber
       }
     }
     else if (type === takeLatest_Destroy.type) {
@@ -88,13 +88,13 @@ export function reduxThunkLoadingReducer(
   })
 }
 
-export const createIsLoadingSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
-  return state.reduxThunkLoading[name] !== undefined
+export const createIsLoadingSelector = (name: string) => (state: StateWithReduxTakingThunk) => {
+  return state.reduxTakingThunk[name] !== undefined
 }
 
-export const createLatestExecutionNumberSelector = (name: string) => (state: StateWithReduxThunkLoading) => {
-  const target = state.reduxThunkLoading[name]
+export const createLatestExecutionNumberSelector = (name: string) => (state: StateWithReduxTakingThunk) => {
+  const target = state.reduxTakingThunk[name]
   return isTakeLatest(target)
-    ? target.takeLatest_latestHandlerNumber
+    ? target.takeLatest_latestExecutionNumber
     : undefined
 }
