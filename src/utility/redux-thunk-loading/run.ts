@@ -1,0 +1,222 @@
+import type { AnyAction, Dispatch } from 'redux'
+import {
+  takeEvery_Add,
+  takeEvery_Remove,
+  takeLatest_Destroy,
+  takeLatest_SetLatestHandlerNumber,
+  takeLeading_End,
+  takeLeading_Start
+} from './actions'
+import {
+  createLatestExecutionNumberSelector,
+  createIsLoadingSelector
+} from './reducer'
+import { defaultTakeType } from './types'
+import type {
+  LoadingThunkTakeLatest,
+  LoadingThunkTakeLeadingOrEvery,
+  StateWithReduxThunkLoading
+} from './types'
+
+function isPromise(obj) {
+  return obj && 'function' == typeof obj.then
+}
+
+function isGenerator(obj) {
+  return obj
+    && 'function' == typeof obj.next
+    && 'function' == typeof obj.throw
+    && 'function' == typeof obj.return
+}
+
+async function runGenerator(generator: Generator | AsyncGenerator): Promise<any> {
+  let iteratorResult: IteratorResult<unknown> | undefined
+  { // scope firstIteratorResult
+    const firstIteratorResult = generator.next()
+    iteratorResult = isPromise(firstIteratorResult)
+      ? await firstIteratorResult
+      : firstIteratorResult as IteratorResult<unknown>
+  }
+
+  while (!iteratorResult.done) {
+    let value: unknown
+    let [hasValueError, valueError]: [boolean, any] = [false, undefined]
+
+    try {
+      value = isPromise(iteratorResult.value)
+        ? await iteratorResult.value
+        : iteratorResult.value
+    }
+    catch (e) {
+      [hasValueError, valueError] = [true, e]
+    }
+    if (hasValueError) {
+      const iteratorThrowResult = generator.throw(valueError)
+      iteratorResult = isPromise(iteratorThrowResult)
+        ? await iteratorThrowResult
+        : iteratorThrowResult as IteratorResult<unknown>
+    } else {
+      const iteratorNextResult = generator.next(value)
+      iteratorResult = isPromise(iteratorNextResult)
+        ? await iteratorNextResult
+        : iteratorNextResult as IteratorResult<unknown>
+    }
+  }
+  const finalResult = iteratorResult?.value
+  return isPromise(finalResult)
+    ? await finalResult
+    : finalResult
+}
+
+type RunTakeLeadingOrEveryArg<
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
+  > = LoadingThunkTakeLeadingOrEvery<TState, TExtraThunkArg> & {
+    dispatch: Dispatch<AnyAction>,
+    getState: () => TState,
+    extraArgument?: TExtraThunkArg
+  }
+
+async function runTakeLeadingOrEvery<
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
+>(runTakeLatestArg: RunTakeLeadingOrEveryArg<TState, TExtraThunkArg>) {
+  const takeType = runTakeLatestArg.takeType ?? defaultTakeType
+  const {
+    dispatch,
+    getState,
+    extraArgument,
+    name,
+    thunk
+  } = runTakeLatestArg
+
+  const isLoadingSelector = createIsLoadingSelector(name)
+  const isLoading = isLoadingSelector(getState())
+
+  if (takeType === "leading" && isLoading) {
+    return
+  } else if (takeType === "leading" && !isLoading) {
+    dispatch(takeLeading_Start(name))
+  } else if (takeType === "every") {
+    dispatch(takeEvery_Add(name))
+  }
+
+  try {
+    const thunkResult = thunk(dispatch, getState, extraArgument)
+    if (isGenerator(thunkResult)) {
+      return await runGenerator(thunkResult)
+    } else {
+      return isPromise(thunkResult)
+        ? await thunkResult
+        : thunkResult
+    }
+  }
+  finally {
+    if (takeType === "leading") {
+      dispatch(takeLeading_End(name))
+    } else if (takeType === "every") {
+      dispatch(takeEvery_Remove(name))
+    }
+  }
+}
+
+type RunTakeLatestArg<
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
+  > = LoadingThunkTakeLatest<TState, TExtraThunkArg> & {
+    dispatch: Dispatch<AnyAction>,
+    getState: () => TState,
+    extraArgument?: TExtraThunkArg
+  }
+
+async function runTakeLatest<
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
+>(runTakeLatestArg: RunTakeLatestArg<TState, TExtraThunkArg>) {
+  const {
+    dispatch,
+    getState,
+    extraArgument,
+    name,
+    thunk
+  } = runTakeLatestArg
+
+  const generator = thunk(dispatch, getState, extraArgument)
+
+  const latestExecutionNumberSelector = createLatestExecutionNumberSelector(name)
+
+  const executionNumber = function createNewExecutionNumber(): number {
+    // returns 1, or state's executionNumber + 1
+    const latestExecutionNumber = latestExecutionNumberSelector(getState())
+    return (latestExecutionNumber ?? 0) + 1
+  }()
+
+  dispatch(takeLatest_SetLatestHandlerNumber(name, executionNumber))
+
+  function getIsExecutionNumberLatest(): boolean {
+    // captures executionNumber, latestExecutionNumberSelector, (name), and getState
+    const latestExecutionNumber = latestExecutionNumberSelector(getState())
+    return latestExecutionNumber === executionNumber
+  }
+
+  let iteratorResult: IteratorResult<unknown> | undefined
+  try {
+    { // scope firstIteratorResult
+      const firstIteratorResult = generator.next()
+      iteratorResult = isPromise(firstIteratorResult)
+        ? await firstIteratorResult
+        : firstIteratorResult as IteratorResult<unknown>
+    }
+
+    while (!iteratorResult.done) {
+      let value: unknown
+      let [hasValueError, valueError]: [boolean, any] = [false, undefined]
+
+      try {
+        value = isPromise(iteratorResult.value)
+          ? await iteratorResult.value
+          : iteratorResult.value
+      }
+      catch (e) {
+        [hasValueError, valueError] = [true, e]
+      }
+
+      if (!getIsExecutionNumberLatest()) {
+        const iteratorReturnResult = generator.return(undefined)
+        iteratorResult = isPromise(iteratorReturnResult)
+          ? await iteratorReturnResult
+          : iteratorReturnResult as IteratorResult<unknown>
+      } else if (hasValueError) {
+        const iteratorThrowResult = generator.throw(valueError)
+        iteratorResult = isPromise(iteratorThrowResult)
+          ? await iteratorThrowResult
+          : iteratorThrowResult as IteratorResult<unknown>
+      } else {
+        const iteratorNextResult = generator.next(value)
+        iteratorResult = isPromise(iteratorNextResult)
+          ? await iteratorNextResult
+          : iteratorNextResult as IteratorResult<unknown>
+      }
+    }
+    const finalResult = iteratorResult?.value
+    return isPromise(finalResult)
+      ? await finalResult
+      : finalResult
+  }
+  finally {
+    if (getIsExecutionNumberLatest()) {
+      dispatch(takeLatest_Destroy(name))
+    }
+  }
+}
+
+export async function run<
+  TState extends StateWithReduxThunkLoading,
+  TExtraThunkArg = undefined
+>(runArg: RunTakeLeadingOrEveryArg<TState, TExtraThunkArg> | RunTakeLatestArg<TState, TExtraThunkArg>) {
+  if (runArg.takeType === "latest") {
+    return await runTakeLatest(runArg)
+  } else {
+    return await runTakeLeadingOrEvery(runArg)
+  }
+}

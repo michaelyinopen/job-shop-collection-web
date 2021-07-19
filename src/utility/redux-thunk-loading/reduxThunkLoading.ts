@@ -3,24 +3,21 @@ import type {
   StateWithReduxThunkLoading,
   LoadingThunkMiddleware,
 } from './types'
-import { loadingCo } from './loadingCo'
+import { run } from './run'
 
-let createReduxThunkLoading = <
+export const reduxThunkLoading = <
   TState extends StateWithReduxThunkLoading,
   TExtraThunkArg = undefined
 >(extraArgument?: TExtraThunkArg): LoadingThunkMiddleware<TState, TExtraThunkArg> => store => next => action => {
   if (isLoadingThunkAction(action)) {
-    return loadingCo(
-      action.thunk,{
+    return run({
       dispatch: store.dispatch,
       getState: store.getState,
       name: action.name,
       takeType: action.takeType,
+      thunk: action.thunk,
       extraArgument
     })
   }
   return next(action)
 }
-
-export const reduxThunkLoading =
-  Object.assign(createReduxThunkLoading, { withExtraArgument: createReduxThunkLoading })

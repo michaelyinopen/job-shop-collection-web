@@ -40,6 +40,7 @@ export type LoadingThunkDispatch<
 
 //#region Action
 export type TakeType = "leading" | "every" | "latest"
+export const defaultTakeType = "every" as const
 
 export type LoadingThunkTakeLeadingOrEvery<
   TState extends StateWithReduxThunkLoading,
@@ -64,7 +65,7 @@ export type LoadingThunkTakeLatest<
       dispatch: TAppDispatch, // do not know the type of dispatch, because there might be other middlewares
       getState: () => TState,
       extraArgument?: TExtraThunkArg,
-    ) => Generator
+    ) => Generator | AsyncGenerator
   }
 
 // takeType: "leading" | "every" can have any kind of function as thunk
