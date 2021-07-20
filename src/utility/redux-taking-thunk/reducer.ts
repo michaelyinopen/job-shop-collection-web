@@ -4,7 +4,7 @@ import {
   takeLeading_End,
   takeEvery_Add,
   takeEvery_Remove,
-  takeLatest_SetLatestExecutionNumber,
+  takeLatest_SetLatestExecutionId,
   takeLatest_Destroy,
   reduxTakingThunkActionTypes
 } from './actions'
@@ -69,14 +69,14 @@ export function reduxTakingThunkReducer(
     }
 
     // takeLatest
-    else if (type === takeLatest_SetLatestExecutionNumber.type) {
-      const { payload: { executionNumber } } = action as ReturnType<typeof takeLatest_SetLatestExecutionNumber>
+    else if (type === takeLatest_SetLatestExecutionId.type) {
+      const { payload: { executionId } } = action as ReturnType<typeof takeLatest_SetLatestExecutionId>
       const target = draftState[name]
       if (draftState[name] === undefined) {
-        draftState[name] = { takeLatest_latestExecutionNumber: executionNumber }
+        draftState[name] = { takeLatest_latestExecutionId: executionId }
       }
       if (isTakeLatest(target)) {
-        target.takeLatest_latestExecutionNumber = executionNumber
+        target.takeLatest_latestExecutionId = executionId
       }
     }
     else if (type === takeLatest_Destroy.type) {
@@ -91,9 +91,9 @@ export const createIsLoadingSelector = (name: string) => (state: StateWithReduxT
   return state.reduxTakingThunk[name] !== undefined
 }
 
-export const createLatestExecutionNumberSelector = (name: string) => (state: StateWithReduxTakingThunk) => {
+export const createLatestExecutionIdSelector = (name: string) => (state: StateWithReduxTakingThunk) => {
   const target = state.reduxTakingThunk[name]
   return isTakeLatest(target)
-    ? target.takeLatest_latestExecutionNumber
+    ? target.takeLatest_latestExecutionId
     : undefined
 }

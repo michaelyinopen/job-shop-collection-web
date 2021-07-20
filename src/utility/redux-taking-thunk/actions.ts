@@ -30,13 +30,13 @@ const takeEvery_Remove = (name: string) => ({
 takeEvery_Remove.type = takeEvery_Remove_type
 export { takeEvery_Remove }
 
-const takeLatest_SetLatestExecutionNumber_type = '@@redux-taking-thunk/takeLatest_SetLatestExecutionNumber'
-const takeLatest_SetLatestExecutionNumber = (name: string, executionNumber: number) => ({
-  type: takeLatest_SetLatestExecutionNumber_type,
-  payload: { name, executionNumber }
+const takeLatest_SetLatestExecutionId_type = '@@redux-taking-thunk/takeLatest_SetLatestExecutionId'
+const takeLatest_SetLatestExecutionId = (name: string, executionId: string) => ({
+  type: takeLatest_SetLatestExecutionId_type,
+  payload: { name, executionId }
 })
-takeLatest_SetLatestExecutionNumber.type = takeLatest_SetLatestExecutionNumber_type
-export { takeLatest_SetLatestExecutionNumber }
+takeLatest_SetLatestExecutionId.type = takeLatest_SetLatestExecutionId_type
+export { takeLatest_SetLatestExecutionId }
 
 const takeLatest_Destroy_type = '@@redux-taking-thunk/takeLatest_Destroy'
 const takeLatest_Destroy = (name: string) => ({
@@ -51,6 +51,6 @@ export const reduxTakingThunkActionTypes = [
   takeLeading_End,
   takeEvery_Add,
   takeEvery_Remove,
-  takeLatest_SetLatestExecutionNumber,
+  takeLatest_SetLatestExecutionId,
   takeLatest_Destroy
 ].map(a => a.type)

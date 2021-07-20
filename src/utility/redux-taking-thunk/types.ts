@@ -14,10 +14,10 @@ export function isTakeEvery(state): state is TakingThunkTakeEveryState {
   return (state as TakingThunkTakeEveryState)?.takeEvery_loadingCount !== undefined
 }
 type TakingThunkTakeLatestState = {
-  takeLatest_latestExecutionNumber: number
+  takeLatest_latestExecutionId: string
 }
 export function isTakeLatest(state): state is TakingThunkTakeLatestState {
-  return (state as TakingThunkTakeLatestState)?.takeLatest_latestExecutionNumber !== undefined
+  return (state as TakingThunkTakeLatestState)?.takeLatest_latestExecutionId !== undefined
 }
 type TakingThunkState = TakingThunkTakeLeadingState | TakingThunkTakeEveryState | TakingThunkTakeLatestState
 export type ReduxTakingThunkState = {

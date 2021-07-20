@@ -1,14 +1,15 @@
 import type { AnyAction, Dispatch } from 'redux'
+import { nanoid } from 'nanoid'
 import {
   takeEvery_Add,
   takeEvery_Remove,
   takeLatest_Destroy,
-  takeLatest_SetLatestExecutionNumber,
+  takeLatest_SetLatestExecutionId,
   takeLeading_End,
   takeLeading_Start
 } from './actions'
 import {
-  createLatestExecutionNumberSelector,
+  createLatestExecutionIdSelector,
   createIsLoadingSelector
 } from './reducer'
 import { defaultTakeType } from './types'
@@ -143,20 +144,17 @@ async function runTakeLatest<
 
   const generator = thunk(dispatch, getState, extraArgument)
 
-  const latestExecutionNumberSelector = createLatestExecutionNumberSelector(name)
+  const latestExecutionIdSelector = createLatestExecutionIdSelector(name)
 
-  const executionNumber = function createNewExecutionNumber(): number {
-    // returns 1, or state's executionNumber + 1
-    const latestExecutionNumber = latestExecutionNumberSelector(getState())
-    return (latestExecutionNumber ?? 0) + 1
-  }()
+  // new executionId
+  const executionId = nanoid()
 
-  dispatch(takeLatest_SetLatestExecutionNumber(name, executionNumber))
+  dispatch(takeLatest_SetLatestExecutionId(name, executionId))
 
-  function getIsExecutionNumberLatest(): boolean {
-    // captures executionNumber, latestExecutionNumberSelector, (name), and getState
-    const latestExecutionNumber = latestExecutionNumberSelector(getState())
-    return latestExecutionNumber === executionNumber
+  function getIsExecutionIdLatest(): boolean {
+    // captures executionId, latestExecutionIdSelector, (name), and getState
+    const latestExecutionId = latestExecutionIdSelector(getState())
+    return latestExecutionId === executionId
   }
 
   let iteratorResult: IteratorResult<unknown> | undefined
@@ -181,7 +179,7 @@ async function runTakeLatest<
         [hasValueError, valueError] = [true, e]
       }
 
-      if (!getIsExecutionNumberLatest()) {
+      if (!getIsExecutionIdLatest()) {
         const iteratorReturnResult = generator.return(undefined)
         iteratorResult = isPromise(iteratorReturnResult)
           ? await iteratorReturnResult
@@ -204,7 +202,7 @@ async function runTakeLatest<
       : finalResult
   }
   finally {
-    if (getIsExecutionNumberLatest()) {
+    if (getIsExecutionIdLatest()) {
       dispatch(takeLatest_Destroy(name))
     }
   }
