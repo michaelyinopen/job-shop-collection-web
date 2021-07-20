@@ -192,7 +192,8 @@ export const store = configureStore({
 
 </details>
 
-> Note about `redux-thunk`\
+> Note about `redux-thunk`
+
 > The `redux-taking-thunk` middleware only handles the dispatch of a `TakingTypeAction`, and does not handle dispatch of a function, therefore does not interfere with `redux-thunk`.
 
 ## Dispatch API
@@ -270,10 +271,11 @@ If store's state of the `name` is "loading", see table:
 
 - If `thunk`'s return value is a promise, `dispatch` will return a promise with the same resolved or rejected value.
 
-- If `thunk`'s return value is not a promise, `dispatch` will return a promise with the same resolved or rejected value.
+- If `thunk`'s return value is not a promise, `dispatch` will return a resolved promise that or if error is thrown a rejected promise.
 
 ### `dispatch` Return value
-This `dispatch` overload returns a Promise. (see [thunk return value](#thunk-return-value))\
+This `dispatch` overload returns a Promise. (see [thunk return value](#thunk-return-value))
+
 E.g. call `then` on the returned Promise.
 
 ```
