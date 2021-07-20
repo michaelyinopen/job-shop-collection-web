@@ -21,7 +21,7 @@ import { createStore, applyMiddleware } from 'redux'
 import { reducer } from './reducer'
 import { reduxTakingThunk } from '../utility/redux-taking-thunk'
 
-export const store = createStore(reducer, undefined, applyMiddleware(logger))
+export const store = createStore(reducer, undefined, applyMiddleware(reduxTakingThunk()))
 ```
 ```
 // with Redux Toolkit
@@ -80,8 +80,29 @@ identifies the action, used to get the loading state
 a function
 
 ### `takeType`
-// Mixed takeType will take leading
-#### `takeType` isLoading
+In case of a newly dispatched `TakingTypeAction`:
+
+If store's state of the `name` is not "loading", the `thunk` will execute and store's state will be "loading".
+
+If store's state of the `name` is "loading", see table:
+
+
+| takeType | `thunk` returns a value | `thunk` returns a Promsie | `thunk` returns a Generator or Async Generator |
+| --- | --- | --- | --- |
+| leading | Does not execute | :star:Does not execute | :star:Does not execute |
+| every | Executes and increments state's counter.<br/>As the function returns immidiately, decrements state's counter | :star:Executes and increments state's counter.<br/>After the promise resolves or rejects, decrements state's counter | Executes and increments state's counter.<br/>After the generator returns, decrements state's counter |
+| latest | Does not allow | Does not allow | :star:Executes and changes state's executionId.<br/>By changing the executionId, all other running generators will be discontinued(will not call next()) |
+
+:star:: recommended use case
+
+> if `takeType` does not match the store state, the `thunk` will not be executed.
+
+#### `takeType` "loading"
+| takeType | |
+| --- | --- |
+| leading | The leading promise is not resolved/rejected; or<br/>The leading generator is not finished.
+| every | Not all promises are resolved/rejected; or<br/> Not all generators are finished
+| latest | The latest generator is not finished (does not care about other generators)
 
 ### `thunk`
 `thunk` can be
@@ -110,7 +131,7 @@ dispatch(takingThunkAction).then(() => alert('got todos!!'))
 ```
 
 ## `createIsLoadingSelector` API
-`createIsLoadingSelector` creates a selector function of the loading state(see [takeType isLoading](#takeType-isLoading)) of the actions identified by `name`.
+`createIsLoadingSelector` creates a selector function of the loading state(see [takeType loading](#takeType-loading)) of the actions identified by `name`.
 ```
 import { createIsLoadingSelector } from '../utility/redux-taking-thunk'
 
@@ -144,6 +165,7 @@ export const store = configureStore({
 ## Depenedencies
 - immer
 - redux
+- nanoid
 
 ## Credit
 Original inspiration comes from [redux-thunk-loading](https://github.com/jeffery021121/redux-thunk-loading).
