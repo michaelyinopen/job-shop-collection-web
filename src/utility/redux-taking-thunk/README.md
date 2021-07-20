@@ -151,15 +151,6 @@ export const reducer = combineReducers({
 2. Add the middleware
 
 ```
-// without Redux Toolkit
-import { createStore, applyMiddleware } from 'redux'
-import { reducer } from './reducer'
-import { reduxTakingThunk } from '../utility/redux-taking-thunk'
-
-export const store = createStore(reducer, undefined, applyMiddleware(reduxTakingThunk()))
-```
-
-```
 // with Redux Toolkit
 import { configureStore } from '@reduxjs/toolkit'
 import { reducer } from './reducer'
@@ -172,6 +163,23 @@ export const store = configureStore({
 })
 ```
 
+<details>
+  <summary>without Redux Toolkit</summary>
+
+```
+// without Redux Toolkit
+import { createStore, applyMiddleware } from 'redux'
+import { reducer } from './reducer'
+import { reduxTakingThunk } from '../utility/redux-taking-thunk'
+
+export const store = createStore(reducer, undefined, applyMiddleware(reduxTakingThunk()))
+```
+
+</details>
+
+<details>
+  <summary>extraArgument</summary>
+
 ```
 // extraArgument
 export const store = configureStore({
@@ -181,6 +189,8 @@ export const store = configureStore({
       .concat(reduxTakingThunk("some extra argument passed to thunk")),
 })
 ```
+
+</details>
 
 > Note about `redux-thunk`\
 > The `redux-taking-thunk` middleware only handles the dispatch of a `TakingTypeAction`, and does not handle dispatch of a function, therefore does not interfere with `redux-thunk`.
