@@ -267,11 +267,13 @@ If store's state of the `name` is "loading", see table:
 - `extraArgument` the argument passed in the middleware
 
 ### `thunk` return value
-- If the `thunk` is a generator function or an async generator function, and the execution did not finish (because another `takeLatest` action with same name is dispatched), `dispatch` will return a resolved Promise with value undefined.
+- If `thunk` is a generator function or an async generator function, and the execution did not finish (because another `takeLatest` action with same name is dispatched), `dispatch` will return a resolved Promise with value undefined.
 
 - If `thunk`'s return value is a promise, `dispatch` will return a promise with the same resolved or rejected value.
 
-- If `thunk`'s return value is not a promise, `dispatch` will return a resolved promise that or if error is thrown a rejected promise.
+- If `thunk`'s return value is not a promise, `dispatch` will return a resolved promise with that value.
+
+-  If an exceptionis thrown from, or uncaught within `thunk`, `dispatch` will return a rejected promise with that exception.
 
 ### `dispatch` Return value
 This `dispatch` overload returns a Promise. (see [thunk return value](#thunk-return-value))
