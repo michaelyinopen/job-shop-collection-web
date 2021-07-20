@@ -1,9 +1,143 @@
 # redux-taking-thunk
+A Redux middleware that allows dispatching thunks with takeLeading, takeEvery or takeLatest behaviour, and adds loading state.
+
+- [Motivation](#motivation)
+- [Setup](#setup)
+- [Dispatch API](#dispatch-api)
+- [createIsLoadingSelector API](#createisloadingselector-api)
+- [With Typescript and Redux Toolkit](#with-typescript-and-redux-toolkit)
+- [Depenedencies](#depenedencies)
+- [Credit](#credit)
 
 ## Motivation
-Get the loading state of a promise thunk.
+When using Redux Thunk to make API requests, how to handle concurrency?
+
+One way is to just call the thunks, without caring the order of dispatch. The order of promise resolve is not controlled. For example a slow first dispatch, could resolve later than a fast second dispatch.
+```
+// take every
+async function fetchTodos(dispatch, getsState){
+  dispatch({type: 'fetchTodoStart'})
+  try {
+    const response = await fetch('http://example.com/todos.json')
+    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+  } catch(e) {
+    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+  }
+}
+
+// with redux-thunk
+dispatch(fetchTodos) // first
+dispatch(fetchTodos) // second, both respond will update state, but do not know which will be the last
+```
+
+A common pattern to handle concurrency is to block the late dispatch if state already is loading.
+
+```
+// take leading
+async function fetchTodos(dispatch, getsState){
+  if(getsState().todoIsLoading === true){
+    return
+  }
+  dispatch({type: 'fetchTodoStart'})
+  try {
+    const response = await fetch('http://example.com/todos.json')
+    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+  } catch(e) {
+    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+  }
+}
+
+// with redux-thunk
+dispatch(fetchTodos) // first
+dispatch(fetchTodos) // second, will be blocked if first is not resolved
+```
+
+An interesting way is take latest.
+
+Take latest discontinus, not cancels. E.g. if an API request is made, and while waiting for the promise to resolve, another thunk is dispatched.
+
+We will not try to cancel the previous API request, as it is already made. Instead, we want to skip the execution of any code following the API request.
+
+However, how to skip the code after the API request? We will transform the async function thunk into a generator thunk, so that the execution exits, and re-enters at `yield`.
+
+```
+// take latest
+// not care about the loading state
+function* fetchTodos(dispatch, getsState){
+  try {
+    const response = yield fetch('http://example.com/todos.json')
+    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+  } catch(e) {
+    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+  }
+}
+```
+
+Because there is a `yield`, `redux-taking-thunk` middleware can decide whether or not to re-enter the execution.
+
+For example, with only one dispatch, the thunk executes "normally" as expected, execution "exits" at the yield, after the API request resolves/rejects, execution "re-enters" and executes the following code, and updates state's value.
+
+For another example, the first thunk executes and "exits" at the yield, and waits for the API request to resolve. At this moment, a second thunk is dispatched. The second thunk will execute "normally" until the end (no other dispatches). When the first thunk's API request resolves, the middleware decides not to "re-enter" the first thunk, code following the yield will not be executed, so the state's value will not be overridden.
+
+With `redux-taking-thunk` the examples will become
+
+```
+// take every
+const takingThunkAction = {
+  name: 'fetchTodos',
+  takeType: 'every'
+  thunk: async function(dispatch){
+    try {
+      const response = await fetch('http://example.com/todos.json')
+      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    } catch(e) {
+      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    }
+  }
+}
+dispatch(takingThunkAction) // first
+dispatch(takingThunkAction) // second, both respond will update state, but do not know which will be the last
+```
+
+```
+// take leading
+const takingThunkAction = {
+  name: 'fetchTodos',
+  takeType: 'leading'
+  thunk: async function(dispatch){
+    try {
+      const response = await fetch('http://example.com/todos.json')
+      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    } catch(e) {
+      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    }
+  }
+}
+dispatch(takingThunkAction) // first, called normally
+dispatch(takingThunkAction) // second, not called if first is not resolved
+```
+
+```
+// take latest
+const takingThunkAction = {
+  name: 'fetchTodos',
+  takeType: 'latest'
+  thunk: function*(dispatch){
+    try {
+      const response = yield fetch('http://example.com/todos.json')
+      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    } catch(e) {
+      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    }
+  }
+}
+dispatch(takingThunkAction) // first
+dispatch(takingThunkAction) // second, graunteed to be the last to update state
+```
+
 ## Setup
 1. Add the reducer
+
 ```
 import { combineReducers } from 'redux'
 import { reduxTakingThunkReducer } from '../utility/redux-taking-thunk'
@@ -15,6 +149,7 @@ export const reducer = combineReducers({
 ```
 
 2. Add the middleware
+
 ```
 // without Redux Toolkit
 import { createStore, applyMiddleware } from 'redux'
@@ -23,6 +158,7 @@ import { reduxTakingThunk } from '../utility/redux-taking-thunk'
 
 export const store = createStore(reducer, undefined, applyMiddleware(reduxTakingThunk()))
 ```
+
 ```
 // with Redux Toolkit
 import { configureStore } from '@reduxjs/toolkit'
@@ -35,6 +171,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat(reduxTakingThunk()),
 })
 ```
+
 ```
 // extraArgument
 export const store = configureStore({
@@ -80,12 +217,12 @@ identifies the action, used to get the loading state
 a function
 
 ### `takeType`
+
 In case of a newly dispatched `TakingTypeAction`:
 
 If store's state of the `name` is not "loading", the `thunk` will execute and store's state will be "loading".
 
 If store's state of the `name` is "loading", see table:
-
 
 | takeType | `thunk` returns a value | `thunk` returns a Promsie | `thunk` returns a Generator or Async Generator |
 | --- | --- | --- | --- |
@@ -96,6 +233,8 @@ If store's state of the `name` is "loading", see table:
 :star:: recommended use case
 
 > if `takeType` does not match the store state, the `thunk` will not be executed.
+
+> `every` does not deal with execution order.
 
 #### `takeType` "loading"
 | takeType | |
@@ -126,12 +265,14 @@ If store's state of the `name` is "loading", see table:
 ### `dispatch` Return value
 This `dispatch` overload returns a Promise. (see [thunk return value](#thunk-return-value))\
 E.g. call `then` on the returned Promise.
+
 ```
 dispatch(takingThunkAction).then(() => alert('got todos!!'))
 ```
 
 ## `createIsLoadingSelector` API
-`createIsLoadingSelector` creates a selector function of the loading state(see [takeType loading](#takeType-loading)) of the actions identified by `name`.
+`createIsLoadingSelector` creates a selector function of the loading state(see [takeType loading](#taketype-loading)) of the actions identified by `name`.
+
 ```
 import { createIsLoadingSelector } from '../utility/redux-taking-thunk'
 
@@ -142,6 +283,7 @@ const isLoading = isLoadingSelector(state)
 ## With Typescript and Redux Toolkit
 Type benefits when used with Typescript and Redux Toolkit.
 - Type hint of the `dispatch` overload
+
 ```
 // in store.ts
 export type AppDispatch = typeof store.dispatch
@@ -150,7 +292,9 @@ export type AppDispatch = typeof store.dispatch
   const dispatch = useAppDispatch()
   dispatch(
 ```
+
 - Type safety when adding middleware, if you forgot to add the reducer
+
 ```
 // in store.ts
 export const store = configureStore({
