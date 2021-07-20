@@ -2,13 +2,13 @@ import { combineReducers, createSelector } from '@reduxjs/toolkit'
 import type { RootState } from './store'
 
 import * as fromJobSets from '../components/JobSets'
-import { reduxThunkLoadingReducer } from '../utility/redux-thunk-loading'
+import { reduxTakingThunkReducer } from '../utility/redux-taking-thunk'
 
 export const reducer = combineReducers({
   jobSets: fromJobSets.jobSetsReducer,
   jobSetsMeta: fromJobSets.jobSetsMetaReducer,
   jobSetsPage: fromJobSets.jobSetsPageReducer,
-  reduxThunkLoading: reduxThunkLoadingReducer
+  reduxTakingThunk: reduxTakingThunkReducer
 })
 
 const jobSetsSelector = (state: RootState) => state.jobSets
