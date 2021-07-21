@@ -138,7 +138,7 @@ dispatch(takingThunkAction) // second, graunteed to be the last to update state
 <details>
   <summary>On Idiomatic Redux</summary>
 
-## On Idiomatic Redux
+### On Idiomatic Redux
 Just my 2¢.
 
 Redux pros
@@ -152,7 +152,7 @@ Redux cons
 - imposed limitations
 - abstractions
 
-### With or without middleware?
+#### With or without middleware?
 
 Redux without middleware
 - can reason about state changes by the all the dispatched actions
