@@ -1,168 +1,13 @@
 # redux-taking-thunk
 A Redux middleware that allows dispatching thunks with takeLeading, takeEvery or takeLatest behaviour, and adds loading state.
 
-- [Motivation](#motivation)
 - [Setup](#setup)
 - [Dispatch API](#dispatch-api)
 - [createIsLoadingSelector API](#createisloadingselector-api)
 - [With Typescript and Redux Toolkit](#with-typescript-and-redux-toolkit)
+- [Motivation](#motivation)
 - [Depenedencies](#depenedencies)
 - [Credit](#credit)
-
-## Motivation
-When using Redux Thunk to make API requests, how to handle concurrency?
-
-One way is to just call the thunks, without caring the order of dispatch. The order of promise resolve is not controlled. For example a slow first dispatch, could resolve later than a fast second dispatch.
-```
-// take every
-async function fetchTodos(dispatch, getsState){
-  dispatch({type: 'fetchTodoStart'})
-  try {
-    const response = await fetch('http://example.com/todos.json')
-    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
-  } catch(e) {
-    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
-  }
-}
-
-// with redux-thunk
-dispatch(fetchTodos) // first
-dispatch(fetchTodos) // second, both respond will update state, but do not know which will be the last
-```
-
-A common pattern to handle concurrency is to block the late dispatch if state already is loading.
-
-```
-// take leading
-async function fetchTodos(dispatch, getsState){
-  if(getsState().todoIsLoading === true){
-    return
-  }
-  dispatch({type: 'fetchTodoStart'})
-  try {
-    const response = await fetch('http://example.com/todos.json')
-    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
-  } catch(e) {
-    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
-  }
-}
-
-// with redux-thunk
-dispatch(fetchTodos) // first
-dispatch(fetchTodos) // second, will be blocked if first is not resolved
-```
-
-An interesting way is take latest.
-
-Take latest discontinus, not cancels. E.g. if an API request is made, and while waiting for the promise to resolve, another thunk is dispatched.
-
-We will not try to cancel the previous API request, as it is already made. Instead, we want to skip the execution of any code following the API request.
-
-However, how to skip the code after the API request? We will transform the async function thunk into a generator thunk, so that the execution exits, and re-enters at `yield`.
-
-```
-// take latest
-// not care about the loading state
-function* fetchTodos(dispatch, getsState){
-  try {
-    const response = yield fetch('http://example.com/todos.json')
-    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
-  } catch(e) {
-    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
-  }
-}
-```
-
-Because there is a `yield`, `redux-taking-thunk` middleware can decide whether or not to re-enter the execution.
-
-For example, with only one dispatch, the thunk executes "normally" as expected, execution "exits" at the yield, after the API request resolves/rejects, execution "re-enters" and executes the following code, and updates state's value.
-
-For another example, the first thunk executes and "exits" at the yield, and waits for the API request to resolve. At this moment, a second thunk is dispatched. The second thunk will execute "normally" until the end (no other dispatches). When the first thunk's API request resolves, the middleware decides not to "re-enter" the first thunk, code following the yield will not be executed, so the state's value will not be overridden.
-
-With `redux-taking-thunk` the examples will become
-
-```
-// take every
-const takingThunkAction = {
-  name: 'fetchTodos',
-  takeType: 'every'
-  thunk: async function(dispatch){
-    try {
-      const response = await fetch('http://example.com/todos.json')
-      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
-    } catch(e) {
-      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
-    }
-  }
-}
-dispatch(takingThunkAction) // first
-dispatch(takingThunkAction) // second, both respond will update state, but do not know which will be the last
-```
-
-```
-// take leading
-const takingThunkAction = {
-  name: 'fetchTodos',
-  takeType: 'leading'
-  thunk: async function(dispatch){
-    try {
-      const response = await fetch('http://example.com/todos.json')
-      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
-    } catch(e) {
-      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
-    }
-  }
-}
-dispatch(takingThunkAction) // first, called normally
-dispatch(takingThunkAction) // second, not called if first is not resolved
-```
-
-```
-// take latest
-const takingThunkAction = {
-  name: 'fetchTodos',
-  takeType: 'latest'
-  thunk: function*(dispatch){
-    try {
-      const response = yield fetch('http://example.com/todos.json')
-      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
-    } catch(e) {
-      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
-    }
-  }
-}
-dispatch(takingThunkAction) // first
-dispatch(takingThunkAction) // second, graunteed to be the last to update state
-```
-
-<details>
-  <summary>On Idiomatic Redux</summary>
-
-### On Idiomatic Redux
-Just my 2¢.
-
-Redux pros
-- centralized state
-- separate action from state update logic
-  - logic stems from "how the state slice respond the actions?", not "what happens for the action?"
-  - vs context, recoil, zustand or global getter setters
-- can reason about state changes by the dispatched actions
-
-Redux cons
-- imposed limitations
-- abstractions
-
-#### With or without middleware?
-
-Redux without middleware
-- can reason about state changes by the all the dispatched actions
-
-Redux-thunk and/or redux-taking-thunk
-- use dispatch as an extension point
-  - dispatch is modified to accept fucntions/thunks
-- can still reason about state changes by the dispatched "simple" actions
-
-</details>
 
 ## Setup
 1. Add the reducer
@@ -348,6 +193,161 @@ export const store = configureStore({
   // eslint errors: ... The types returned by 'slice(...)' are incompatible between these types....
 })
 ```
+
+## Motivation
+When using Redux Thunk to make API requests, how to handle concurrency?
+
+One way is to just call the thunks, without caring the order of dispatch. The order of promise resolve is not controlled. For example a slow first dispatch, could resolve later than a fast second dispatch.
+```
+// take every
+async function fetchTodos(dispatch, getsState){
+  dispatch({type: 'fetchTodoStart'})
+  try {
+    const response = await fetch('http://example.com/todos.json')
+    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+  } catch(e) {
+    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+  }
+}
+
+// with redux-thunk
+dispatch(fetchTodos) // first
+dispatch(fetchTodos) // second, both respond will update state, but do not know which will be the last
+```
+
+A common pattern to handle concurrency is to block the late dispatch if state already is loading.
+
+```
+// take leading
+async function fetchTodos(dispatch, getsState){
+  if(getsState().todoIsLoading === true){
+    return
+  }
+  dispatch({type: 'fetchTodoStart'})
+  try {
+    const response = await fetch('http://example.com/todos.json')
+    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+  } catch(e) {
+    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+  }
+}
+
+// with redux-thunk
+dispatch(fetchTodos) // first
+dispatch(fetchTodos) // second, will be blocked if first is not resolved
+```
+
+An interesting way is take latest.
+
+Take latest discontinus, not cancels. E.g. if an API request is made, and while waiting for the promise to resolve, another thunk is dispatched.
+
+We will not try to cancel the previous API request, as it is already made. Instead, we want to skip the execution of any code following the API request.
+
+However, how to skip the code after the API request? We will transform the async function thunk into a generator thunk, so that the execution exits, and re-enters at `yield`.
+
+```
+// take latest
+// not care about the loading state
+function* fetchTodos(dispatch, getsState){
+  try {
+    const response = yield fetch('http://example.com/todos.json')
+    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+  } catch(e) {
+    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+  }
+}
+```
+
+Because there is a `yield`, `redux-taking-thunk` middleware can decide whether or not to re-enter the execution.
+
+For example, with only one dispatch, the thunk executes "normally" as expected, execution "exits" at the yield, after the API request resolves/rejects, execution "re-enters" and executes the following code, and updates state's value.
+
+For another example, the first thunk executes and "exits" at the yield, and waits for the API request to resolve. At this moment, a second thunk is dispatched. The second thunk will execute "normally" until the end (no other dispatches). When the first thunk's API request resolves, the middleware decides not to "re-enter" the first thunk, code following the yield will not be executed, so the state's value will not be overridden.
+
+With `redux-taking-thunk` the examples will become
+
+```
+// take every
+const takingThunkAction = {
+  name: 'fetchTodos',
+  takeType: 'every'
+  thunk: async function(dispatch){
+    try {
+      const response = await fetch('http://example.com/todos.json')
+      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    } catch(e) {
+      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    }
+  }
+}
+dispatch(takingThunkAction) // first
+dispatch(takingThunkAction) // second, both respond will update state, but do not know which will be the last
+```
+
+```
+// take leading
+const takingThunkAction = {
+  name: 'fetchTodos',
+  takeType: 'leading'
+  thunk: async function(dispatch){
+    try {
+      const response = await fetch('http://example.com/todos.json')
+      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    } catch(e) {
+      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    }
+  }
+}
+dispatch(takingThunkAction) // first, called normally
+dispatch(takingThunkAction) // second, not called if first is not resolved
+```
+
+```
+// take latest
+const takingThunkAction = {
+  name: 'fetchTodos',
+  takeType: 'latest'
+  thunk: function*(dispatch){
+    try {
+      const response = yield fetch('http://example.com/todos.json')
+      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    } catch(e) {
+      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    }
+  }
+}
+dispatch(takingThunkAction) // first
+dispatch(takingThunkAction) // second, graunteed to be the last to update state
+```
+
+<details>
+  <summary>On Idiomatic Redux</summary>
+
+### On Idiomatic Redux
+Just my 2¢.
+
+Redux pros
+- centralized state
+- separate action from state update logic
+  - logic stems from "how the state slice respond the actions?", not "what happens for the action?"
+  - vs context, recoil, zustand or global getter setters
+- can reason about state changes by the dispatched actions
+
+Redux cons
+- imposed limitations
+- abstractions
+
+#### With or without middleware?
+
+Redux without middleware
+- can reason about state changes by the all the dispatched actions
+
+Redux-thunk and/or redux-taking-thunk
+- use dispatch as an extension point
+  - dispatch is modified to accept fucntions/thunks
+- can still reason about state changes by the dispatched "simple" actions
+
+</details>
 
 ## Depenedencies
 - immer
