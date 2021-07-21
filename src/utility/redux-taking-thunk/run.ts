@@ -141,8 +141,11 @@ async function runTakeLatest<
     name,
     thunk
   } = runTakeLatestArg
-
   const generator = thunk(dispatch, getState, extraArgument)
+
+  if (!isGenerator(generator)) {
+    throw new Error("redux-taking-thunk only allows dispatching 'takeLatest' with a generator function or an async generator fucntion, but got something else.")
+  }
 
   const latestExecutionIdSelector = createLatestExecutionIdSelector(name)
 
