@@ -135,6 +135,35 @@ dispatch(takingThunkAction) // first
 dispatch(takingThunkAction) // second, graunteed to be the last to update state
 ```
 
+<details>
+  <summary>On Idiomatic Redux</summary>
+
+## On Idiomatic Redux
+Just my 2¢.
+
+Redux pros
+- centralized state
+- separate action from state update logic
+  - logic stems from "how the state slice respond the actions?", not "what happens for the action?"
+  - vs context, recoil, zustand or global getter setters
+- can reason about state changes by the dispatched actions
+
+Redux cons
+- imposed limitations
+- abstractions
+
+### With or without middleware?
+
+Redux without middleware
+- can reason about state changes by the all the dispatched actions
+
+Redux-thunk and/or redux-taking-thunk
+- use dispatch as an extension point
+  - dispatch is modified to accept fucntions/thunks
+- can still reason about state changes by the dispatched "simple" actions
+
+</details>
+
 ## Setup
 1. Add the reducer
 
@@ -237,7 +266,7 @@ If store's state of the `name` is "loading", see table:
 
 | takeType | `thunk` returns a value | `thunk` returns a Promsie | `thunk` returns a Generator or Async Generator |
 | --- | --- | --- | --- |
-| leading | Does not execute | :star:Does not execute | :star:Does not execute |
+| leading | Does not execute | :star:Does not execute | Does not execute |
 | every | Executes and increments state's counter.<br/>As the function returns immidiately, decrements state's counter | :star:Executes and increments state's counter.<br/>After the promise resolves or rejects, decrements state's counter | Executes and increments state's counter.<br/>After the generator returns, decrements state's counter |
 | latest | Does not allow | Does not allow | :star:Executes and changes state's executionId.<br/>By changing the executionId, all other running generators will be discontinued(will not call next()) |
 
