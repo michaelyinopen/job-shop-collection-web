@@ -1,9 +1,15 @@
-export { reduxTakingThunk } from './reduxTakingThunk'
+export {
+  createReduxTakingThunkMiddleware,
+} from './createReduxTakingThunkMiddleware'
 
 export {
   reduxTakingThunkReducer,
   createIsLoadingSelector,
 } from './reducer'
+
+export {
+  isTakingThunkAction,
+} from './types'
 
 export type {
   StateWithReduxTakingThunk,

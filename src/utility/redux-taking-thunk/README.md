@@ -14,7 +14,7 @@ A Redux middleware that allows dispatching thunks with takeLeading, takeEvery or
 
 ```
 import { combineReducers } from 'redux'
-import { reduxTakingThunkReducer } from '../utility/redux-taking-thunk'
+import { reduxTakingThunkReducer } from 'redux-taking-thunk'
 
 export const reducer = combineReducers({
   other: otherReducer,
@@ -26,14 +26,28 @@ export const reducer = combineReducers({
 
 ```
 // with Redux Toolkit
-import { configureStore } from '@reduxjs/toolkit'
+import {
+  configureStore,
+  createImmutableStateInvariantMiddleware,
+  createSerializableStateInvariantMiddleware
+} from '@reduxjs/toolkit'
+import thunkMiddleware from 'redux-thunk'
 import { reducer } from './reducer'
-import { reduxTakingThunk } from '../utility/redux-taking-thunk'
+import { createReduxTakingThunkMiddleware } from 'redux-taking-thunk'
 
 export const store = configureStore({
   reducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(reduxTakingThunk()),
+  middleware: process.env.NODE_ENV !== 'production'
+    ? [
+      thunkMiddleware,
+      createReduxTakingThunkMiddleware(),
+      createImmutableStateInvariantMiddleware(),
+      createSerializableStateInvariantMiddleware()
+    ]
+    : [
+      thunkMiddleware,
+      createReduxTakingThunkMiddleware(),
+    ],
 })
 ```
 
@@ -44,9 +58,9 @@ export const store = configureStore({
 // without Redux Toolkit
 import { createStore, applyMiddleware } from 'redux'
 import { reducer } from './reducer'
-import { reduxTakingThunk } from '../utility/redux-taking-thunk'
+import { createReduxTakingThunkMiddleware } from 'redux-taking-thunk'
 
-export const store = createStore(reducer, undefined, applyMiddleware(reduxTakingThunk()))
+export const store = createStore(reducer, undefined, applyMiddleware(createReduxTakingThunkMiddleware()))
 ```
 
 </details>
@@ -58,9 +72,17 @@ export const store = createStore(reducer, undefined, applyMiddleware(reduxTaking
 // extraArgument
 export const store = configureStore({
   reducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(reduxTakingThunk("some extra argument passed to thunk")),
+  middleware: process.env.NODE_ENV !== 'production'
+    ? [
+      thunkMiddleware,
+      createReduxTakingThunkMiddleware(),
+      createImmutableStateInvariantMiddleware(),
+      createSerializableStateInvariantMiddleware()
+    ]
+    : [
+      thunkMiddleware,
+      createReduxTakingThunkMiddleware(),
+    ],
 })
 ```
 
@@ -80,7 +102,7 @@ dispatch(a: TakingThunkAction) => Promise<any>
 ```
 const takingThunkAction = {
   name: 'fetchTodos',
-  takeType: 'latest'
+  takeType: 'latest',
   thunk: function*(dispatch){
     try {
       const response = yield fetch('http://example.com/todos.json')
@@ -162,7 +184,7 @@ dispatch(takingThunkAction).then(() => alert('got todos!!'))
 `createIsLoadingSelector` creates a selector function of the loading state(see [takeType loading](#taketype-loading)) of the actions identified by `name`.
 
 ```
-import { createIsLoadingSelector } from '../utility/redux-taking-thunk'
+import { createIsLoadingSelector } from 'redux-taking-thunk'
 
 const isLoadingSelector = createIsLoadingSelector(name)
 const isLoading = isLoadingSelector(state)
@@ -188,9 +210,18 @@ export type AppDispatch = typeof store.dispatch
 export const store = configureStore({
   reducer,
 
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(reduxThunkLoading()),
-  // eslint errors: ... The types returned by 'slice(...)' are incompatible between these types....
+  middleware: process.env.NODE_ENV !== 'production'
+    ? [
+      thunkMiddleware,
+      createReduxTakingThunkMiddleware(),
+      createImmutableStateInvariantMiddleware(),
+      createSerializableStateInvariantMiddleware()
+    ]
+    : [
+      thunkMiddleware,
+      createReduxTakingThunkMiddleware(),
+    ],
+  // eslint errors: ... Type 'TakingThunkMiddleware...' is not assignable to type 'Middleware...
 })
 ```
 
@@ -270,7 +301,7 @@ With `redux-taking-thunk` the examples will become
 // take every
 const takingThunkAction = {
   name: 'fetchTodos',
-  takeType: 'every'
+  takeType: 'every',
   thunk: async function(dispatch){
     try {
       const response = await fetch('http://example.com/todos.json')
@@ -288,7 +319,7 @@ dispatch(takingThunkAction) // second, both respond will update state, but do no
 // take leading
 const takingThunkAction = {
   name: 'fetchTodos',
-  takeType: 'leading'
+  takeType: 'leading',
   thunk: async function(dispatch){
     try {
       const response = await fetch('http://example.com/todos.json')
@@ -306,7 +337,7 @@ dispatch(takingThunkAction) // second, not called if first is not resolved
 // take latest
 const takingThunkAction = {
   name: 'fetchTodos',
-  takeType: 'latest'
+  takeType: 'latest',
   thunk: function*(dispatch){
     try {
       const response = yield fetch('http://example.com/todos.json')

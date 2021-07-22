@@ -5,7 +5,7 @@ import type {
 } from './types'
 import { run } from './run'
 
-export const reduxTakingThunk = <
+export const createReduxTakingThunkMiddleware = <
   TState extends StateWithReduxTakingThunk,
   TExtraThunkArg = undefined
 >(extraArgument?: TExtraThunkArg): TakingThunkMiddleware<TState, TExtraThunkArg> => store => next => action => {
