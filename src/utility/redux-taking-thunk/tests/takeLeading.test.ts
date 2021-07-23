@@ -143,7 +143,7 @@ test('Uncaught error will return rejected promise', async () => {
     name: 'fetchTodos',
     takeType: 'leading',
     thunk: async function (dispatch) {
-      throw new Error("thrown error went wrong")
+      await api.get_thrownApiError_oneSecond()
     }
   }
   let [hasError, errorMessage] = [false, null]
@@ -153,7 +153,7 @@ test('Uncaught error will return rejected promise', async () => {
     [hasError, errorMessage] = [true, e.message]
   }
   expect(hasError).toBeTruthy()
-  expect(errorMessage).toEqual("thrown error went wrong")
+  expect(errorMessage).toEqual("api error")
 })
 
 test('isLoading will be true if the leading thunk is waiting', async () => {

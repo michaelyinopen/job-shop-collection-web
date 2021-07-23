@@ -5,6 +5,7 @@ A Redux middleware that allows dispatching thunks with takeLeading, takeEvery or
 - [Dispatch API](#dispatch-api)
 - [createIsLoadingSelector API](#createisloadingselector-api)
 - [With Typescript and Redux Toolkit](#with-typescript-and-redux-toolkit)
+- [Unit tests](#unit-tests)
 - [Motivation](#motivation)
 - [Depenedencies](#depenedencies)
 - [Credit](#credit)
@@ -169,7 +170,7 @@ If store's state of the `name` is "loading", see table:
 
 - If `thunk`'s return value is not a promise, `dispatch` will return a resolved promise with that value.
 
--  If an exceptionis thrown from, or uncaught within `thunk`, `dispatch` will return a rejected promise with that exception.
+-  If an exceptionis thrown from, or uncaught within `thunk`, `dispatch` will return a rejected promise with that error.
 
 ### `dispatch` Return value
 This `dispatch` overload returns a Promise. (see [thunk return value](#thunk-return-value))
@@ -223,6 +224,11 @@ export const store = configureStore({
     ],
   // eslint errors: ... Type 'TakingThunkMiddleware...' is not assignable to type 'Middleware...
 })
+```
+
+## Unit tests
+```
+npm run test redux-taking-thunk -- --verbose
 ```
 
 ## Motivation
