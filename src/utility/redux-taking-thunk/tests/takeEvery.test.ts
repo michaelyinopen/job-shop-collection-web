@@ -110,11 +110,14 @@ test('Can dispatch async generator function thunk', async () => {
 })
 
 test('Can dispatch multiple async function thunks', async () => {
+  const first_get_AB_oneSecond = jest.fn(api.get_AB_oneSecond)
+  const second_get_BCD_twoSecond = jest.fn(api.get_BCD_twoSecond)
+  const third_get_BCDE_oneSecond = jest.fn(api.get_BCDE_oneSecond)
   const firstAction = {
     name: 'fetchTodos',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_AB_oneSecond()
+      const newTodos = await first_get_AB_oneSecond()
       dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
     }
   }
@@ -123,7 +126,7 @@ test('Can dispatch multiple async function thunks', async () => {
     name: 'fetchTodos',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_BCD_twoSecond()
+      const newTodos = await second_get_BCD_twoSecond()
       dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
     }
   }
@@ -132,7 +135,7 @@ test('Can dispatch multiple async function thunks', async () => {
     name: 'fetchTodos',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_BCDE_oneSecond()
+      const newTodos = await third_get_BCDE_oneSecond()
       dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
     }
   }
@@ -144,6 +147,9 @@ test('Can dispatch multiple async function thunks', async () => {
   ])
 
   expect(store.getState().todo.items).toEqual(['Bravo', 'Charlie', 'Delta'])
+  expect(first_get_AB_oneSecond.mock.calls.length).toBe(1)
+  expect(second_get_BCD_twoSecond.mock.calls.length).toBe(1)
+  expect(third_get_BCDE_oneSecond.mock.calls.length).toBe(1)
 })
 
 test('Default take type is every', async () => {
@@ -207,7 +213,7 @@ test('Can use getState and extraArgument', async () => {
   expect(returned).toEqual(['Alfa'])
 })
 
-test('Mixing take types will block the later dispatches', async () => {
+test.skip('Mixing take types will have unpredictable execution', async () => {
   const firstAction = {
     name: 'fetchTodos',
     takeType: 'every',
@@ -262,13 +268,14 @@ test('Thrown error will return rejected promise', async () => {
   expect(errorMessage).toEqual("thrown error went wrong")
 })
 
-test('isLoading will be true if there are thunks executing', async () => {
+test('isLoading will be true if there are thunks waiting', async () => {
   const selector = createIsLoadingSelector("fetchTodos")
   let isLoading = selector(store.getState())
   expect(isLoading).toBeFalsy()
 
   const firstAction = {
     name: 'fetchTodos',
+    takeType: 'every',
     thunk: async function (dispatch) {
       const newTodos = await api.get_AB_oneSecond()
       dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
@@ -277,6 +284,7 @@ test('isLoading will be true if there are thunks executing', async () => {
   const firstDispatchPromise = store.dispatch(firstAction)
   const secondAction = {
     name: 'fetchTodos',
+    takeType: 'every',
     thunk: async function (dispatch) {
       const newTodos = await api.get_BCD_twoSecond()
       dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
@@ -285,6 +293,7 @@ test('isLoading will be true if there are thunks executing', async () => {
   const secondDispatchPromise = store.dispatch(secondAction)
   const thirdAction = {
     name: 'fetchTodos',
+    takeType: 'every',
     thunk: async function (dispatch) {
       const newTodos = await api.get_BCDE_oneSecond()
       dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
@@ -317,6 +326,7 @@ test('Different names do not interfere', async () => {
 
   const fetchTodoAction = {
     name: 'fetchTodos',
+    takeType: 'every',
     thunk: async function (dispatch) {
       const newTodos = await api.get_AB_oneSecond()
       dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
@@ -328,6 +338,7 @@ test('Different names do not interfere', async () => {
 
   const someOtherAction = {
     name: 'someOther',
+    takeType: 'every',
     thunk: async function () {
       const ms = 2000
       await new Promise(resolve => setTimeout(resolve, ms))
