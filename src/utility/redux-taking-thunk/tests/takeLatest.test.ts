@@ -1,3 +1,5 @@
+
+
 import {
   configureStore,
   createImmutableStateInvariantMiddleware,
@@ -30,49 +32,7 @@ beforeEach(() => {
   })
 })
 
-test('Can dispatch simple action', () => {
-  store.dispatch({ type: actionTypes.todoSetAll, payload: ['Alfa', 'Bravo'] })
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
-})
-
-test('Redux-thunk dispatch function still works', async () => {
-  await store.dispatch(async function (dispatch) {
-    const newTodos = await api.get_AB_oneSecond()
-    dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
-  })
-
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
-})
-
-test('takeLeading can dispatch Promise', async () => {
-  const takingThunkAction = {
-    name: 'fetchTodos',
-    takeType: 'leading',
-    thunk: async function (dispatch) {
-      const newTodos = await api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
-    }
-  }
-  await store.dispatch(takingThunkAction)
-
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
-})
-
-test('takeEvery can dispatch Promise', async () => {
-  const takingThunkAction = {
-    name: 'fetchTodos',
-    takeType: 'every',
-    thunk: async function (dispatch) {
-      const newTodos = await api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
-    }
-  }
-  await store.dispatch(takingThunkAction)
-
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
-})
-
-test('takeLatest can dispatch Generator', async () => {
+test('takeLatest can dispatch Generator function thunk', async () => {
   const takingThunkAction = {
     name: 'fetchTodos',
     takeType: 'every',

@@ -69,9 +69,23 @@ async function get_BCD_twoSecond(){
   return ['Bravo', 'Charlie', 'Delta']
 }
 
+async function get_BCDE_oneSecond(){
+  const ms = 1000
+  await new Promise(resolve => setTimeout(resolve, ms))
+  return ['Bravo', 'Charlie', 'Delta', 'Echo']
+}
+
+async function get_BCDE_twoSecond(){
+  const ms = 2000
+  await new Promise(resolve => setTimeout(resolve, ms))
+  return ['Bravo', 'Charlie', 'Delta', 'Echo']
+}
+
 export const api = {
   get_AB_oneSecond,
   get_AB_twoSecond,
   get_BCD_oneSecond,
-  get_BCD_twoSecond
+  get_BCD_twoSecond,
+  get_BCDE_oneSecond,
+  get_BCDE_twoSecond
 }
