@@ -1,10 +1,26 @@
-import { configureStore } from '@reduxjs/toolkit'
+
+import {
+  configureStore,
+  createImmutableStateInvariantMiddleware,
+  createSerializableStateInvariantMiddleware,
+} from '@reduxjs/toolkit'
+import thunkMiddleware from 'redux-thunk'
+import { createReduxTakingThunkMiddleware } from '../utility/redux-taking-thunk'
 import { reducer } from './reducer'
-import { reduxTakingThunk } from '../utility/redux-taking-thunk'
 
 export const store = configureStore({
   reducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(reduxTakingThunk()),
+  middleware: process.env.NODE_ENV !== 'production'
+    ? [
+      thunkMiddleware,
+      createReduxTakingThunkMiddleware(),
+      createImmutableStateInvariantMiddleware(),
+      createSerializableStateInvariantMiddleware()
+    ]
+    : [
+      thunkMiddleware,
+      createReduxTakingThunkMiddleware(),
+    ],
 })
 
 export type AppDispatch = typeof store.dispatch

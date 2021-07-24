@@ -32,6 +32,8 @@
     "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "eslint": "eslint ./src",
+    "cosmos": "cross-env FAST_REFRESH=false cosmos",
+    "cosmos:export": "cosmos-export",
     "start-production": "http-server build"
   },
   "eslintConfig": {
@@ -86,8 +88,10 @@
   "devDependencies": {
     "@types/react-router-dom": "^5.1.7",
     "@types/url-template": "^2.0.28",
+    "cross-env": "^7.0.3",
     "eslint-plugin-import": "^2.23.4",
-    "http-server": "^0.12.3"
+    "http-server": "^0.12.3",
+    "react-cosmos": "^5.6.3"
   },
   "proxy": "http://localhost:55758"
 }
