@@ -22,4 +22,7 @@ export {
   jobSetsPageReset
 } from './actions'
 
-export { getJobSetsTakingThunkAction } from './getJobSetsTakingThunkAction'
+export {
+  getJobSetsTakingThunkAction,
+  jobSetsIsLoadingSelector,
+} from './getJobSetsTakingThunkAction'

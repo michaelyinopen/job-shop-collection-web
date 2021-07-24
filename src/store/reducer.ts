@@ -20,8 +20,6 @@ export const jobSetHeadersSelector = createSelector(
   fromJobSets.jobSetHeadersSelector
 )
 
-//todo
-export const jobSetsIsLoadingSelector = () => true
 export const jobSetsFailedMessageSelector = createSelector(
   jobSetsSelector,
   fromJobSets.jobSetsFailedMessageSelector

@@ -26,11 +26,13 @@ import {
   useAppSelector,
   jobSetsPageHasSelectedSelector,
   jobSetsPageSelectedItemIdsSelector,
-  jobSetsIsLoadingSelector,
   jobSetsFailedMessageSelector,
 } from '../../store'
 import { ProgressOverlay } from '../../styles'
-import { getJobSetsTakingThunkAction } from './store'
+import {
+  getJobSetsTakingThunkAction,
+  jobSetsIsLoadingSelector
+} from './store'
 
 const useStyles = makeStyles(theme => ({
   tableTitle: { // move

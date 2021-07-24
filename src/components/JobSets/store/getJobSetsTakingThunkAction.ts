@@ -4,13 +4,14 @@ import {
   getJobSetsSucceeded,
   getJobSetsFailed
 } from "./actions"
+import { createIsLoadingSelector } from "../../../utility/redux-taking-thunk"
 
 // todo use page token to fetch more than once
 export const getJobSetsTakingThunkAction: AppTakingThunkAction = {
   name: 'getJobSets',
   takeType: 'latest',
   thunk: function* (dispatch: AppDispatch) {
-    const getJobSetsResult: any = (yield getJobSetsApiAsync())
+    const getJobSetsResult: any = yield getJobSetsApiAsync()
     if (getJobSetsResult.kind === "success") {
       dispatch(getJobSetsSucceeded(getJobSetsResult.success().data))
     } else {
@@ -18,3 +19,5 @@ export const getJobSetsTakingThunkAction: AppTakingThunkAction = {
     }
   }
 }
+
+export const jobSetsIsLoadingSelector = createIsLoadingSelector('getJobSets')
