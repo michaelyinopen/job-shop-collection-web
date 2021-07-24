@@ -2,9 +2,7 @@
 import { createAction } from '@reduxjs/toolkit'
 import type { JobSetHeaderDto } from '../../../api'
 import type { JobSetHeader } from './jobSetsReducer'
-import type { JobSerPageOrderByProperty } from './jobSetsPageReducer'
-
-export const getJobSetsStarted = createAction('jobSets/getJobSetsStarted')
+import type { JobSetPageOrderByProperty } from './jobSetsPageReducer'
 
 export const getJobSetsSucceeded = createAction(
   'jobSets/getJobSetsSucceeded',
@@ -25,23 +23,24 @@ export const getJobSetsFailed = createAction(
 )
 
 //#region jobSetsPage
-export const setItems = createAction<JobSetHeader[]>('jobSetsPage/setItems')
-export const toggleSort = createAction(
+export const jobSetsPageSetItems = createAction<JobSetHeader[]>('jobSetsPage/setItems')
+export const jobSetsPageToggleSort = createAction(
   'jobSetsPage/toggleSort',
-  (property: JobSerPageOrderByProperty) => ({ payload: { property } })
+  (property: JobSetPageOrderByProperty) => ({ payload: { property } })
 )
-export const selectAll = createAction('jobSetsPage/selectAll')
-export const selectOne = createAction(
+export const jobSetsPageSelectAll = createAction('jobSetsPage/selectAll')
+export const jobSetsPageSelectOne = createAction(
   'jobSetsPage/selectOne',
   (id: number) => ({ payload: { id } })
 )
-export const unSelectOne = createAction(
+export const jobSetsPageUnSelectOne = createAction(
   'jobSetsPage/unSelectOne',
   (id: number) => ({ payload: { id } })
 )
-export const changePage = createAction(
+export const jobSetsPageChangePage = createAction(
   'jobSetsPage/changePage',
   (pageIndex: number) => ({ payload: { pageIndex } })
 )
-export const changeRowsPerPage = createAction<number>('jobSetsPage/changeRowsPerPage')
+export const jobSetsPageChangeRowsPerPage = createAction<number>('jobSetsPage/changeRowsPerPage')
+export const jobSetsPageReset = createAction('jobSetsPage/reset')
 //#endregion jobSetsPage

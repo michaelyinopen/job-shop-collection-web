@@ -1,6 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit'
 import type { EntityState, EntityId } from '@reduxjs/toolkit'
-import { getJobSetsSucceeded } from './actions'
+import {
+  getJobSetsSucceeded,
+  getJobSetsFailed
+} from './actions'
 import { createCustomReducer } from '../../../utility'
 import type { JobSetHeaderDto } from '../../../api'
 
@@ -46,9 +49,16 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
   }
 })
 
-const jobSetsInitialState: EntityState<JobSetState> = {
+type JobSetsState = EntityState<JobSetState> & {
+  loadFailedMessage: string | null,
+  deletingJobSetIds: string[],
+}
+
+const jobSetsInitialState: JobSetsState = {
   ids: [],
-  entities: {}
+  entities: {},
+  loadFailedMessage: null,
+  deletingJobSetIds: []
 }
 
 export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
@@ -79,6 +89,11 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
         : hasRemoved
           ? state.ids.filter((id) => id in state.entities)
           : state.ids
+
+      state.loadFailedMessage = null
+    })
+    .addCase(getJobSetsFailed, (state, action) => {
+      state.loadFailedMessage = action.payload.failedMessage
     })
 })
 
@@ -103,4 +118,6 @@ export const jobSetHeadersSelector =
       eTag: entity.eTag,
     }
   })
+
+  export const jobSetsFailedMessageSelector = (state: JobSetsState) =>state.loadFailedMessage
 

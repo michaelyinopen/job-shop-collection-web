@@ -1,29 +1,25 @@
 export {
   jobSetsReducer,
   jobSetIdsSelector,
-  jobSetHeadersSelector
+  jobSetHeadersSelector,
+  jobSetsFailedMessageSelector,
 } from './jobSetsReducer'
-
-export {
-  jobSetsMetaReducer,
-  jobSetsIsLoadingSelector,
-  jobSetsFailedMessageSelector
-} from './jobSetsMetaReducer'
 
 export {
   jobSetsPageReducer,
   jobSetsPageHasSelectedSelector,
-  jobSetsPageSelectedItemIdsSelector,
+  jobSetsPageSelectedItemIdsSelector
 } from './jobSetsPageReducer'
 
 export {
-  setItems,
-  toggleSort,
-  selectAll,
-  selectOne,
-  unSelectOne,
-  changePage,
-  changeRowsPerPage
+  jobSetsPageSetItems,
+  jobSetsPageToggleSort,
+  jobSetsPageSelectAll,
+  jobSetsPageSelectOne,
+  jobSetsPageUnSelectOne,
+  jobSetsPageChangePage,
+  jobSetsPageChangeRowsPerPage,
+  jobSetsPageReset
 } from './actions'
 
-export { getJobSets } from './getJobSets'
+export { getJobSetsTakingThunkAction } from './getJobSetsTakingThunkAction'

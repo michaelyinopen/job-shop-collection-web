@@ -1,19 +1,24 @@
 import { useEffect } from "react"
 import { useAppDispatch, useAppSelector, jobSetHeadersSelector } from '../../store'
-import { getJobSets, setItems } from './store'
+import {
+  getJobSetsTakingThunkAction,
+  jobSetsPageSetItems,
+  jobSetsPageReset,
+} from './store'
 
-import { JobSetsPageContainer } from './JobSetPageContainer'
+import { JobSetsPageContainer } from './JobSetsPageContainer'
 import { JobSetsToolbarTitle } from './JobSetsToolbarTitle'
 
 export const JobSets = () => {
   const dispatch = useAppDispatch()
   useEffect(() => {
-    dispatch(getJobSets())
+    dispatch(getJobSetsTakingThunkAction)
   }, [dispatch])
 
   const jobSetHeaders = useAppSelector(jobSetHeadersSelector)
   useEffect(() => {
-    dispatch(setItems(jobSetHeaders))
+    dispatch(jobSetsPageSetItems(jobSetHeaders))
+    return () => dispatch(jobSetsPageReset())
   }, [dispatch, jobSetHeaders])
 
   return (

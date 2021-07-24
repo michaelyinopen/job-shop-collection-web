@@ -6,7 +6,6 @@ import { reduxTakingThunkReducer } from '../utility/redux-taking-thunk'
 
 export const reducer = combineReducers({
   jobSets: fromJobSets.jobSetsReducer,
-  jobSetsMeta: fromJobSets.jobSetsMetaReducer,
   jobSetsPage: fromJobSets.jobSetsPageReducer,
   reduxTakingThunk: reduxTakingThunkReducer
 })
@@ -21,13 +20,10 @@ export const jobSetHeadersSelector = createSelector(
   fromJobSets.jobSetHeadersSelector
 )
 
-const jobSetsMetaSelector = (state: RootState) => state.jobSetsMeta
-export const jobSetsIsLoadingSelector = createSelector(
-  jobSetsMetaSelector,
-  fromJobSets.jobSetsIsLoadingSelector
-)
+//todo
+export const jobSetsIsLoadingSelector = () => true
 export const jobSetsFailedMessageSelector = createSelector(
-  jobSetsMetaSelector,
+  jobSetsSelector,
   fromJobSets.jobSetsFailedMessageSelector
 )
 

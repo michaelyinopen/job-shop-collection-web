@@ -1,21 +1,21 @@
 import { createReducer } from '@reduxjs/toolkit'
 import {
-  setItems,
-  toggleSort,
-  selectAll,
-  selectOne,
-  unSelectOne,
-  changePage,
-  changeRowsPerPage
+  jobSetsPageSetItems,
+  jobSetsPageToggleSort,
+  jobSetsPageSelectAll,
+  jobSetsPageSelectOne,
+  jobSetsPageUnSelectOne,
+  jobSetsPageChangePage,
+  jobSetsPageChangeRowsPerPage
 } from './actions'
 import type { JobSetHeader } from './jobSetsReducer'
 
-export type JobSerPageOrderByProperty = 'id' | 'title' | 'description'
+export type JobSetPageOrderByProperty = 'id' | 'title' | 'description'
 
 type JobSetsPageState = {
   items: JobSetHeader[];
   order: 'asc' | 'desc',
-  orderBy: JobSerPageOrderByProperty,
+  orderBy: JobSetPageOrderByProperty,
   selectedItemIds: number[],
   pageIndex: number,
   rowsPerPage: number
@@ -32,7 +32,7 @@ const JobSetsPageInitialState: JobSetsPageState = {
 
 export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builder) => {
   builder
-    .addCase(setItems, (state, { payload }) => {
+    .addCase(jobSetsPageSetItems, (state, { payload }) => {
       // stable sort the items according to state.order and state.orderBy
       state.items = payload
         .map((element, index) => ({ element, index }))
@@ -53,7 +53,7 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
         state.selectedItemIds = state.selectedItemIds.filter(s => state.items.some(r => r.id === s))
       }
     })
-    .addCase(toggleSort, (state, { payload: { property } }) => {
+    .addCase(jobSetsPageToggleSort, (state, { payload: { property } }) => {
       const isPreviousDesc = state.orderBy === property && state.order === 'desc'
       const isSortAsc = isPreviousDesc
       state.orderBy = property
@@ -72,26 +72,26 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
         })
         .map(({ element }) => element)
     })
-    .addCase(selectAll, (state) => {
+    .addCase(jobSetsPageSelectAll, (state) => {
       if (state.selectedItemIds.length !== state.items.length) {
         state.selectedItemIds = state.items.map(r => r.id)
       }
     })
-    .addCase(selectOne, (state, { payload: { id } }) => {
+    .addCase(jobSetsPageSelectOne, (state, { payload: { id } }) => {
       if (!state.selectedItemIds.includes(id)) {
         state.selectedItemIds.push(id)
       }
     })
-    .addCase(unSelectOne, (state, { payload: { id } }) => {
+    .addCase(jobSetsPageUnSelectOne, (state, { payload: { id } }) => {
       var index = state.selectedItemIds.indexOf(id)
       if (index !== -1) {
         state.selectedItemIds.splice(index, 1)
       }
     })
-    .addCase(changePage, (state, { payload: { pageIndex } }) => {
+    .addCase(jobSetsPageChangePage, (state, { payload: { pageIndex } }) => {
       state.pageIndex = pageIndex
     })
-    .addCase(changeRowsPerPage, (state, { payload }) => {
+    .addCase(jobSetsPageChangeRowsPerPage, (state, { payload }) => {
       const firstRowIndexOfPreviousState = state.pageIndex * state.rowsPerPage
       state.pageIndex = Math.floor(firstRowIndexOfPreviousState / payload)
       state.rowsPerPage = payload

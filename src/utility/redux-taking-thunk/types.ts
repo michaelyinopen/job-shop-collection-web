@@ -47,8 +47,8 @@ export type TakingThunkTakeLeadingOrEveryAction<
   > = {
     name: string,
     takeType?: "leading" | "every"
-    thunk: <TAppDispatch>(
-      dispatch: TAppDispatch, // do not know the type of dispatch, because there might be other middlewares
+    thunk: (
+      dispatch: any, // do not know the type of dispatch, because there might be other middlewares
       getState: () => TState,
       extraArgument?: TExtraThunkArg,
     ) => any
@@ -60,8 +60,8 @@ export type TakingThunkTakeLatestAction<
   > = {
     name: string,
     takeType: "latest"
-    thunk: <TAppDispatch>( // must be generator function
-      dispatch: TAppDispatch, // do not know the type of dispatch, because there might be other middlewares
+    thunk: ( // must be generator function
+      dispatch: any, // do not know the type of dispatch, because there might be other middlewares
       getState: () => TState,
       extraArgument?: TExtraThunkArg,
     ) => Generator | AsyncGenerator

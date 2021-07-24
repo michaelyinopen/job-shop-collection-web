@@ -3,49 +3,44 @@ import { getJobSetsSucceeded } from "./actions"
 
 describe("getJobSetsSucceeded", () => {
   test("add to empty state", () => {
-    let state = {
-      ids: [],
-      entities: {}
-    }
+    const state = jobSetsReducer(undefined, { type: "@@nonExistingAction" })
     const action = getJobSetsSucceeded([
       { id: 10, title: "Ten", isLocked: false, eTag: "1010" },
       { id: 11, title: "Eleven", isLocked: false, eTag: "1111" }
     ])
     // act
     const nextState = jobSetsReducer(state, action)
-    expect(nextState).toEqual({
-      ids: [10, 11],
-      entities: {
-        10: {
-          id: 10,
-          title: "Ten",
-          description: null,
-          content: null,
-          jobColors: null,
-          isAutoTimeOptions: false,
-          timeOptions: null,
-          isLocked: false,
-          eTag: "1010",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
-        },
-        11: {
-          id: 11,
-          title: "Eleven",
-          description: null,
-          content: null,
-          jobColors: null,
-          isAutoTimeOptions: false,
-          timeOptions: null,
-          isLocked: false,
-          eTag: "1111",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
-        }
+    expect(nextState.ids).toEqual([10, 11])
+    expect(nextState.entities).toEqual({
+      10: {
+        id: 10,
+        title: "Ten",
+        description: null,
+        content: null,
+        jobColors: null,
+        isAutoTimeOptions: false,
+        timeOptions: null,
+        isLocked: false,
+        eTag: "1010",
+        isLoading: false,
+        loadFailedMessage: null,
+        isUpdating: false,
+        updateFailedMessage: null,
+      },
+      11: {
+        id: 11,
+        title: "Eleven",
+        description: null,
+        content: null,
+        jobColors: null,
+        isAutoTimeOptions: false,
+        timeOptions: null,
+        isLocked: false,
+        eTag: "1111",
+        isLoading: false,
+        loadFailedMessage: null,
+        isUpdating: false,
+        updateFailedMessage: null,
       }
     })
     expect(nextState).not.toBe(state)
@@ -54,7 +49,9 @@ describe("getJobSetsSucceeded", () => {
   })
 
   test("cause no change", () => {
-    let state = {
+    let state = jobSetsReducer(undefined, { type: "@@nonExistingAction" })
+    state = {
+      ...state,
       ids: [10, 11],
       entities: {
         10: {
@@ -103,7 +100,9 @@ describe("getJobSetsSucceeded", () => {
   })
 
   test("update", () => {
-    let state = {
+    let state = jobSetsReducer(undefined, { type: "@@nonExistingAction" })
+    state = {
+      ...state,
       ids: [10, 11],
       entities: {
         10: {
@@ -144,39 +143,37 @@ describe("getJobSetsSucceeded", () => {
     ])
     // act
     const nextState = jobSetsReducer(state, action)
-    expect(nextState).toEqual({
-      ids: [10, 11],
-      entities: {
-        10: {
-          id: 10,
-          title: "Ten",
-          description: null,
-          content: null,
-          jobColors: null,
-          isAutoTimeOptions: false,
-          timeOptions: null,
-          isLocked: false,
-          eTag: "1010",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
-        },
-        11: {
-          id: 11,
-          title: "Eleven",
-          description: null,
-          content: null,
-          jobColors: null,
-          isAutoTimeOptions: false,
-          timeOptions: null,
-          isLocked: true,
-          eTag: "9999",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
-        }
+    expect(nextState.ids).toEqual([10, 11])
+    expect(nextState.entities).toEqual({
+      10: {
+        id: 10,
+        title: "Ten",
+        description: null,
+        content: null,
+        jobColors: null,
+        isAutoTimeOptions: false,
+        timeOptions: null,
+        isLocked: false,
+        eTag: "1010",
+        isLoading: false,
+        loadFailedMessage: null,
+        isUpdating: false,
+        updateFailedMessage: null,
+      },
+      11: {
+        id: 11,
+        title: "Eleven",
+        description: null,
+        content: null,
+        jobColors: null,
+        isAutoTimeOptions: false,
+        timeOptions: null,
+        isLocked: true,
+        eTag: "9999",
+        isLoading: false,
+        loadFailedMessage: null,
+        isUpdating: false,
+        updateFailedMessage: null,
       }
     })
     expect(nextState).not.toBe(state)
@@ -187,7 +184,9 @@ describe("getJobSetsSucceeded", () => {
   })
 
   test("delete", () => {
-    let state = {
+    let state = jobSetsReducer(undefined, { type: "@@nonExistingAction" })
+    state = {
+      ...state,
       ids: [10, 11],
       entities: {
         10: {
@@ -227,24 +226,22 @@ describe("getJobSetsSucceeded", () => {
     ])
     // act
     const nextState = jobSetsReducer(state, action)
-    expect(nextState).toEqual({
-      ids: [11],
-      entities: {
-        11: {
-          id: 11,
-          title: "Eleven",
-          description: null,
-          content: null,
-          jobColors: null,
-          isAutoTimeOptions: false,
-          timeOptions: null,
-          isLocked: false,
-          eTag: "1111",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
-        }
+    expect(nextState.ids).toEqual([11])
+    expect(nextState.entities).toEqual({
+      11: {
+        id: 11,
+        title: "Eleven",
+        description: null,
+        content: null,
+        jobColors: null,
+        isAutoTimeOptions: false,
+        timeOptions: null,
+        isLocked: false,
+        eTag: "1111",
+        isLoading: false,
+        loadFailedMessage: null,
+        isUpdating: false,
+        updateFailedMessage: null,
       }
     })
     expect(nextState).not.toBe(state)
@@ -254,7 +251,9 @@ describe("getJobSetsSucceeded", () => {
   })
 
   test("insert, update and delete", () => {
-    let state = {
+    let state = jobSetsReducer(undefined, { type: "@@nonExistingAction" })
+    state = {
+      ...state,
       ids: [10, 11],
       entities: {
         10: {
@@ -295,39 +294,37 @@ describe("getJobSetsSucceeded", () => {
     ])
     // act
     const nextState = jobSetsReducer(state, action)
-    expect(nextState).toEqual({
-      ids: [11, 12],
-      entities: {
-        11: {
-          id: 11,
-          title: "Eleven",
-          description: null,
-          content: null,
-          jobColors: null,
-          isAutoTimeOptions: false,
-          timeOptions: null,
-          isLocked: true,
-          eTag: "9999",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
-        },
-        12: {
-          id: 12,
-          title: "Twelve",
-          description: null,
-          content: null,
-          jobColors: null,
-          isAutoTimeOptions: false,
-          timeOptions: null,
-          isLocked: false,
-          eTag: "1212",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
-        }
+    expect(nextState.ids).toEqual([11, 12])
+    expect(nextState.entities).toEqual({
+      11: {
+        id: 11,
+        title: "Eleven",
+        description: null,
+        content: null,
+        jobColors: null,
+        isAutoTimeOptions: false,
+        timeOptions: null,
+        isLocked: true,
+        eTag: "9999",
+        isLoading: false,
+        loadFailedMessage: null,
+        isUpdating: false,
+        updateFailedMessage: null,
+      },
+      12: {
+        id: 12,
+        title: "Twelve",
+        description: null,
+        content: null,
+        jobColors: null,
+        isAutoTimeOptions: false,
+        timeOptions: null,
+        isLocked: false,
+        eTag: "1212",
+        isLoading: false,
+        loadFailedMessage: null,
+        isUpdating: false,
+        updateFailedMessage: null,
       }
     })
     expect(nextState).not.toBe(state)

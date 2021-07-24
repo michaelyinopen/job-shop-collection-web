@@ -30,7 +30,7 @@ import {
   jobSetsFailedMessageSelector,
 } from '../../store'
 import { ProgressOverlay } from '../../styles'
-import { getJobSets } from './store'
+import { getJobSetsTakingThunkAction } from './store'
 
 const useStyles = makeStyles(theme => ({
   tableTitle: { // move
@@ -155,7 +155,7 @@ const JobSetsTitle = () => {
 
   const dispatch = useAppDispatch()
   const reloadCallback = useCallback(() => {
-    dispatch(getJobSets())
+    dispatch(getJobSetsTakingThunkAction)
   }, [dispatch])
 
   const isLoading = useAppSelector(jobSetsIsLoadingSelector)
