@@ -32,6 +32,7 @@ export const theme = responsiveFontSizes(
         '@global': {
           html: {
             height: '100%',
+            overflow: 'overlay',
           },
           body: {
             height: '100%',
