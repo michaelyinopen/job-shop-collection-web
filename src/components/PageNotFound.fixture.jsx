@@ -2,14 +2,15 @@ import {
   PageInLayoutDecorator,
   ThemeDecorator,
   RouterDecorator
-} from '../../__decorators__'
-import { Home } from './Home'
+} from '../__decorators__'
+import { PageNotFound } from './PageNotFound'
 
 export default (
   <ThemeDecorator>
     <RouterDecorator>
+
       <PageInLayoutDecorator>
-        <Home />
+        <PageNotFound />
       </PageInLayoutDecorator>
     </RouterDecorator>
   </ThemeDecorator>

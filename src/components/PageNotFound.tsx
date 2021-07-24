@@ -10,7 +10,7 @@ export const PageNotFound: FunctionComponent<RouteComponentProps> = ({ history }
       <Typography variant="h4">Page not found</Typography>
       <p>Sorry. The path does not link to any page.</p>
       <Fab
-        onClick={() => history.length === 1 ? window.close() : history.goBack() }
+        onClick={() => history?.length === 1 ? window?.close?.() : history?.goBack?.() }
       >
         Back
       </Fab>

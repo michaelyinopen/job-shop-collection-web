@@ -1,15 +1,15 @@
 import {
   PageInLayoutDecorator,
   ThemeDecorator,
-  RouterDecorator
-} from '../../__decorators__'
-import { Home } from './Home'
+  RouterDecorator,
+} from '../__decorators__'
+import { About } from './About'
 
 export default (
   <ThemeDecorator>
     <RouterDecorator>
       <PageInLayoutDecorator>
-        <Home />
+        <About />
       </PageInLayoutDecorator>
     </RouterDecorator>
   </ThemeDecorator>
