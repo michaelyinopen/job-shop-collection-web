@@ -34,6 +34,7 @@
     "eslint": "eslint --ext ts,tsx,js,jsx src",
     "cosmos": "cross-env FAST_REFRESH=false cosmos",
     "cosmos:export": "cosmos-export",
+    "build-stats": "react-scripts build --stats && webpack-bundle-analyzer build/bundle-stats.json",
     "start-production": "http-server build"
   },
   "eslintConfig": {
@@ -104,7 +105,8 @@
     "eslint-plugin-import": "^2.23.4",
     "http-server": "^0.12.3",
     "msw": "^0.33.0",
-    "react-cosmos": "^5.6.3"
+    "react-cosmos": "^5.6.3",
+    "webpack-bundle-analyzer": "^4.4.2"
   },
   "proxy": "http://localhost:55758",
   "msw": {
