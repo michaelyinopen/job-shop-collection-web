@@ -49,8 +49,8 @@ export const LabeledIconButton: FunctionComponent<Props> = memo((props) => {
 
   return (
     <Button
-      classes={buttonClasses}
       {...buttonProps}
+      classes={buttonClasses}
     >
       <span className={classes.wrapper}>
         {icon}

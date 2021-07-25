@@ -22,7 +22,9 @@ type Props = ContainerProps & StyledComponentProps<ClassKey>
 
 export const PageContainer: FunctionComponent<Props> = (props) => {
   const classes = useStyles(props)
+  
+  const { pageContainer, ...containerClasses } = classes
   return (
-    <Container className={classes.pageContainer} {...props} />
+    <Container className={pageContainer} {...props} classes={containerClasses}/>
   )
 }
