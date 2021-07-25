@@ -1,14 +1,12 @@
-import { rest, setupWorker } from 'msw'
+import { rest } from 'msw'
 import {
+  MswDecorator,
   PageInLayoutDecorator,
   ReduxDecorator,
   ThemeDecorator,
   RouterDecorator,
 } from '../../__decorators__'
 import { JobSets } from './JobSets'
-
-const worker = setupWorker()
-worker.start()
 
 const handlers = [
   rest.get('/api/job-sets', (_req, res, ctx) => {
@@ -24,19 +22,20 @@ const handlers = [
     )
   }),
 ]
-worker.use(...handlers)
 
 // singleton register
 // worker.resetHandlers
 
 export default (
-  <ReduxDecorator>
-    <ThemeDecorator>
-      <RouterDecorator>
-        <PageInLayoutDecorator>
-          <JobSets />
-        </PageInLayoutDecorator>
-      </RouterDecorator>
-    </ThemeDecorator>
-  </ReduxDecorator>
+  <MswDecorator handlers={handlers}>
+    <ReduxDecorator>
+      <ThemeDecorator>
+        <RouterDecorator>
+          <PageInLayoutDecorator>
+            <JobSets />
+          </PageInLayoutDecorator>
+        </RouterDecorator>
+      </ThemeDecorator>
+    </ReduxDecorator>
+  </MswDecorator>
 )

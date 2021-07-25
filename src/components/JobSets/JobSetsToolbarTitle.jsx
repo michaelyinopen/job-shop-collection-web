@@ -204,8 +204,7 @@ const useJobSetToolbarTitleStyles = makeStyles(theme => ({
 
 export const JobSetsToolbarTitle = () => {
   const classes = useJobSetToolbarTitleStyles()
-  // const hasSelected = useAppSelector(jobSetsPageHasSelectedSelector) //todo
-  const hasSelected = true
+  const hasSelected = useAppSelector(jobSetsPageHasSelectedSelector)
   return (
     <Toolbar
       className={clsx(
