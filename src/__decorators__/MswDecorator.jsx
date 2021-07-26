@@ -7,7 +7,7 @@ let worker
 async function initializeWorker() {
   if (worker === undefined) {
     worker = setupWorker()
-    await worker.start()
+    await worker.start({ onUnhandledRequest: 'error' })
   }
 }
 

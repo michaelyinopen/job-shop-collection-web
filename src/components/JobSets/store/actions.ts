@@ -13,6 +13,16 @@ export const getJobSetsSucceeded = createAction(
   })
 )
 
+// only adds and not remove
+export const getNextJobSetsSucceeded = createAction(
+  'jobSets/getNextJobSetsSucceeded',
+  (jobSetHeaders: JobSetHeaderDto[]) => ({
+    payload: {
+      jobSetHeaders
+    }
+  })
+)
+
 export const getJobSetsFailed = createAction(
   'jobSets/getJobSetsFailed',
   (failedMessage: string) => ({

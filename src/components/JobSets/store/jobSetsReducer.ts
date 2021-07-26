@@ -2,6 +2,7 @@ import { createReducer } from '@reduxjs/toolkit'
 import type { EntityState, EntityId } from '@reduxjs/toolkit'
 import {
   getJobSetsSucceeded,
+  getNextJobSetsSucceeded,
   getJobSetsFailed
 } from './actions'
 import { createCustomReducer } from '../../../utility'
@@ -46,7 +47,14 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
     state.description = jobSetHeaderFromAction.description ?? null
     state.isLocked = jobSetHeaderFromAction.isLocked
     state.eTag = jobSetHeaderFromAction.eTag ?? null
-  }
+  },
+  [getNextJobSetsSucceeded.type]: (state, _action, jobSetHeaderFromAction: JobSetHeaderDto) => {
+    state.id = jobSetHeaderFromAction.id
+    state.title = jobSetHeaderFromAction.title ?? null
+    state.description = jobSetHeaderFromAction.description ?? null
+    state.isLocked = jobSetHeaderFromAction.isLocked
+    state.eTag = jobSetHeaderFromAction.eTag ?? null
+  },
 })
 
 type JobSetsState = EntityState<JobSetState> & {
@@ -92,6 +100,27 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
 
       state.loadFailedMessage = null
     })
+    .addCase(getNextJobSetsSucceeded, (state, action) => {
+      const { payload: { jobSetHeaders } } = action
+
+      let hasCreated = false
+      for (const jobSetHeader of jobSetHeaders) {
+        if (!(jobSetHeader.id in state.entities)) {
+          hasCreated = true
+        }
+        const newEntity = jobSetReducer(
+          state.entities[jobSetHeader.id],
+          action,
+          jobSetHeader)
+        state.entities[jobSetHeader.id] = newEntity
+      }
+
+      state.ids = hasCreated
+        ? [...state.ids, ...jobSetHeaders.map(jsh => jsh.id)]
+        : state.ids
+
+      state.loadFailedMessage = null
+    })
     .addCase(getJobSetsFailed, (state, action) => {
       state.loadFailedMessage = action.payload.failedMessage
     })
@@ -119,5 +148,5 @@ export const jobSetHeadersSelector =
     }
   })
 
-  export const jobSetsFailedMessageSelector = (state: JobSetsState) =>state.loadFailedMessage
+export const jobSetsFailedMessageSelector = (state: JobSetsState) => state.loadFailedMessage
 
