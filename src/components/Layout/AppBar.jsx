@@ -1,5 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles'
 import {
+  makeStyles,
+  createStyles,
   AppBar as MuiAppBar,
   Toolbar,
   Typography,
@@ -17,7 +18,7 @@ import GitHubIcon from '@material-ui/icons/GitHub'
 import { HomeLink, JobSetsLink, AboutLink } from '../../route'
 import { LabeledIconButton } from './LabeledIconButton'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => createStyles({
   title: {
     color: 'inherit',
     textDecoration: 'none',

@@ -1,8 +1,7 @@
-import { Paper } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, createStyles, Paper } from '@material-ui/core'
 import { PageContainer } from "../../styles"
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => createStyles({
   pageContainer: {
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),

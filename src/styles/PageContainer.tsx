@@ -1,5 +1,4 @@
-import { makeStyles, createStyles } from '@material-ui/core/styles'
-import { Container } from '@material-ui/core'
+import { makeStyles, createStyles, Container } from '@material-ui/core'
 
 import type { FunctionComponent } from 'react'
 import type { Theme, StyledComponentProps } from '@material-ui/core/styles'

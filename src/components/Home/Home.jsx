@@ -1,7 +1,6 @@
 import { forwardRef } from 'react'
 import { Link } from 'react-router-dom'
-import { makeStyles } from '@material-ui/core/styles'
-import { Card, CardContent, CardMedia, Typography, Fab } from '@material-ui/core'
+import { makeStyles, createStyles, Card, CardContent, CardMedia, Typography, Fab } from '@material-ui/core'
 import clsx from 'clsx'
 import { PageContainer } from '../../styles'
 import { routePaths } from '../../route'
@@ -13,7 +12,7 @@ import keyFeatureInputLogic from './key-feature-input-logic.mp4'
 import keyFeatureDnd from './key-feature-dnd.mp4'
 import keyFeatureTests from './key-feature-tests.png'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => createStyles({
   noBottomMargin: {
     marginBlockEnd: 0,
     marginBottom: 0

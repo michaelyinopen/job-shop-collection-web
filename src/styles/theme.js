@@ -19,7 +19,7 @@ export const theme = responsiveFontSizes(
           h6: 'h3',
           subtitle1: 'h3',
           subtitle2: 'h3',
-        }
+        },
       },
       MuiFab: {
         variant: "extended",

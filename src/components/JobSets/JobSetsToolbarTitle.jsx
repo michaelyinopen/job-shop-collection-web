@@ -1,14 +1,15 @@
 import { useCallback } from 'react'
 import clsx from 'clsx'
 import {
+  makeStyles,
+  createStyles,
+  lighten,
   Toolbar,
   Typography,
   Button,
   IconButton,
-  useTheme,
-  useMediaQuery,
+  CircularProgress,
 } from '@material-ui/core'
-import { lighten, makeStyles } from '@material-ui/core/styles'
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
@@ -18,51 +19,17 @@ import { NewJobSetLink } from '../../route'
 import {
   useAppDispatch,
   useAppSelector,
-  jobSetsPageHasSelectedSelector,
   jobSetsPageSelectedItemIdsSelector,
   jobSetsFailedMessageSelector,
 } from '../../store'
 import { ProgressOverlay } from '../../styles'
+import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
 import {
   getJobSetsTakingThunkAction,
   jobSetsIsLoadingSelector
 } from './store'
 
-// table: {
-//   tableLayout: "fixed",
-// },
-// rowWithMenu: {
-//   backgroundColor:
-//     theme.palette.type === 'light'
-//       ? 'rgba(0, 0, 0, 0.07)' // grey[200]
-//       : 'rgba(255, 255, 255, 0.14)',
-// },
-// descriptionCell: {
-//   maxWidth: '700px',
-// },
-// actionsFlexbox: {
-//   display: 'flex',
-//   justifyContent: 'space-evenly',
-//   maxWidth: '96px'
-// },
-// buttonSuccess: {
-//   backgroundColor: green[500],
-// },
-// buttonFailed: {
-//   backgroundColor: red[500],
-// },
-// idColumn: { width: '56px' },
-// actionsColumn: { width: '96px', boxSizing: "border-box" },
-// titleColumn: {
-//   width: '200px',
-//   boxSizing: "border-box",
-//   [theme.breakpoints.down('xs')]: { width: '100%' }
-// },
-// descriptionColumn: {
-//   width: '100%',
-// },
-
-const useJobSetsSelectedToolbarStyles = makeStyles(theme => ({
+const useJobSetsSelectedToolbarStyles = makeStyles(theme => createStyles({
   toolbarSeparator: {
     flex: 1
   },
@@ -71,6 +38,7 @@ const useJobSetsSelectedToolbarStyles = makeStyles(theme => ({
 const JobSetsSelectedToolbar = () => {
   const classes = useJobSetsSelectedToolbarStyles()
 
+  const isLoading = useAppSelector(jobSetsIsLoadingSelector)
   const seletedItemIds = useAppSelector(jobSetsPageSelectedItemIdsSelector)
 
   // todo
@@ -83,16 +51,21 @@ const JobSetsSelectedToolbar = () => {
         {seletedItemIds.length} selected
       </Typography>
       <div className={classes.toolbarSeparator} />
-      <ProgressOverlay isLoading={isDeleting}>
-        <IconButton onClick={deleteSelectedCallback}>
-          <DeleteIcon />
-        </IconButton>
-      </ProgressOverlay>
+      {isLoading
+        ? <CircularProgress />
+        : (
+          <ProgressOverlay isLoading={isDeleting}>
+            <IconButton onClick={deleteSelectedCallback}>
+              <DeleteIcon />
+            </IconButton>
+          </ProgressOverlay>
+        )
+      }
     </>
   )
 }
 
-const useJobSetsTitleStyles = makeStyles(theme => ({
+const useJobSetsTitleStyles = makeStyles(theme => createStyles({
   tableTitle: {
     marginRight: theme.spacing(3),
     fontWeight: theme.typography.fontWeightRegular
@@ -108,8 +81,7 @@ const useJobSetsTitleStyles = makeStyles(theme => ({
 
 const JobSetsTitle = () => {
   const classes = useJobSetsTitleStyles()
-  const theme = useTheme()
-  const isExtraSmallScreen = useMediaQuery(theme.breakpoints.down('xs'))
+  const isExtraSmallScreen = useIsExtraSmallScreen()
 
   const dispatch = useAppDispatch()
   const reloadCallback = useCallback(() => {
@@ -145,7 +117,7 @@ const JobSetsTitle = () => {
   )
 }
 
-const useJobSetToolbarTitleStyles = makeStyles(theme => ({
+const useJobSetsToolbarTitleStyles = makeStyles(theme => createStyles({
   toolbar: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
@@ -159,8 +131,9 @@ const useJobSetToolbarTitleStyles = makeStyles(theme => ({
 }))
 
 export const JobSetsToolbarTitle = () => {
-  const classes = useJobSetToolbarTitleStyles()
-  const hasSelected = useAppSelector(jobSetsPageHasSelectedSelector)
+  const classes = useJobSetsToolbarTitleStyles()
+  const selectedItemIds = useAppSelector(jobSetsPageSelectedItemIdsSelector)
+  const hasSelected = selectedItemIds.length > 0
   return (
     <Toolbar
       className={clsx(

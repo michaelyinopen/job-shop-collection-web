@@ -1,7 +1,7 @@
-import { CircularProgress, makeStyles } from '@material-ui/core'
+import { makeStyles, createStyles, CircularProgress } from '@material-ui/core'
 import type { ReactNode, FunctionComponent } from 'react'
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(() => createStyles({
   wrapper: {
     position: 'relative',
   },

@@ -1,6 +1,5 @@
 import { memo } from 'react'
-import { makeStyles, createStyles } from '@material-ui/core/styles'
-import { Button } from '@material-ui/core'
+import { makeStyles, createStyles, Button } from '@material-ui/core'
 
 import type { FunctionComponent, ReactNode } from 'react'
 import type { Theme, StyledComponentProps } from '@material-ui/core/styles'

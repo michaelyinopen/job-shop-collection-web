@@ -1,8 +1,8 @@
-import { createReducer } from '@reduxjs/toolkit'
+import { createReducer, createSelector } from '@reduxjs/toolkit'
 import {
   jobSetsPageSetItems,
   jobSetsPageToggleSort,
-  jobSetsPageSelectAll,
+  jobSetsPageToggleSelectAll,
   jobSetsPageSelectOne,
   jobSetsPageUnSelectOne,
   jobSetsPageChangePage,
@@ -34,7 +34,7 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
   builder
     .addCase(jobSetsPageSetItems, (state, { payload }) => {
       // stable sort the items according to state.order and state.orderBy
-      state.items = payload
+      state.items = payload.items
         .map((element, index) => ({ element, index }))
         .sort((a, b) => {
           const ascendingSort = a.element[state.orderBy]! > b.element[state.orderBy]!
@@ -49,15 +49,15 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
 
       const maxPageIndex = Math.max(0, Math.ceil(state.items.length / state.rowsPerPage) - 1)
       state.pageIndex = state.pageIndex > maxPageIndex ? maxPageIndex : state.pageIndex
-      if (state.selectedItemIds.some(s => !state.items.some(r => r.id === s))) {
+      if (payload.fixSelected && state.selectedItemIds.some(s => !state.items.some(r => r.id === s))) {
         state.selectedItemIds = state.selectedItemIds.filter(s => state.items.some(r => r.id === s))
       }
     })
     .addCase(jobSetsPageToggleSort, (state, { payload: { property } }) => {
-      const isPreviousDesc = state.orderBy === property && state.order === 'desc'
-      const isSortAsc = isPreviousDesc
+      const isPreviousAsc = state.orderBy === property && state.order === 'asc'
+      const isSortDesc = isPreviousAsc
       state.orderBy = property
-      state.order = isSortAsc ? 'asc' : 'desc'
+      state.order = isSortDesc ? 'desc' : 'asc'
       // stable sort the items according to state.order and state.orderBy
       state.items = state.items
         .map((element, index) => ({ element, index }))
@@ -67,14 +67,19 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
             : a.element[state.orderBy]! < b.element[state.orderBy]!
               ? -1
               : 0
-          const unStableSort = isSortAsc ? ascendingSort : -ascendingSort
+          const unStableSort = isSortDesc ? -ascendingSort : ascendingSort
           return unStableSort !== 0 ? unStableSort : a.index - b.index
         })
         .map(({ element }) => element)
     })
-    .addCase(jobSetsPageSelectAll, (state) => {
+    .addCase(jobSetsPageToggleSelectAll, (state) => {
       if (state.selectedItemIds.length !== state.items.length) {
+        // from not-all-selected to all selected
         state.selectedItemIds = state.items.map(r => r.id)
+      }
+      else {
+        // from all selected none selected
+        state.selectedItemIds.splice(0, state.selectedItemIds.length)
       }
     })
     .addCase(jobSetsPageSelectOne, (state, { payload: { id } }) => {
@@ -98,5 +103,26 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
     })
 })
 
-export const jobSetsPageHasSelectedSelector = (state: JobSetsPageState) => state.selectedItemIds.length > 0
 export const jobSetsPageSelectedItemIdsSelector = (state: JobSetsPageState) => state.selectedItemIds
+export const jobSetsPageRowsPerPageSelector = (state: JobSetsPageState) => state.rowsPerPage
+export const jobSetsPagePageIndexSelector = (state: JobSetsPageState) => state.pageIndex
+export const jobSetsPageOrderSelector = (state: JobSetsPageState) => state.order
+export const jobSetsPageOrderBySelector = (state: JobSetsPageState) => state.orderBy
+export const jobSetsPageItemsSelector = (state: JobSetsPageState) => state.items
+export const jobSetsPageItemCountSelector = (state: JobSetsPageState) => state.items.length
+
+export const jobSetsPageItemIdssOfPageSelector = createSelector(
+  jobSetsPageItemsSelector,
+  jobSetsPageRowsPerPageSelector,
+  jobSetsPagePageIndexSelector,
+  (items: JobSetHeader[], rowsPerPage: number, pageIndex: number) => {
+    return items
+      .slice(pageIndex * rowsPerPage, pageIndex * rowsPerPage + rowsPerPage)
+      .map(h => h.id)
+  }
+)
+
+export const createJobSetsPageItemSelector = (id: number) => createSelector(
+  jobSetsPageItemsSelector,
+  (items: JobSetHeader[]) => items.find(h => h.id === id)
+)

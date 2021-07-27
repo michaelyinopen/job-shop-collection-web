@@ -26,11 +26,39 @@ export const jobSetsFailedMessageSelector = createSelector(
 )
 
 const jobSetsPageSelector = (state: RootState) => state.jobSetsPage
-export const jobSetsPageHasSelectedSelector = createSelector(
-  jobSetsPageSelector,
-  fromJobSets.jobSetsPageHasSelectedSelector
-)
 export const jobSetsPageSelectedItemIdsSelector = createSelector(
   jobSetsPageSelector,
   fromJobSets.jobSetsPageSelectedItemIdsSelector
+)
+export const jobSetsPageRowsPerPageSelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPageRowsPerPageSelector
+)
+export const jobSetsPagePageIndexSelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPagePageIndexSelector
+)
+export const jobSetsPageOrderSelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPageOrderSelector
+)
+export const jobSetsPageOrderBySelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPageOrderBySelector
+)
+export const jobSetsPageItemsSelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPageItemsSelector
+)
+export const jobSetsPageItemCountSelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPageItemCountSelector
+)
+export const jobSetsPageItemIdssOfPageSelector = createSelector(
+  jobSetsPageSelector,
+  fromJobSets.jobSetsPageItemIdssOfPageSelector
+)
+export const createJobSetsPageItemSelector = (id: number) => createSelector(
+  jobSetsPageSelector,
+  fromJobSets.createJobSetsPageItemSelector(id)
 )

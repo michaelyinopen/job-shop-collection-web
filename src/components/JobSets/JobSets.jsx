@@ -4,10 +4,12 @@ import {
   getJobSetsTakingThunkAction,
   jobSetsPageSetItems,
   jobSetsPageReset,
+  jobSetsIsLoadingSelector
 } from './store'
 
 import { JobSetsPageContainer } from './JobSetsPageContainer'
 import { JobSetsToolbarTitle } from './JobSetsToolbarTitle'
+import { JobSetsTable } from './JobSetsTable'
 
 export const JobSets = () => {
   const dispatch = useAppDispatch()
@@ -15,16 +17,18 @@ export const JobSets = () => {
     dispatch(getJobSetsTakingThunkAction)
   }, [dispatch])
 
+  const isLoading = useAppSelector(jobSetsIsLoadingSelector)
   const jobSetHeaders = useAppSelector(jobSetHeadersSelector)
   useEffect(() => {
-    dispatch(jobSetsPageSetItems(jobSetHeaders))
+    dispatch(jobSetsPageSetItems(jobSetHeaders, !isLoading))
     return () => dispatch(jobSetsPageReset())
-  }, [dispatch, jobSetHeaders])
+  }, [dispatch, isLoading, jobSetHeaders])
 
   return (
     <JobSetsPageContainer>
       <JobSetsToolbarTitle />
-      <div>{JSON.stringify(jobSetHeaders)}</div>
+      <JobSetsTable />
+      {/*<JobSetsTablePagination>*/}
     </JobSetsPageContainer>
   )
 }

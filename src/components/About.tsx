@@ -1,9 +1,8 @@
-import { Button, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, createStyles, Button, Typography } from '@material-ui/core'
 import GitHubIcon from '@material-ui/icons/GitHub'
 import { PageContainer } from '../styles/PageContainer'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => createStyles({
   section: {
     paddingBottom: theme.spacing(3),
   }

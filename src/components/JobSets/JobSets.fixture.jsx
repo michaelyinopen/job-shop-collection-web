@@ -1,5 +1,4 @@
 import { rest } from 'msw'
-import { useEffect } from 'react'
 import {
   MswDecorator,
   PageInLayoutDecorator,
@@ -9,12 +8,10 @@ import {
 } from '../../__decorators__'
 import { JobSets } from './JobSets'
 
-import { useAppDispatch } from '../../store'
-import { jobSetsPageSelectOne } from './store'
-
 const handlers = [
   rest.get('/api/job-sets', (_req, res, ctx) => {
     return res(
+      ctx.delay(),
       ctx.status(200),
       ctx.json({
         "data": [
@@ -41,11 +38,4 @@ const Decorator = ({ children }) => (
   </MswDecorator>
 )
 
-const JobSetsFixture = () => {
-  const appDispatch = useAppDispatch()
-  useEffect(() => {
-    appDispatch(jobSetsPageSelectOne(0))
-  }, [appDispatch])
-  return <JobSets />
-}
-export default <Decorator><JobSetsFixture /></Decorator>
+export default <Decorator><JobSets /></Decorator>

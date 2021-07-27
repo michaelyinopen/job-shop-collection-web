@@ -33,12 +33,20 @@ export const getJobSetsFailed = createAction(
 )
 
 //#region jobSetsPage
-export const jobSetsPageSetItems = createAction<JobSetHeader[]>('jobSetsPage/setItems')
+export const jobSetsPageSetItems = createAction(
+  'jobSetsPage/setItems',
+  (items: JobSetHeader[], fixSelected?: boolean) => ({
+    payload: {
+      items,
+      fixSelected
+    }
+  })
+)
 export const jobSetsPageToggleSort = createAction(
   'jobSetsPage/toggleSort',
   (property: JobSetPageOrderByProperty) => ({ payload: { property } })
 )
-export const jobSetsPageSelectAll = createAction('jobSetsPage/selectAll')
+export const jobSetsPageToggleSelectAll = createAction('jobSetsPage/toggleSelectAll')
 export const jobSetsPageSelectOne = createAction(
   'jobSetsPage/selectOne',
   (id: number) => ({ payload: { id } })

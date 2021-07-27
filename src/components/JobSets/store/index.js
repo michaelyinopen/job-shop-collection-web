@@ -7,14 +7,21 @@ export {
 
 export {
   jobSetsPageReducer,
-  jobSetsPageHasSelectedSelector,
-  jobSetsPageSelectedItemIdsSelector
+  jobSetsPageSelectedItemIdsSelector,
+  jobSetsPageRowsPerPageSelector,
+  jobSetsPagePageIndexSelector,
+  jobSetsPageOrderSelector,
+  jobSetsPageOrderBySelector,
+  jobSetsPageItemsSelector,
+  jobSetsPageItemCountSelector,
+  jobSetsPageItemIdssOfPageSelector,
+  createJobSetsPageItemSelector,
 } from './jobSetsPageReducer'
 
 export {
   jobSetsPageSetItems,
   jobSetsPageToggleSort,
-  jobSetsPageSelectAll,
+  jobSetsPageToggleSelectAll,
   jobSetsPageSelectOne,
   jobSetsPageUnSelectOne,
   jobSetsPageChangePage,
