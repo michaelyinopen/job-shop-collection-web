@@ -51,8 +51,8 @@ export const jobSetsPageSelectOne = createAction(
   'jobSetsPage/selectOne',
   (id: number) => ({ payload: { id } })
 )
-export const jobSetsPageUnSelectOne = createAction(
-  'jobSetsPage/unSelectOne',
+export const jobSetsPageUnselectOne = createAction(
+  'jobSetsPage/unselectOne',
   (id: number) => ({ payload: { id } })
 )
 export const jobSetsPageChangePage = createAction(

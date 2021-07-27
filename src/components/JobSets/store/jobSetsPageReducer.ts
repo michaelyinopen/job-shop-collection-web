@@ -4,7 +4,7 @@ import {
   jobSetsPageToggleSort,
   jobSetsPageToggleSelectAll,
   jobSetsPageSelectOne,
-  jobSetsPageUnSelectOne,
+  jobSetsPageUnselectOne,
   jobSetsPageChangePage,
   jobSetsPageChangeRowsPerPage
 } from './actions'
@@ -87,7 +87,7 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
         state.selectedItemIds.push(id)
       }
     })
-    .addCase(jobSetsPageUnSelectOne, (state, { payload: { id } }) => {
+    .addCase(jobSetsPageUnselectOne, (state, { payload: { id } }) => {
       var index = state.selectedItemIds.indexOf(id)
       if (index !== -1) {
         state.selectedItemIds.splice(index, 1)
@@ -125,4 +125,9 @@ export const jobSetsPageItemIdssOfPageSelector = createSelector(
 export const createJobSetsPageItemSelector = (id: number) => createSelector(
   jobSetsPageItemsSelector,
   (items: JobSetHeader[]) => items.find(h => h.id === id)
+)
+
+export const createItemIsSelectedSelector = (id: number) => createSelector(
+  jobSetsPageSelectedItemIdsSelector,
+  (selectedItemIds: number[]) => selectedItemIds.includes(id)
 )

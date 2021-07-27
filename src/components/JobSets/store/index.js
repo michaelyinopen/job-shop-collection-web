@@ -16,6 +16,7 @@ export {
   jobSetsPageItemCountSelector,
   jobSetsPageItemIdssOfPageSelector,
   createJobSetsPageItemSelector,
+  createItemIsSelectedSelector,
 } from './jobSetsPageReducer'
 
 export {
@@ -23,7 +24,7 @@ export {
   jobSetsPageToggleSort,
   jobSetsPageToggleSelectAll,
   jobSetsPageSelectOne,
-  jobSetsPageUnSelectOne,
+  jobSetsPageUnselectOne,
   jobSetsPageChangePage,
   jobSetsPageChangeRowsPerPage,
   jobSetsPageReset

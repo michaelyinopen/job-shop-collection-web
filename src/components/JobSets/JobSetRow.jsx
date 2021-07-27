@@ -1,3 +1,5 @@
+
+import { useRef } from 'react'
 import clsx from 'clsx'
 import {
   makeStyles,
@@ -5,7 +7,6 @@ import {
   Checkbox,
   TableRow,
   TableCell,
-  Typography,
   IconButton,
 } from '@material-ui/core'
 import {
@@ -16,9 +17,13 @@ import {
   useAppDispatch,
   useAppSelector,
   createJobSetsPageItemSelector,
+  createItemIsSelectedSelector,
 } from '../../store'
 import { columnStyles } from './columnStyles'
-import { useRef } from 'react'
+import {
+  jobSetsPageSelectOne,
+  jobSetsPageUnselectOne,
+} from './store'
 
 const useJobSetRowStyles = makeStyles(theme => createStyles({
   rowWithMenu: {
@@ -53,14 +58,16 @@ export const JobSetRow = (props) => {
     dense,
     showDescription,
   } = props
+
+  const dispatch = useAppDispatch()
   const { current: jobSetsPageItemSelector } = useRef(createJobSetsPageItemSelector(jobSetHeaderId))
   const jobSetHeader = useAppSelector(jobSetsPageItemSelector)
+  const { current: itemIsSelectedSelector } = useRef(createItemIsSelectedSelector(jobSetHeaderId))
+  const isItemSelected = useAppSelector(itemIsSelectedSelector)
   //todo
   const menuOpen = false
   const viewJobSetCallback = () => { }
   const onContextMenu = () => { }
-  const isItemSelected = false
-  const onSelect = () => { }
   const onMoreActionButtonClick = () => { }
 
   if (!jobSetHeader) {
@@ -81,7 +88,9 @@ export const JobSetRow = (props) => {
       <TableCell padding="checkbox">
         <Checkbox
           checked={isItemSelected}
-          onClick={onSelect}
+          onClick={() => isItemSelected
+            ? dispatch(jobSetsPageUnselectOne(jobSetHeaderId))
+            : dispatch(jobSetsPageSelectOne(jobSetHeaderId))}
           onContextMenu={preventDefaultPropagation}
         />
       </TableCell>
