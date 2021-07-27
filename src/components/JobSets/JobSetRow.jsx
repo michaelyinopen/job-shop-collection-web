@@ -1,5 +1,7 @@
 
-import { useRef } from 'react'
+import { useRef, useState, useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
+import { generatePath } from 'react-router'
 import clsx from 'clsx'
 import {
   makeStyles,
@@ -8,11 +10,18 @@ import {
   TableRow,
   TableCell,
   IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
 } from '@material-ui/core'
 import {
   MoreVert as MoreVertIcon,
+  Forward as ForwardIcon,
+  Edit as EditIcon,
+  OpenInNew as OpenInNewIcon,
 } from '@material-ui/icons'
 import { preventDefaultPropagation } from '../../utility'
+import { routePaths } from '../../route'
 import {
   useAppDispatch,
   useAppSelector,
@@ -45,32 +54,78 @@ const useJobSetRowStyles = makeStyles(theme => createStyles({
 export const JobSetRow = (props) => {
   const classes = useJobSetRowStyles(props)
   const {
-    jobSetHeaderId,
+    jobSetHeaderId: id,
     dense,
     showDescription,
   } = props
 
   const dispatch = useAppDispatch()
-  const { current: jobSetsPageItemSelector } = useRef(createJobSetsPageItemSelector(jobSetHeaderId))
+  const { current: jobSetsPageItemSelector } = useRef(createJobSetsPageItemSelector(id))
   const jobSetHeader = useAppSelector(jobSetsPageItemSelector)
-  const { current: itemIsSelectedSelector } = useRef(createItemIsSelectedSelector(jobSetHeaderId))
+  const { current: itemIsSelectedSelector } = useRef(createItemIsSelectedSelector(id))
   const isItemSelected = useAppSelector(itemIsSelectedSelector)
   //todo
-  const menuOpen = false
-  const viewJobSetCallback = () => { }
-  const onContextMenu = () => { }
-  const onMoreActionButtonClick = () => { }
+
+  const { push } = useHistory()
+  const [viewJobSetCallback, editJobSetCallback, openInNewTabCallback] = useMemo(
+    () => {
+      const path = generatePath(routePaths.jobSet, { id })
+      const openInNewTabCallback = e => {
+        e.stopPropagation()
+        const win = window.open(path, '_blank')
+        win.focus()
+      }
+      const viewCallback = e => {
+        e.stopPropagation()
+        push(path)
+      }
+      const editPath = generatePath(routePaths.jobSet, { id, edit: "edit" })
+      const editCallback = e => {
+        e.stopPropagation()
+        e.preventDefault()
+        push(editPath)
+      }
+      return [viewCallback, editCallback, openInNewTabCallback]
+    },
+    [push, id]
+  )
+
+  const [menuPosition, setMenuPosition] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorReference, setAnchorReference] = useState('none')
+  const menuOpen = Boolean(anchorEl) || Boolean(menuPosition)
+
+  const onMoreActionButtonClick = event => {
+    event.stopPropagation()
+    event.preventDefault()
+    setAnchorReference('anchorEl')
+    setAnchorEl(event.currentTarget)
+    setMenuPosition(null)
+  }
+  const onContextMenu = event => {
+    event.stopPropagation()
+    event.preventDefault()
+    const cursorPositon = { top: event.pageY, left: event.pageX }
+    setAnchorReference('anchorPosition')
+    setMenuPosition(cursorPositon)
+    setAnchorEl(null)
+  }
+
+  const handleCloseContextMenu = () => {
+    setAnchorReference('none')
+    setMenuPosition(null)
+    setAnchorEl(null)
+  }
 
   if (!jobSetHeader) {
     return
   }
-
   return (
     <TableRow
       className={clsx({ [classes.rowWithMenu]: menuOpen })}
       hover
       onClick={viewJobSetCallback}
-      onContextMenu={onContextMenu} // TODO replace with custom context menu, also stop propagation on buttons
+      onContextMenu={onContextMenu}
       role="checkbox"
       aria-checked={isItemSelected}
       tabIndex={-1}
@@ -80,8 +135,8 @@ export const JobSetRow = (props) => {
         <Checkbox
           checked={isItemSelected}
           onClick={() => isItemSelected
-            ? dispatch(jobSetsPageUnselectOne(jobSetHeaderId))
-            : dispatch(jobSetsPageSelectOne(jobSetHeaderId))}
+            ? dispatch(jobSetsPageUnselectOne(id))
+            : dispatch(jobSetsPageSelectOne(id))}
           onContextMenu={preventDefaultPropagation}
         />
       </TableCell>
@@ -103,12 +158,6 @@ export const JobSetRow = (props) => {
       }
       <TableCell align="left" padding="none" className={classes.actionsColumn}>
         <div className={classes.actionsFlexbox}>
-          {/* <RowDeleteButtonContainer
-            id={id}
-            jobSetHeader={jobSetHeader}
-            dense={dense}
-            reloadCallback={reloadCallback}
-          />*/}
           <IconButton
             onClick={onMoreActionButtonClick}
             onContextMenu={preventDefaultPropagation}
@@ -118,17 +167,40 @@ export const JobSetRow = (props) => {
           </IconButton>
         </div>
       </TableCell>
-      {/* <RowMoreActionsMenu
-        viewJobSetCallback={viewJobSetCallback}
-        editJobSetCallback={editJobSetCallback}
-        openInNewTabCallback={openInNewTabCallback}
+      <Menu
         anchorReference={anchorReference}
         anchorEl={anchorEl}
         anchorPosition={menuPosition}
+        keepMounted
         open={menuOpen}
-        handleClose={handleCloseContextMenu}
-        isLocked={isLocked}
-      /> */}
+        onClose={handleCloseContextMenu}
+        onClick={preventDefaultPropagation}
+      >
+        <MenuItem onClick={viewJobSetCallback} onContextMenu={preventDefaultPropagation}>
+          <ListItemIcon>
+            <ForwardIcon />
+          </ListItemIcon>
+          View
+        </MenuItem>
+        <MenuItem
+          onClick={editJobSetCallback}
+          onContextMenu={preventDefaultPropagation}
+          disabled={jobSetHeader.isLocked}
+        >
+          <ListItemIcon>
+            <EditIcon />
+          </ListItemIcon>
+          Edit
+        </MenuItem>
+        <MenuItem onClick={openInNewTabCallback} onContextMenu={preventDefaultPropagation}>
+          <ListItemIcon>
+            <OpenInNewIcon />
+          </ListItemIcon>
+          Open in new tab
+        </MenuItem>
+        {/* todo add delete here */}
+      </Menu>
+      {/* todo indicate locked */}
     </TableRow >
   )
 }
