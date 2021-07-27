@@ -3,7 +3,6 @@ import type { RootState } from './store'
 
 import * as fromJobSets from '../components/JobSets'
 import { reduxTakingThunkReducer } from '../utility/redux-taking-thunk'
-import { create } from 'domain'
 
 export const reducer = combineReducers({
   jobSets: fromJobSets.jobSetsReducer,
@@ -50,10 +49,6 @@ export const jobSetsPageOrderBySelector = createSelector(
 export const jobSetsPageItemsSelector = createSelector(
   jobSetsPageSelector,
   fromJobSets.jobSetsPageItemsSelector
-)
-export const jobSetsPageItemCountSelector = createSelector(
-  jobSetsPageSelector,
-  fromJobSets.jobSetsPageItemCountSelector
 )
 export const jobSetsPageItemIdssOfPageSelector = createSelector(
   jobSetsPageSelector,

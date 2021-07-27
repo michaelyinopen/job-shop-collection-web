@@ -15,7 +15,6 @@ import {
   jobSetsPageItemIdssOfPageSelector,
   jobSetsPageSelectedItemIdsSelector,
   jobSetsPageRowsPerPageSelector,
-  jobSetsPageItemCountSelector,
   jobSetsPageOrderSelector,
   jobSetsPageOrderBySelector,
 } from '../../store'
@@ -32,7 +31,7 @@ const useJobSetsTableStyles = makeStyles(theme => createStyles({
     tableLayout: 'fixed',
   },
   fillerRow: {
-    height: props => (props.dense ? 31 : 49) * props.emptyRows
+    height: props => (props.dense ? 34.4 : 52.4) * props.emptyRows
   },
   ...columnStyles(theme)
 }))
@@ -43,22 +42,17 @@ const JobSetsTableConnect = (Component) => {
     const pageItemIds = useAppSelector(jobSetsPageItemIdssOfPageSelector)
     const rowsPerPage = useAppSelector(jobSetsPageRowsPerPageSelector)
     const selectedItemIds = useAppSelector(jobSetsPageSelectedItemIdsSelector)
-    const selectedItemCount = selectedItemIds.length
-    const itemCount = useAppSelector(jobSetsPageItemCountSelector)
     const order = useAppSelector(jobSetsPageOrderSelector)
     const orderBy = useAppSelector(jobSetsPageOrderBySelector)
-    const dense = rowsPerPage > 10
     const isExtraSmallScreen = useIsExtraSmallScreen()
-    const showDescription = !isExtraSmallScreen
 
     return <Component
       dispatch={dispatch}
-      dense={dense}
-      showDescription={showDescription}
-      emptyRows={0}
+      dense={rowsPerPage > 10}
+      showDescription={!isExtraSmallScreen}
+      emptyRows={rowsPerPage - pageItemIds.length}
       pageItemIds={pageItemIds}
-      itemCount={itemCount}
-      selectedItemCount={selectedItemCount}
+      selectedItemCount={selectedItemIds.length}
       order={order}
       orderBy={orderBy}
     />
@@ -74,7 +68,6 @@ export const JobSetsTable = JobSetsTableConnect((props) => {
     showDescription,
     emptyRows,
     pageItemIds,
-    itemCount,
     selectedItemCount,
     order,
     orderBy
@@ -90,8 +83,8 @@ export const JobSetsTable = JobSetsTableConnect((props) => {
           <TableRow>
             <TableCell padding='checkbox'>
               <Checkbox
-                indeterminate={selectedItemCount > 0 && selectedItemCount < itemCount}
-                checked={selectedItemCount > 0 && selectedItemCount === itemCount}
+                indeterminate={selectedItemCount > 0 && selectedItemCount < pageItemIds.length}
+                checked={selectedItemCount > 0 && selectedItemCount === pageItemIds.length}
                 onChange={() => dispatch(jobSetsPageToggleSelectAll())}
                 inputProps={{ 'aria-label': 'select all' }}
               />
@@ -99,7 +92,7 @@ export const JobSetsTable = JobSetsTableConnect((props) => {
             <TableCell
               padding='none'
               align='left'
-              sortDirection={orderBy === 'id' ? order : false}
+              sortDirection={orderBy === 'id' ? order : 'asc'}
               className={classes.idColumn}
             >
               <TableSortLabel
@@ -112,12 +105,12 @@ export const JobSetsTable = JobSetsTableConnect((props) => {
             </TableCell>
             <TableCell
               align='left'
-              sortDirection={orderBy === 'title' ? order : false}
+              sortDirection={orderBy === 'title' ? order : 'asc'}
               className={classes.titleColumn}
             >
               <TableSortLabel
                 active={orderBy === 'title'}
-                direction={order}
+                direction={orderBy === 'title' ? order : 'asc'}
                 onClick={() => dispatch(jobSetsPageToggleSort('title'))}
               >
                 Title
@@ -126,12 +119,12 @@ export const JobSetsTable = JobSetsTableConnect((props) => {
             {showDescription ? (
               <TableCell
                 align='left'
-                sortDirection={orderBy === 'description' ? order : false}
+                sortDirection={orderBy === 'description' ? order : 'asc'}
                 className={classes.descriptionColumn}
               >
                 <TableSortLabel
                   active={orderBy === 'description'}
-                  direction={order}
+                  direction={orderBy === 'description' ? order : 'asc'}
                   onClick={() => dispatch(jobSetsPageToggleSort('description'))}
                 >
                   Description

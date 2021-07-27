@@ -16,7 +16,7 @@ type JobSetsPageState = {
   items: JobSetHeader[];
   order: 'asc' | 'desc',
   orderBy: JobSetPageOrderByProperty,
-  selectedItemIds: number[],
+  selectedItemIds: number[], // can only select current page items
   pageIndex: number,
   rowsPerPage: number
 }
@@ -47,10 +47,15 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
         })
         .map(({ element }) => element)
 
-      const maxPageIndex = Math.max(0, Math.ceil(state.items.length / state.rowsPerPage) - 1)
-      state.pageIndex = state.pageIndex > maxPageIndex ? maxPageIndex : state.pageIndex
-      if (payload.fixSelected && state.selectedItemIds.some(s => !state.items.some(r => r.id === s))) {
-        state.selectedItemIds = state.selectedItemIds.filter(s => state.items.some(r => r.id === s))
+      if (payload.fixSelected) {
+        const maxPageIndex = Math.max(0, Math.ceil(state.items.length / state.rowsPerPage) - 1)
+        state.pageIndex = state.pageIndex > maxPageIndex ? maxPageIndex : state.pageIndex
+        const startItemIndexOfPage = state.pageIndex * state.rowsPerPage
+        const endItemIndexOfPage = state.pageIndex * state.rowsPerPage + state.rowsPerPage
+        const itemsOfPage = state.items.slice(startItemIndexOfPage, endItemIndexOfPage)
+        if (state.selectedItemIds.some(s => !itemsOfPage.some(r => r.id === s))) {
+          state.selectedItemIds = state.selectedItemIds.filter(s => itemsOfPage.some(r => r.id === s))
+        }
       }
     })
     .addCase(jobSetsPageToggleSort, (state, { payload: { property } }) => {
@@ -61,29 +66,40 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
       // stable sort the items according to state.order and state.orderBy
       state.items = state.items
         .map((element, index) => ({ element, index }))
-        .sort((a, b) => {
-          const ascendingSort = a.element[state.orderBy]! > b.element[state.orderBy]!
-            ? 1
-            : a.element[state.orderBy]! < b.element[state.orderBy]!
-              ? -1
-              : 0
+        .sort((aTuple, bTuple) => {
+          const a = aTuple.element[state.orderBy]
+          const b = bTuple.element[state.orderBy]
+
+          const ascendingSort =
+            !(a || b) ? 0 // both undefined
+              : !a ? -1 // a undefined
+                : !b ? 1 // b undefined
+                  : a > b ? 1
+                    : a < b ? -1
+                      : 0
           const unStableSort = isSortDesc ? -ascendingSort : ascendingSort
-          return unStableSort !== 0 ? unStableSort : a.index - b.index
+          return unStableSort !== 0 ? unStableSort : aTuple.index - bTuple.index
         })
         .map(({ element }) => element)
     })
     .addCase(jobSetsPageToggleSelectAll, (state) => {
-      if (state.selectedItemIds.length !== state.items.length) {
+      const startItemIndexOfPage = state.pageIndex * state.rowsPerPage
+      const endItemIndexOfPage = state.pageIndex * state.rowsPerPage + state.rowsPerPage
+      const itemsOfPage = state.items.slice(startItemIndexOfPage, endItemIndexOfPage)
+      if (state.selectedItemIds.length !== itemsOfPage.length) {
         // from not-all-selected to all selected
-        state.selectedItemIds = state.items.map(r => r.id)
+        state.selectedItemIds = itemsOfPage.map(r => r.id)
       }
       else {
-        // from all selected none selected
+        // from all selected to none selected
         state.selectedItemIds.splice(0, state.selectedItemIds.length)
       }
     })
     .addCase(jobSetsPageSelectOne, (state, { payload: { id } }) => {
-      if (!state.selectedItemIds.includes(id)) {
+      const startItemIndexOfPage = state.pageIndex * state.rowsPerPage
+      const endItemIndexOfPage = state.pageIndex * state.rowsPerPage + state.rowsPerPage
+      const itemsOfPage = state.items.slice(startItemIndexOfPage, endItemIndexOfPage)
+      if (!state.selectedItemIds.includes(id) && itemsOfPage.some(r => r.id === id)) {
         state.selectedItemIds.push(id)
       }
     })
@@ -95,11 +111,24 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
     })
     .addCase(jobSetsPageChangePage, (state, { payload: { pageIndex } }) => {
       state.pageIndex = pageIndex
+      // fix selected
+      const startItemIndexOfPage = state.pageIndex * state.rowsPerPage
+      const endItemIndexOfPage = state.pageIndex * state.rowsPerPage + state.rowsPerPage
+      const itemsOfPage = state.items.slice(startItemIndexOfPage, endItemIndexOfPage)
+      if (state.selectedItemIds.some(s => !itemsOfPage.some(r => r.id === s))) {
+        state.selectedItemIds = state.selectedItemIds.filter(s => itemsOfPage.some(r => r.id === s))
+      }
     })
     .addCase(jobSetsPageChangeRowsPerPage, (state, { payload }) => {
       const firstRowIndexOfPreviousState = state.pageIndex * state.rowsPerPage
       state.pageIndex = Math.floor(firstRowIndexOfPreviousState / payload)
       state.rowsPerPage = payload
+      const startItemIndexOfPage = state.pageIndex * state.rowsPerPage
+      const endItemIndexOfPage = state.pageIndex * state.rowsPerPage + state.rowsPerPage
+      const itemsOfPage = state.items.slice(startItemIndexOfPage, endItemIndexOfPage)
+      if (state.selectedItemIds.some(s => !itemsOfPage.some(r => r.id === s))) {
+        state.selectedItemIds = state.selectedItemIds.filter(s => itemsOfPage.some(r => r.id === s))
+      }
     })
 })
 
@@ -109,7 +138,6 @@ export const jobSetsPagePageIndexSelector = (state: JobSetsPageState) => state.p
 export const jobSetsPageOrderSelector = (state: JobSetsPageState) => state.order
 export const jobSetsPageOrderBySelector = (state: JobSetsPageState) => state.orderBy
 export const jobSetsPageItemsSelector = (state: JobSetsPageState) => state.items
-export const jobSetsPageItemCountSelector = (state: JobSetsPageState) => state.items.length
 
 export const jobSetsPageItemIdssOfPageSelector = createSelector(
   jobSetsPageItemsSelector,

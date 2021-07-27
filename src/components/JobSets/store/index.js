@@ -13,7 +13,6 @@ export {
   jobSetsPageOrderSelector,
   jobSetsPageOrderBySelector,
   jobSetsPageItemsSelector,
-  jobSetsPageItemCountSelector,
   jobSetsPageItemIdssOfPageSelector,
   createJobSetsPageItemSelector,
   createItemIsSelectedSelector,

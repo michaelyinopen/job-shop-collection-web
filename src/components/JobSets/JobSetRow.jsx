@@ -29,20 +29,11 @@ const useJobSetRowStyles = makeStyles(theme => createStyles({
   rowWithMenu: {
     backgroundColor: theme.palette.grey[200]
   },
-  // descriptionCell: {
-  //   maxWidth: '700px',
-  // },
   actionsFlexbox: {
     display: 'flex',
     justifyContent: 'space-evenly',
     maxWidth: '96px'
   },
-  // buttonSuccess: {
-  //   backgroundColor: green[500],
-  // },
-  // buttonFailed: {
-  //   backgroundColor: red[500],
-  // },
   textCell: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
