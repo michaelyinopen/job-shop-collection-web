@@ -81,6 +81,12 @@ export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builde
           return unStableSort !== 0 ? unStableSort : aTuple.index - bTuple.index
         })
         .map(({ element }) => element)
+      const startItemIndexOfPage = state.pageIndex * state.rowsPerPage
+      const endItemIndexOfPage = state.pageIndex * state.rowsPerPage + state.rowsPerPage
+      const itemsOfPage = state.items.slice(startItemIndexOfPage, endItemIndexOfPage)
+      if (state.selectedItemIds.some(s => !itemsOfPage.some(r => r.id === s))) {
+        state.selectedItemIds = state.selectedItemIds.filter(s => itemsOfPage.some(r => r.id === s))
+      }
     })
     .addCase(jobSetsPageToggleSelectAll, (state) => {
       const startItemIndexOfPage = state.pageIndex * state.rowsPerPage
