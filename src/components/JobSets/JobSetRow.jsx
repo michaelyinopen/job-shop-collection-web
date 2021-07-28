@@ -1,5 +1,5 @@
 
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { generatePath } from 'react-router'
 import clsx from 'clsx'
@@ -51,6 +51,10 @@ const useJobSetRowStyles = makeStyles(theme => createStyles({
   ...columnStyles(theme)
 }))
 
+/**
+ * jobSetHeaderId must be kept the same
+ * use key=jobSetHeaderId to be sure
+ */
 export const JobSetRow = (props) => {
   const classes = useJobSetRowStyles(props)
   const {
@@ -60,62 +64,54 @@ export const JobSetRow = (props) => {
   } = props
 
   const dispatch = useAppDispatch()
-  const { current: jobSetsPageItemSelector } = useRef(createJobSetsPageItemSelector(id))
+  const jobSetsPageItemSelector = useRef(createJobSetsPageItemSelector(id)).current
   const jobSetHeader = useAppSelector(jobSetsPageItemSelector)
-  const { current: itemIsSelectedSelector } = useRef(createItemIsSelectedSelector(id))
+  const itemIsSelectedSelector = useRef(createItemIsSelectedSelector(id)).current
   const isItemSelected = useAppSelector(itemIsSelectedSelector)
-  //todo
 
   const { push } = useHistory()
-  const [viewJobSetCallback, editJobSetCallback, openInNewTabCallback] = useMemo(
-    () => {
-      const path = generatePath(routePaths.jobSet, { id })
-      const openInNewTabCallback = e => {
-        e.stopPropagation()
-        const win = window.open(path, '_blank')
-        win.focus()
-      }
-      const viewCallback = e => {
-        e.stopPropagation()
-        push(path)
-      }
-      const editPath = generatePath(routePaths.jobSet, { id, edit: "edit" })
-      const editCallback = e => {
-        e.stopPropagation()
-        e.preventDefault()
-        push(editPath)
-      }
-      return [viewCallback, editCallback, openInNewTabCallback]
-    },
-    [push, id]
-  )
+  const viewJobSetCallback = useRef(e => {
+    e.stopPropagation()
+    e.preventDefault()
+    push(generatePath(routePaths.jobSet, { id }))
+  }).current
+  const openInNewTabCallback = useRef(e => {
+    e.stopPropagation()
+    e.preventDefault()
+    const win = window.open(generatePath(routePaths.jobSet, { id }), '_blank')
+    win.focus()
+  }).current
+  const editJobSetCallback = useRef(e => {
+    e.stopPropagation()
+    e.preventDefault()
+    push(generatePath(routePaths.jobSet, { id, edit: "edit" }))
+  }).current
 
   const [menuPosition, setMenuPosition] = useState(null)
   const [anchorEl, setAnchorEl] = useState(null)
   const [anchorReference, setAnchorReference] = useState('none')
   const menuOpen = Boolean(anchorEl) || Boolean(menuPosition)
 
-  const onMoreActionButtonClick = event => {
-    event.stopPropagation()
-    event.preventDefault()
+  const onMoreActionButtonClick = useRef(e => {
+    e.stopPropagation()
+    e.preventDefault()
     setAnchorReference('anchorEl')
-    setAnchorEl(event.currentTarget)
+    setAnchorEl(e.currentTarget)
     setMenuPosition(null)
-  }
-  const onContextMenu = event => {
-    event.stopPropagation()
-    event.preventDefault()
-    const cursorPositon = { top: event.pageY, left: event.pageX }
+  }).current
+  const onContextMenu = useRef(e => {
+    e.stopPropagation()
+    e.preventDefault()
+    const cursorPositon = { top: e.pageY, left: e.pageX }
     setAnchorReference('anchorPosition')
     setMenuPosition(cursorPositon)
     setAnchorEl(null)
-  }
-
-  const handleCloseContextMenu = () => {
+  }).current
+  const handleCloseContextMenu = useRef(() => {
     setAnchorReference('none')
     setMenuPosition(null)
     setAnchorEl(null)
-  }
+  }).current
 
   if (!jobSetHeader) {
     return
