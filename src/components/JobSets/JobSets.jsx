@@ -10,6 +10,7 @@ import {
 import { JobSetsPageContainer } from './JobSetsPageContainer'
 import { JobSetsToolbarTitle } from './JobSetsToolbarTitle'
 import { JobSetsTable } from './JobSetsTable'
+import { JobSetsTablePagination } from './JobSetsTablePagination'
 
 export const JobSets = () => {
   const dispatch = useAppDispatch()
@@ -28,7 +29,7 @@ export const JobSets = () => {
     <JobSetsPageContainer>
       <JobSetsToolbarTitle />
       <JobSetsTable />
-      {/*<JobSetsTablePagination>*/}
+      <JobSetsTablePagination />
     </JobSetsPageContainer>
   )
 }
