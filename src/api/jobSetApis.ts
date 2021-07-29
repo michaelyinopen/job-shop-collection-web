@@ -4,7 +4,7 @@ import type { Result, Failure } from '../utility'
 
 const API_URL = process.env.REACT_APP_API_URL ?? ""
 
-class ApiFailure implements Failure{
+class ApiFailure implements Failure {
   failureType: "API Failure"
   errorMesage: string
   constructor(errorMesage: string) {

@@ -1,5 +1,7 @@
 import { useEffect } from "react"
 import { useAppDispatch, useAppSelector, jobSetHeadersSelector } from '../../store'
+import { addNotification } from '../../notifications'
+import { routePaths } from '../../route'
 import {
   getJobSetsTakingThunkAction,
   jobSetsPageSetItems,
@@ -16,6 +18,14 @@ export const JobSets = () => {
   const dispatch = useAppDispatch()
   useEffect(() => {
     dispatch(getJobSetsTakingThunkAction)
+      .then(result => {
+        if (result?.kind === 'failure') {
+          dispatch(addNotification({
+            summary: "Load Job Sets Failed",
+            matchPath: routePaths.jobSets
+          }))
+        }
+      })
   }, [dispatch])
 
   const isLoading = useAppSelector(jobSetsIsLoadingSelector)

@@ -21,7 +21,7 @@ type JobSetsPageState = {
   rowsPerPage: number
 }
 
-const JobSetsPageInitialState: JobSetsPageState = {
+const jobSetsPageInitialState: JobSetsPageState = {
   items: [],
   order: 'desc',
   orderBy: 'id',
@@ -30,7 +30,7 @@ const JobSetsPageInitialState: JobSetsPageState = {
   rowsPerPage: 10
 }
 
-export const jobSetsPageReducer = createReducer(JobSetsPageInitialState, (builder) => {
+export const jobSetsPageReducer = createReducer(jobSetsPageInitialState, (builder) => {
   builder
     .addCase(jobSetsPageSetItems, (state, { payload }) => {
       // stable sort the items according to state.order and state.orderBy

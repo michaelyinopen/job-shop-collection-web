@@ -2,11 +2,13 @@ import { combineReducers, createSelector } from '@reduxjs/toolkit'
 import type { RootState } from './store'
 
 import * as fromJobSets from '../components/JobSets'
+import * as fromNotifications from '../notifications'
 import { reduxTakingThunkReducer } from '../utility/redux-taking-thunk'
 
 export const reducer = combineReducers({
   jobSets: fromJobSets.jobSetsReducer,
   jobSetsPage: fromJobSets.jobSetsPageReducer,
+  notifications: fromNotifications.notificationsReducer,
   reduxTakingThunk: reduxTakingThunkReducer
 })
 
@@ -61,4 +63,10 @@ export const createJobSetsPageItemSelector = (id: number) => createSelector(
 export const createItemIsSelectedSelector = (id: number) => createSelector(
   jobSetsPageSelector,
   fromJobSets.createItemIsSelectedSelector(id)
+)
+
+const notificationsSelector = (state: RootState) => state.notifications
+export const currentSnackbarNotificationSelector = createSelector(
+  notificationsSelector,
+  fromNotifications.currentSnackbarNotificationSelector
 )

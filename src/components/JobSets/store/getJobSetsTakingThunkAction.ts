@@ -6,7 +6,12 @@ import {
   getNextJobSetsSucceeded
 } from "./actions"
 import { createIsLoadingSelector } from "../../../utility/redux-taking-thunk"
+import { SuccessResult } from "../../../utility"
 
+/** @returns Promise of SuccessResult(undefined) if completed successfully; or
+ * Promise of FailureResult(Failure) if error; or
+ * Promise of undefined if did not complete because another takeLatest action was dispatched
+ */
 export const getJobSetsTakingThunkAction: AppTakingThunkAction = {
   name: 'getJobSets',
   takeType: 'latest',
@@ -16,7 +21,7 @@ export const getJobSetsTakingThunkAction: AppTakingThunkAction = {
       dispatch(getJobSetsSucceeded(getJobSetsResult.success().data))
     } else {
       dispatch(getJobSetsFailed(getJobSetsResult.failure().errorMesage))
-      return
+      return getJobSetsResult
     }
 
     let pageToken: number | undefined = getJobSetsResult.success().nextPageToken
@@ -26,14 +31,15 @@ export const getJobSetsTakingThunkAction: AppTakingThunkAction = {
         dispatch(getNextJobSetsSucceeded(getNextJobSetsResult.success().data))
         const nextPageToken = getNextJobSetsResult.success().nextPageToken
         if (pageToken === nextPageToken) {
-          break
+          return new SuccessResult(undefined)
         }
         pageToken = nextPageToken
       } else {
         dispatch(getJobSetsFailed(getNextJobSetsResult.failure().errorMesage))
-        return
+        return getJobSetsResult
       }
     }
+    return new SuccessResult(undefined)
   }
 }
 
