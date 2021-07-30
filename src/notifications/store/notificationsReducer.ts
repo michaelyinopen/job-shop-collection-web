@@ -11,7 +11,7 @@ export type NotificationSimpleSource = {
   id: string,
   matchPath?: string,
   summary: string,
-  detail?: string,
+  /*detail?: string,*/
 }
 export type NotificationTemplateSource = {
   id: string,

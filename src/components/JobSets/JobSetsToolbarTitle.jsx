@@ -22,6 +22,8 @@ import {
   jobSetsPageSelectedItemIdsSelector,
   jobSetsFailedMessageSelector,
 } from '../../store'
+import { addNotification } from '../../notifications'
+import { routePaths } from '../../route'
 import { ProgressOverlay } from '../../styles'
 import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
 import {
@@ -86,6 +88,15 @@ const JobSetsTitle = () => {
   const dispatch = useAppDispatch()
   const reloadCallback = useCallback(() => {
     dispatch(getJobSetsTakingThunkAction)
+      .then(result => {
+        console.log('then')
+        if (result?.kind === 'failure') {
+          dispatch(addNotification({
+            summary: "Load Job Sets Failed",
+            matchPath: routePaths.jobSets
+          }))
+        }
+      })
   }, [dispatch])
 
   const isLoading = useAppSelector(jobSetsIsLoadingSelector)

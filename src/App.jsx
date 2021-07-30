@@ -13,6 +13,7 @@ import { Home } from './components/Home'
 import { About } from './components/About'
 import { PageNotFound } from './components/PageNotFound'
 import { JobSets } from './components/JobSets'
+import { AppSnackbar } from './notifications'
 
 export function App() {
   return (
@@ -27,6 +28,7 @@ export function App() {
               <Route exact path={routePaths.jobSets} component={JobSets} />
               <Route component={PageNotFound} />
             </Switch>
+            <AppSnackbar />
           </Layout>
         </BrowserRouter>
       </ThemeProvider>

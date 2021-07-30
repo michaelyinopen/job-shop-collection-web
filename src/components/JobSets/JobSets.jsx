@@ -19,6 +19,7 @@ export const JobSets = () => {
   useEffect(() => {
     dispatch(getJobSetsTakingThunkAction)
       .then(result => {
+        console.log('then')
         if (result?.kind === 'failure') {
           dispatch(addNotification({
             summary: "Load Job Sets Failed",
