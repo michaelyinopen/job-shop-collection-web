@@ -34,8 +34,11 @@ const useStyles = makeStyles(theme => createStyles({
     margin: theme.spacing(1),
   },
   separator: { flexGrow: 1 },
+  center: {
+    textAlign: 'center'
+  },
   list: {
-    listStyleType: "none",
+    listStyleType: 'none',
     marginBlockStart: 0,
     marginBlockEnd: 0,
     marginInlineStart: 0,
@@ -81,6 +84,9 @@ export const NotificationDrawer = () => {
         </IconButton>
       </Toolbar>
       <div className={classes.drawerContent}>
+        {allNotifications.length === 0
+          ? <div className={classes.center}>No new notifications</div>
+          : null}
         <ol className={classes.list}>
           {allNotifications.map(n => (
             <Card className={classes.card}>

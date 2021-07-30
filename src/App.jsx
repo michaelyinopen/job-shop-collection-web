@@ -13,7 +13,8 @@ import { Home } from './components/Home'
 import { About } from './components/About'
 import { PageNotFound } from './components/PageNotFound'
 import { JobSets } from './components/JobSets'
-import { AppSnackbar } from './notifications'
+
+import { AppSnackbar, NotificationDrawer } from './notifications'
 
 export function App() {
   return (
@@ -29,6 +30,7 @@ export function App() {
               <Route component={PageNotFound} />
             </Switch>
             <AppSnackbar />
+            <NotificationDrawer />
           </Layout>
         </BrowserRouter>
       </ThemeProvider>
