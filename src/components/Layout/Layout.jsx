@@ -1,4 +1,5 @@
 import { makeStyles, createStyles } from '@material-ui/core'
+import { NotificationDrawer } from '../../notifications'
 import { AppBar } from './AppBar'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -21,6 +22,7 @@ export const Layout = props => {
       <AppBar />
       <div className={classes.container}>
         {props.children}
+        <NotificationDrawer />
       </div>
     </div>
   )

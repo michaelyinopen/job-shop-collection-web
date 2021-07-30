@@ -52,7 +52,7 @@ export const theme = responsiveFontSizes(
           fontWeight: 700,
         }
       },
-      MuiTableCell:{
+      MuiTableCell: {
         paddingCheckbox: {
           boxSizing: 'content-box'
         }

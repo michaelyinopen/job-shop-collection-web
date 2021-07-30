@@ -6,6 +6,7 @@ import {
   Typography,
   Button,
   IconButton,
+  Tooltip,
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
@@ -14,8 +15,11 @@ import HomeIcon from '@material-ui/icons/Home'
 import ListIcon from '@material-ui/icons/List'
 import InfoIcon from '@material-ui/icons/Info'
 import GitHubIcon from '@material-ui/icons/GitHub'
+import MessageIcon from '@material-ui/icons/Message'
 
 import { HomeLink, JobSetsLink, AboutLink } from '../../route'
+import { useAppDispatch } from '../../store'
+import { openDrawer } from '../../notifications'
 import { LabeledIconButton } from './LabeledIconButton'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -37,7 +41,8 @@ const useStyles = makeStyles(theme => createStyles({
 }))
 
 const WideAppBar = ({
-  classes
+  classes,
+  openDrawerCallback
 }) => {
   return (
     <MuiAppBar position="static">
@@ -77,13 +82,24 @@ const WideAppBar = ({
         >
           About
         </Button>
+        <Tooltip title="Notifications">
+          <IconButton
+            className={classes.button}
+            color="inherit"
+            variant="outlined"
+            onClick={openDrawerCallback}
+          >
+            <MessageIcon />
+          </IconButton>
+        </Tooltip>
       </Toolbar>
     </MuiAppBar>
   )
 }
 
 const NarrowAppBar = ({
-  classes
+  classes,
+  openDrawerCallback
 }) => {
   return (
     <MuiAppBar position="static">
@@ -99,14 +115,14 @@ const NarrowAppBar = ({
           component={JobSetsLink}
         />
         <LabeledIconButton
-          icon={<GitHubIcon fontSize="small" />}
-          label="Code"
-          href="https://github.com/michaelyinopen/job-shop-collection-web"
-        />
-        <LabeledIconButton
           icon={<InfoIcon fontSize="small" />}
           label="About"
           component={AboutLink}
+        />
+        <LabeledIconButton
+          icon={<MessageIcon fontSize="small" />}
+          label="Notifications"
+          onClick={openDrawerCallback}
         />
       </Toolbar>
     </MuiAppBar>
@@ -118,5 +134,12 @@ export const AppBar = () => {
   const theme = useTheme()
   const widerThanSmall = useMediaQuery(theme.breakpoints.up('sm'))
 
-  return widerThanSmall ? <WideAppBar classes={classes} /> : <NarrowAppBar classes={classes} />
+  const dispatch = useAppDispatch()
+  const openDrawerCallback = e => {
+    dispatch(openDrawer())
+  }
+
+  return widerThanSmall
+    ? <WideAppBar classes={classes} openDrawerCallback={openDrawerCallback} />
+    : <NarrowAppBar classes={classes} openDrawerCallback={openDrawerCallback} />
 }

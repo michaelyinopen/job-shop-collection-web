@@ -66,7 +66,23 @@ export const createItemIsSelectedSelector = (id: number) => createSelector(
 )
 
 const notificationsSelector = (state: RootState) => state.notifications
+export const allNotificationsSelector = createSelector(
+  notificationsSelector,
+  fromNotifications.allNotificationsSelector
+)
+
 export const currentSnackbarNotificationSelector = createSelector(
   notificationsSelector,
   fromNotifications.currentSnackbarNotificationSelector
 )
+
+export const haveQueuedNotificationsSelector = createSelector(
+  notificationsSelector,
+  fromNotifications.haveQueuedNotificationsSelector
+)
+
+export const isNotificationDrawerOpenSelector = createSelector(
+  notificationsSelector,
+  fromNotifications.isNotificationDrawerOpenSelector
+)
+

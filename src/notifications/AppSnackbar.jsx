@@ -8,6 +8,7 @@ import {
   useAppDispatch,
   useAppSelector,
   currentSnackbarNotificationSelector,
+  haveQueuedNotificationsSelector,
 } from '../store'
 import {
   openSnackbar,
@@ -20,6 +21,7 @@ export const AppSnackbar = () => {
   const currentNotification = useAppSelector(currentSnackbarNotificationSelector)
   const dispatch = useAppDispatch()
 
+  // skip notification if current path does not match
   const location = useLocation()
   useEffect(() => {
     if (!currentNotification) {
@@ -37,6 +39,19 @@ export const AppSnackbar = () => {
       }
     }
   }, [currentNotification, location.pathname, dispatch])
+
+  // start closing snackbar immidiately if there are more notifications queued
+  const haveQueued = useAppSelector(haveQueuedNotificationsSelector)
+  useEffect(() => {
+    if (!currentNotification) {
+      return
+    }
+    if (haveQueued) {
+      dispatch(closingSnackbar(currentNotification.id))
+      // dispatch exitedSnackbar in case the Snackbar for an id is never rendered
+      setTimeout(() => dispatch(exitedSnackbar(currentNotification.id)), 300)
+    }
+  }, [currentNotification, haveQueued, dispatch])
 
   if (!currentNotification) {
     return null

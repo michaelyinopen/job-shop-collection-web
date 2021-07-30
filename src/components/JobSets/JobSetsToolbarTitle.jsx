@@ -20,7 +20,6 @@ import {
   useAppDispatch,
   useAppSelector,
   jobSetsPageSelectedItemIdsSelector,
-  jobSetsFailedMessageSelector,
 } from '../../store'
 import { addNotification } from '../../notifications'
 import { routePaths } from '../../route'
@@ -89,7 +88,6 @@ const JobSetsTitle = () => {
   const reloadCallback = useCallback(() => {
     dispatch(getJobSetsTakingThunkAction)
       .then(result => {
-        console.log('then')
         if (result?.kind === 'failure') {
           dispatch(addNotification({
             summary: "Load Job Sets Failed",
@@ -100,7 +98,6 @@ const JobSetsTitle = () => {
   }, [dispatch])
 
   const isLoading = useAppSelector(jobSetsIsLoadingSelector)
-  const failedMessage = useAppSelector(jobSetsFailedMessageSelector)
 
   return (
     <>
@@ -112,9 +109,6 @@ const JobSetsTitle = () => {
           <RefreshIcon />
         </IconButton>
       </ProgressOverlay>
-      <Typography color="error">
-        {failedMessage}
-      </Typography>
       <Button
         component={NewJobSetLink}
         variant="contained"

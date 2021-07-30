@@ -45,3 +45,9 @@ export type ClassKeyOfStyles<StylesOrClassKey> = StylesOrClassKey extends string
   : never;
 ```
 Example see `components\Layout\LabeledIconButton.tsx` that allows overriding classes of MuiButton. If only className is required, simply use e.g. `styles/PageContainer.jsx`.
+
+Development warning in browser console:
+```
+Warning: findDOMNode is deprecated in StrictMode.
+```
+is caused by library Material-UI, can ignore
