@@ -14,22 +14,19 @@ import {
   MenuItem,
   ListItemIcon,
 } from '@material-ui/core'
-import MoreVertIcon from '@material-ui/icon/MoreVert'
-import ForwardIcon from '@material-ui/icon/Forward'
-import EditIcon from '@material-ui/icon/Edit'
-import OpenInNewIcon from '@material-ui/icon/OpenInNew'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import ForwardIcon from '@material-ui/icons/Forward'
+import EditIcon from '@material-ui/icons/Edit'
+import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import { preventDefaultPropagation } from '../../utility'
 import { routePaths } from '../../route'
-import {
-  useAppDispatch,
-  useAppSelector,
-  createJobSetsPageItemSelector,
-  createItemIsSelectedSelector,
-} from '../../store'
+import { useAppDispatch, useAppSelector } from '../../store'
 import { columnStyles } from './columnStyles'
 import {
   jobSetsPageSelectOne,
   jobSetsPageUnselectOne,
+  createJobSetsPageItemSelector,
+  createItemIsSelectedSelector,
 } from './store'
 
 const useJobSetRowStyles = makeStyles(theme => createStyles({

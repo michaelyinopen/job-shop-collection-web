@@ -1,12 +1,13 @@
-import { createReducer } from '@reduxjs/toolkit'
-import type { EntityState, EntityId } from '@reduxjs/toolkit'
+import { createReducer, createSelector } from '@reduxjs/toolkit'
+import type { EntityState, EntityId, Dictionary } from '@reduxjs/toolkit'
+import { createCustomReducer, backwardCompose } from '../../../utility'
+import { jobSetsSelector } from '../../../store'
+import type { JobSetHeaderDto } from '../../../api'
 import {
   getJobSetsSucceeded,
   getNextJobSetsSucceeded,
   getJobSetsFailed
 } from './actions'
-import { createCustomReducer } from '../../../utility'
-import type { JobSetHeaderDto } from '../../../api'
 
 type JobSetState = {
   id: number;
@@ -126,7 +127,15 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
     })
 })
 
-export const jobSetIdsSelector = (state: EntityState<JobSetState>) => state.ids as number[]
+const jobSetIdsSelector = backwardCompose(
+  jobSetsSelector,
+  (state: EntityState<JobSetState>) => state.ids
+)
+
+const jobSetEntitiesSelector = backwardCompose(
+  jobSetsSelector,
+  (state: EntityState<JobSetState>) => state.entities
+)
 
 export type JobSetHeader = {
   id: number,
@@ -136,17 +145,24 @@ export type JobSetHeader = {
   eTag?: string
 }
 
-export const jobSetHeadersSelector =
-  (state: EntityState<JobSetState>) => state.ids.map((id: EntityId) => {
-    const entity = state.entities[id]!
-    return {
-      id: entity.id,
-      title: entity.title,
-      description: entity.description,
-      isLocked: entity.isLocked,
-      eTag: entity.eTag,
-    }
-  })
+export const jobSetHeadersSelector = createSelector(
+  jobSetIdsSelector,
+  jobSetEntitiesSelector,
+  (ids: EntityId[], entities: Dictionary<JobSetState>) => {
+    return ids.map((id: EntityId) => {
+      const entity = entities[id]!
+      return {
+        id: entity.id,
+        title: entity.title,
+        description: entity.description,
+        isLocked: entity.isLocked,
+        eTag: entity.eTag,
+      }
+    })
+  }
+)
 
-export const jobSetsFailedMessageSelector = (state: JobSetsState) => state.loadFailedMessage
-
+export const jobSetsFailedMessageSelector = backwardCompose(
+  jobSetsSelector,
+  (state: JobSetsState) => state.loadFailedMessage
+)

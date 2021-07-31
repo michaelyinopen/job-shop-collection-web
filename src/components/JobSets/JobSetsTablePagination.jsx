@@ -2,16 +2,13 @@ import {
   TablePagination,
 } from '@material-ui/core'
 import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
-import {
-  useAppDispatch,
-  useAppSelector,
-  jobSetsPageRowsPerPageSelector,
-  jobSetsPageItemsSelector,
-  jobSetsPagePageIndexSelector,
-} from '../../store'
+import { useAppDispatch, useAppSelector } from '../../store'
 import {
   jobSetsPageChangePage,
   jobSetsPageChangeRowsPerPage,
+  jobSetsPageRowsPerPageSelector,
+  jobSetsPageItemsSelector,
+  jobSetsPagePageIndexSelector,
 } from './store'
 
 export const JobSetsTablePagination = () => {

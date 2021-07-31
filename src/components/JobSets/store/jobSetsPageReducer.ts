@@ -1,4 +1,6 @@
 import { createReducer, createSelector } from '@reduxjs/toolkit'
+import { backwardCompose } from '../../../utility'
+import { jobSetsPageSelector } from '../../../store'
 import {
   jobSetsPageSetItems,
   jobSetsPageToggleSort,
@@ -138,13 +140,30 @@ export const jobSetsPageReducer = createReducer(jobSetsPageInitialState, (builde
     })
 })
 
-export const jobSetsPageSelectedItemIdsSelector = (state: JobSetsPageState) => state.selectedItemIds
-export const jobSetsPageRowsPerPageSelector = (state: JobSetsPageState) => state.rowsPerPage
-export const jobSetsPagePageIndexSelector = (state: JobSetsPageState) => state.pageIndex
-export const jobSetsPageOrderSelector = (state: JobSetsPageState) => state.order
-export const jobSetsPageOrderBySelector = (state: JobSetsPageState) => state.orderBy
-export const jobSetsPageItemsSelector = (state: JobSetsPageState) => state.items
-
+export const jobSetsPageSelectedItemIdsSelector = backwardCompose(
+  jobSetsPageSelector,
+  (state: JobSetsPageState) => state.selectedItemIds
+)
+export const jobSetsPageRowsPerPageSelector = backwardCompose(
+  jobSetsPageSelector,
+  (state: JobSetsPageState) => state.rowsPerPage
+)
+export const jobSetsPagePageIndexSelector = backwardCompose(
+  jobSetsPageSelector,
+  (state: JobSetsPageState) => state.pageIndex
+)
+export const jobSetsPageOrderSelector = backwardCompose(
+  jobSetsPageSelector,
+  (state: JobSetsPageState) => state.order
+)
+export const jobSetsPageOrderBySelector = backwardCompose(
+  jobSetsPageSelector,
+  (state: JobSetsPageState) => state.orderBy
+)
+export const jobSetsPageItemsSelector = backwardCompose(
+  jobSetsPageSelector,
+  (state: JobSetsPageState) => state.items
+)
 export const jobSetsPageItemIdssOfPageSelector = createSelector(
   jobSetsPageItemsSelector,
   jobSetsPageRowsPerPageSelector,
@@ -155,12 +174,10 @@ export const jobSetsPageItemIdssOfPageSelector = createSelector(
       .map(h => h.id)
   }
 )
-
 export const createJobSetsPageItemSelector = (id: number) => createSelector(
   jobSetsPageItemsSelector,
   (items: JobSetHeader[]) => items.find(h => h.id === id)
 )
-
 export const createItemIsSelectedSelector = (id: number) => createSelector(
   jobSetsPageSelectedItemIdsSelector,
   (selectedItemIds: number[]) => selectedItemIds.includes(id)

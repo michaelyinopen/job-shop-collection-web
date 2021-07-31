@@ -1,12 +1,13 @@
 import { useEffect } from "react"
-import { useAppDispatch, useAppSelector, jobSetHeadersSelector } from '../../store'
+import { useAppDispatch, useAppSelector } from '../../store'
 import { addNotification } from '../../notifications'
 import { routePaths } from '../../route'
 import {
   getJobSetsTakingThunkAction,
   jobSetsPageSetItems,
   jobSetsPageReset,
-  jobSetsIsLoadingSelector
+  jobSetsIsLoadingSelector,
+  jobSetHeadersSelector
 } from './store'
 
 import { JobSetsPageContainer } from './JobSetsPageContainer'

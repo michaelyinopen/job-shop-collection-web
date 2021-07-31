@@ -1,5 +1,7 @@
 import { createReducer, createSelector } from '@reduxjs/toolkit'
 import { compareDesc, parseISO } from 'date-fns'
+import { backwardCompose } from '../../utility'
+import { notificationsSelector } from '../../store'
 import {
   openSnackbar,
   closingSnackbar,
@@ -91,7 +93,11 @@ export const notificationsReducer = createReducer(initialState, (builder) => {
     })
 })
 
-export const notificationItemsSelector = (state: NotificationsState) => state.items
+export const notificationItemsSelector = state => notificationsSelector(state).items
+// export const notificationItemsSelector = backwardCompose(
+//   notificationsSelector,
+//   (state: NotificationsState) => state.items
+// )
 
 export const allNotificationsSelector = createSelector(
   notificationItemsSelector,
@@ -109,4 +115,8 @@ export const haveQueuedNotificationsSelector = createSelector(
   items => items.filter(n => ['pending', 'open', 'closing'].includes(n.status)).length > 1
 )
 
-export const isNotificationDrawerOpenSelector = (state: NotificationsState) => state.isDrawerOpen
+export const isNotificationDrawerOpenSelector = state => notificationsSelector(state).isDrawerOpen
+// export const isNotificationDrawerOpenSelector = backwardCompose(
+//   notificationsSelector,
+//   (state: NotificationsState) => state.isDrawerOpen
+// )

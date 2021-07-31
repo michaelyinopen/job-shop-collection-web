@@ -1,6 +1,5 @@
 export {
   jobSetsReducer,
-  jobSetIdsSelector,
   jobSetHeadersSelector,
   jobSetsFailedMessageSelector,
 } from './jobSetsReducer'

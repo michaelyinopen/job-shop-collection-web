@@ -10,22 +10,19 @@ import {
   IconButton,
   CircularProgress,
 } from '@material-ui/core'
-import AddIcon from '@material-ui/icon/Add'
-import DeleteIcon from '@material-ui/icon/Delete'
-import RefreshIcon from '@material-ui/icon/Refresh'
+import AddIcon from '@material-ui/icons/Add'
+import DeleteIcon from '@material-ui/icons/Delete'
+import RefreshIcon from '@material-ui/icons/Refresh'
 import { NewJobSetLink } from '../../route'
-import {
-  useAppDispatch,
-  useAppSelector,
-  jobSetsPageSelectedItemIdsSelector,
-} from '../../store'
+import { useAppDispatch, useAppSelector, } from '../../store'
 import { addNotification } from '../../notifications'
 import { routePaths } from '../../route'
 import { ProgressOverlay } from '../../styles'
 import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
 import {
   getJobSetsTakingThunkAction,
-  jobSetsIsLoadingSelector
+  jobSetsIsLoadingSelector,
+  jobSetsPageSelectedItemIdsSelector,
 } from './store'
 
 const useJobSetsSelectedToolbarStyles = makeStyles(theme => createStyles({
