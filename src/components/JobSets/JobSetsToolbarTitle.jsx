@@ -10,11 +10,9 @@ import {
   IconButton,
   CircularProgress,
 } from '@material-ui/core'
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Refresh as RefreshIcon,
-} from '@material-ui/icons'
+import AddIcon from '@material-ui/icon/Add'
+import DeleteIcon from '@material-ui/icon/Delete'
+import RefreshIcon from '@material-ui/icon/Refresh'
 import { NewJobSetLink } from '../../route'
 import {
   useAppDispatch,

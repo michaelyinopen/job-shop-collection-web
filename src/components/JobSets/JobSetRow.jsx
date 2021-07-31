@@ -14,12 +14,10 @@ import {
   MenuItem,
   ListItemIcon,
 } from '@material-ui/core'
-import {
-  MoreVert as MoreVertIcon,
-  Forward as ForwardIcon,
-  Edit as EditIcon,
-  OpenInNew as OpenInNewIcon,
-} from '@material-ui/icons'
+import MoreVertIcon from '@material-ui/icon/MoreVert'
+import ForwardIcon from '@material-ui/icon/Forward'
+import EditIcon from '@material-ui/icon/Edit'
+import OpenInNewIcon from '@material-ui/icon/OpenInNew'
 import { preventDefaultPropagation } from '../../utility'
 import { routePaths } from '../../route'
 import {
