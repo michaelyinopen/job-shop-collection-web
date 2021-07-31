@@ -100,6 +100,7 @@ export const getNotificationsSelectors = (notificationsSelector: (rootState: any
   const allNotificationsSelector = createSelector(
     notificationItemsSelector,
     items => [...items]
+      .reverse() // in case same dateTimeIso
       .sort((a, b) => compareDesc(parseISO(a.dateTimeIso), parseISO(b.dateTimeIso)))
   )
   const currentSnackbarNotificationSelector = createSelector(
