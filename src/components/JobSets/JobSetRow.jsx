@@ -20,13 +20,16 @@ import EditIcon from '@material-ui/icons/Edit'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
 import { preventDefaultPropagation } from '../../utility'
 import { routePaths } from '../../route'
-import { useAppDispatch, useAppSelector } from '../../store'
+import {
+  useAppDispatch,
+  useAppSelector,
+  createJobSetsPageItemSelector,
+  createItemIsSelectedSelector,
+} from '../../store'
 import { columnStyles } from './columnStyles'
 import {
   jobSetsPageSelectOne,
   jobSetsPageUnselectOne,
-  createJobSetsPageItemSelector,
-  createItemIsSelectedSelector,
 } from './store'
 
 const useJobSetRowStyles = makeStyles(theme => createStyles({

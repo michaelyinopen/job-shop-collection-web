@@ -1,6 +1,5 @@
 import { createReducer, createSelector } from '@reduxjs/toolkit'
 import { backwardCompose } from '../../../utility'
-import { jobSetsPageSelector } from '../../../store'
 import {
   jobSetsPageSetItems,
   jobSetsPageToggleSort,
@@ -140,45 +139,59 @@ export const jobSetsPageReducer = createReducer(jobSetsPageInitialState, (builde
     })
 })
 
-export const jobSetsPageSelectedItemIdsSelector = backwardCompose(
-  jobSetsPageSelector,
-  (state: JobSetsPageState) => state.selectedItemIds
-)
-export const jobSetsPageRowsPerPageSelector = backwardCompose(
-  jobSetsPageSelector,
-  (state: JobSetsPageState) => state.rowsPerPage
-)
-export const jobSetsPagePageIndexSelector = backwardCompose(
-  jobSetsPageSelector,
-  (state: JobSetsPageState) => state.pageIndex
-)
-export const jobSetsPageOrderSelector = backwardCompose(
-  jobSetsPageSelector,
-  (state: JobSetsPageState) => state.order
-)
-export const jobSetsPageOrderBySelector = backwardCompose(
-  jobSetsPageSelector,
-  (state: JobSetsPageState) => state.orderBy
-)
-export const jobSetsPageItemsSelector = backwardCompose(
-  jobSetsPageSelector,
-  (state: JobSetsPageState) => state.items
-)
-export const jobSetsPageItemIdssOfPageSelector = createSelector(
-  jobSetsPageItemsSelector,
-  jobSetsPageRowsPerPageSelector,
-  jobSetsPagePageIndexSelector,
-  (items: JobSetHeader[], rowsPerPage: number, pageIndex: number) => {
-    return items
-      .slice(pageIndex * rowsPerPage, pageIndex * rowsPerPage + rowsPerPage)
-      .map(h => h.id)
+export const getJobSetsPageSelectors = (jobSetsPageSelector: (rootState: any) => JobSetsPageState) => {
+  const jobSetsPageSelectedItemIdsSelector = backwardCompose(
+    jobSetsPageSelector,
+    (state: JobSetsPageState) => state.selectedItemIds
+  )
+  const jobSetsPageRowsPerPageSelector = backwardCompose(
+    jobSetsPageSelector,
+    (state: JobSetsPageState) => state.rowsPerPage
+  )
+  const jobSetsPagePageIndexSelector = backwardCompose(
+    jobSetsPageSelector,
+    (state: JobSetsPageState) => state.pageIndex
+  )
+  const jobSetsPageOrderSelector = backwardCompose(
+    jobSetsPageSelector,
+    (state: JobSetsPageState) => state.order
+  )
+  const jobSetsPageOrderBySelector = backwardCompose(
+    jobSetsPageSelector,
+    (state: JobSetsPageState) => state.orderBy
+  )
+  const jobSetsPageItemsSelector = backwardCompose(
+    jobSetsPageSelector,
+    (state: JobSetsPageState) => state.items
+  )
+  const jobSetsPageItemIdssOfPageSelector = createSelector(
+    jobSetsPageItemsSelector,
+    jobSetsPageRowsPerPageSelector,
+    jobSetsPagePageIndexSelector,
+    (items: JobSetHeader[], rowsPerPage: number, pageIndex: number) => {
+      return items
+        .slice(pageIndex * rowsPerPage, pageIndex * rowsPerPage + rowsPerPage)
+        .map(h => h.id)
+    }
+  )
+  const createJobSetsPageItemSelector = (id: number) => createSelector(
+    jobSetsPageItemsSelector,
+    (items: JobSetHeader[]) => items.find(h => h.id === id)
+  )
+  const createItemIsSelectedSelector = (id: number) => createSelector(
+    jobSetsPageSelectedItemIdsSelector,
+    (selectedItemIds: number[]) => selectedItemIds.includes(id)
+  )
+
+  return {
+    jobSetsPageSelectedItemIdsSelector,
+    jobSetsPageRowsPerPageSelector,
+    jobSetsPagePageIndexSelector,
+    jobSetsPageOrderSelector,
+    jobSetsPageOrderBySelector,
+    jobSetsPageItemsSelector,
+    jobSetsPageItemIdssOfPageSelector,
+    createJobSetsPageItemSelector,
+    createItemIsSelectedSelector,
   }
-)
-export const createJobSetsPageItemSelector = (id: number) => createSelector(
-  jobSetsPageItemsSelector,
-  (items: JobSetHeader[]) => items.find(h => h.id === id)
-)
-export const createItemIsSelectedSelector = (id: number) => createSelector(
-  jobSetsPageSelectedItemIdsSelector,
-  (selectedItemIds: number[]) => selectedItemIds.includes(id)
-)
+}

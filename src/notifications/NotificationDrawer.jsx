@@ -9,12 +9,13 @@ import {
 } from '@material-ui/core'
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import CloseIcon from '@material-ui/icons/Close'
-import { useAppDispatch, useAppSelector, } from '../store'
 import {
-  closeDrawer,
+  useAppDispatch,
+  useAppSelector,
   isNotificationDrawerOpenSelector,
   allNotificationsSelector,
-} from './store'
+} from '../store'
+import { closeDrawer } from './store'
 
 const useStyles = makeStyles(theme => createStyles({
   drawerContainer: {

@@ -14,15 +14,18 @@ import AddIcon from '@material-ui/icons/Add'
 import DeleteIcon from '@material-ui/icons/Delete'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import { NewJobSetLink } from '../../route'
-import { useAppDispatch, useAppSelector, } from '../../store'
+import {
+  useAppDispatch,
+  useAppSelector,
+  jobSetsPageSelectedItemIdsSelector,
+} from '../../store'
 import { addNotification } from '../../notifications'
 import { routePaths } from '../../route'
 import { ProgressOverlay } from '../../styles'
 import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
 import {
   getJobSetsTakingThunkAction,
-  jobSetsIsLoadingSelector,
-  jobSetsPageSelectedItemIdsSelector,
+  jobSetsIsLoadingSelector
 } from './store'
 
 const useJobSetsSelectedToolbarStyles = makeStyles(theme => createStyles({

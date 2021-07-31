@@ -1,9 +1,6 @@
 export {
   notificationsReducer,
-  allNotificationsSelector,
-  currentSnackbarNotificationSelector,
-  haveQueuedNotificationsSelector,
-  isNotificationDrawerOpenSelector,
+  getNotificationsSelectors,
 } from './notificationsReducer'
 
 export {

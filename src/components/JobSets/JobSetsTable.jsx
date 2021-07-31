@@ -9,17 +9,20 @@ import {
   TableCell,
   TableSortLabel,
 } from '@material-ui/core'
-import { useAppDispatch, useAppSelector } from '../../store'
-import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
-import { columnStyles } from './columnStyles'
 import {
-  jobSetsPageToggleSelectAll,
-  jobSetsPageToggleSort,
+  useAppDispatch,
+  useAppSelector,
   jobSetsPageItemIdssOfPageSelector,
   jobSetsPageSelectedItemIdsSelector,
   jobSetsPageRowsPerPageSelector,
   jobSetsPageOrderSelector,
   jobSetsPageOrderBySelector,
+} from '../../store'
+import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
+import { columnStyles } from './columnStyles'
+import {
+  jobSetsPageToggleSelectAll,
+  jobSetsPageToggleSort,
 } from './store'
 import { JobSetRow } from './JobSetRow'
 

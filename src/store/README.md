@@ -31,15 +31,16 @@ Use `import { createSelector } from '@reduxjs/toolkit'` for memoized and combine
 Can use `backwardCompose` to functionally compose selectors.
 
 ### Circular reference
-"feature"'s selector will reference parent(root) reducer's seletor functions,\
+Tried to reference parent selector from "feature" reducer file, but failed because got undefined.\
+~~"feature"'s selector will reference parent(root) reducer's seletor functions,\
 which causes the two reducer files to have circular references with each other.\
-This is intentional and ES6 import can handle it.
+This is intentional and ES6 import can handle it.~~
 
-Pro:
-- do not need to re-export all (enhanced) selectors in the root store
-- some createSelector will be easier to write
+### export getFeatureSelectors
+"feature" selectors will be exported using a get{Feature}Selectors, that takes the slice selector 
+to create the completed reducers, and return an object with selector properties.
 
-Con:
-- "feature" unnecessarily knows details of the parent
-- circular dependency
-- (neutral) emphasis the "feature" classification
+The selectors will be re-exported in the `./store/selectors` file.
+
+TakingThunk isLoading selectors are not exported by `./store/selectors`,
+because that slice have a fixed location in the root state.

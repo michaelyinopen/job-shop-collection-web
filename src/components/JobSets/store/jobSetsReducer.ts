@@ -1,7 +1,6 @@
 import { createReducer, createSelector } from '@reduxjs/toolkit'
 import type { EntityState, EntityId, Dictionary } from '@reduxjs/toolkit'
 import { createCustomReducer, backwardCompose } from '../../../utility'
-import { jobSetsSelector } from '../../../store'
 import type { JobSetHeaderDto } from '../../../api'
 import {
   getJobSetsSucceeded,
@@ -127,16 +126,6 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
     })
 })
 
-const jobSetIdsSelector = backwardCompose(
-  jobSetsSelector,
-  (state: EntityState<JobSetState>) => state.ids
-)
-
-const jobSetEntitiesSelector = backwardCompose(
-  jobSetsSelector,
-  (state: EntityState<JobSetState>) => state.entities
-)
-
 export type JobSetHeader = {
   id: number,
   title?: string,
@@ -145,24 +134,40 @@ export type JobSetHeader = {
   eTag?: string
 }
 
-export const jobSetHeadersSelector = createSelector(
-  jobSetIdsSelector,
-  jobSetEntitiesSelector,
-  (ids: EntityId[], entities: Dictionary<JobSetState>) => {
-    return ids.map((id: EntityId) => {
-      const entity = entities[id]!
-      return {
-        id: entity.id,
-        title: entity.title,
-        description: entity.description,
-        isLocked: entity.isLocked,
-        eTag: entity.eTag,
-      }
-    })
-  }
-)
+export const getJobSetsSelectors = (jobSetsSelector: (rootState: any) => JobSetsState) => {
+  const jobSetIdsSelector = backwardCompose(
+    jobSetsSelector,
+    (state: JobSetsState) => state.ids
+  )
 
-export const jobSetsFailedMessageSelector = backwardCompose(
-  jobSetsSelector,
-  (state: JobSetsState) => state.loadFailedMessage
-)
+  const jobSetEntitiesSelector = backwardCompose(
+    jobSetsSelector,
+    (state: JobSetsState) => state.entities
+  )
+
+  const jobSetHeadersSelector = createSelector(
+    jobSetIdsSelector,
+    jobSetEntitiesSelector,
+    (ids: EntityId[], entities: Dictionary<JobSetState>) => {
+      return ids.map((id: EntityId) => {
+        const entity = entities[id]!
+        return {
+          id: entity.id,
+          title: entity.title,
+          description: entity.description,
+          isLocked: entity.isLocked,
+          eTag: entity.eTag,
+        }
+      })
+    }
+  )
+
+  const jobSetsFailedMessageSelector = backwardCompose(
+    jobSetsSelector,
+    (state: JobSetsState) => state.loadFailedMessage
+  )
+  return {
+    jobSetHeadersSelector,
+    jobSetsFailedMessageSelector
+  }
+}

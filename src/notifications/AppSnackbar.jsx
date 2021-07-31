@@ -4,14 +4,17 @@ import { useLocation } from 'react-router-dom'
 import {
   Snackbar,
 } from '@material-ui/core'
-import { useAppDispatch, useAppSelector } from '../store'
+import {
+  useAppDispatch,
+  useAppSelector,
+  currentSnackbarNotificationSelector,
+  haveQueuedNotificationsSelector,
+} from '../store'
 import {
   openSnackbar,
   closingSnackbar,
   exitedSnackbar,
   skipSnackbar,
-  currentSnackbarNotificationSelector,
-  haveQueuedNotificationsSelector,
 } from './store'
 
 export const AppSnackbar = () => {

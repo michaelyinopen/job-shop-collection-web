@@ -1,7 +1,6 @@
 import { createReducer, createSelector } from '@reduxjs/toolkit'
 import { compareDesc, parseISO } from 'date-fns'
 import { backwardCompose } from '../../utility'
-import { notificationsSelector } from '../../store'
 import {
   openSnackbar,
   closingSnackbar,
@@ -93,30 +92,32 @@ export const notificationsReducer = createReducer(initialState, (builder) => {
     })
 })
 
-export const notificationItemsSelector = state => notificationsSelector(state).items
-// export const notificationItemsSelector = backwardCompose(
-//   notificationsSelector,
-//   (state: NotificationsState) => state.items
-// )
-
-export const allNotificationsSelector = createSelector(
-  notificationItemsSelector,
-  items => [...items]
-    .sort((a, b) => compareDesc(parseISO(a.dateTimeIso), parseISO(b.dateTimeIso)))
-)
-
-export const currentSnackbarNotificationSelector = createSelector(
-  notificationItemsSelector,
-  items => items.find(n => ['pending', 'open', 'closing'].includes(n.status))
-)
-
-export const haveQueuedNotificationsSelector = createSelector(
-  notificationItemsSelector,
-  items => items.filter(n => ['pending', 'open', 'closing'].includes(n.status)).length > 1
-)
-
-export const isNotificationDrawerOpenSelector = state => notificationsSelector(state).isDrawerOpen
-// export const isNotificationDrawerOpenSelector = backwardCompose(
-//   notificationsSelector,
-//   (state: NotificationsState) => state.isDrawerOpen
-// )
+export const getNotificationsSelectors = (notificationsSelector: (rootState: any) => NotificationsState) => {
+  const notificationItemsSelector = backwardCompose(
+    notificationsSelector,
+    (state: NotificationsState) => state.items
+  )
+  const allNotificationsSelector = createSelector(
+    notificationItemsSelector,
+    items => [...items]
+      .sort((a, b) => compareDesc(parseISO(a.dateTimeIso), parseISO(b.dateTimeIso)))
+  )
+  const currentSnackbarNotificationSelector = createSelector(
+    notificationItemsSelector,
+    items => items.find(n => ['pending', 'open', 'closing'].includes(n.status))
+  )
+  const haveQueuedNotificationsSelector = createSelector(
+    notificationItemsSelector,
+    items => items.filter(n => ['pending', 'open', 'closing'].includes(n.status)).length > 1
+  )
+  const isNotificationDrawerOpenSelector = backwardCompose(
+    notificationsSelector,
+    (state: NotificationsState) => state.isDrawerOpen
+  )
+  return {
+    allNotificationsSelector,
+    currentSnackbarNotificationSelector,
+    haveQueuedNotificationsSelector,
+    isNotificationDrawerOpenSelector,
+  }
+}

@@ -1,20 +1,11 @@
 export {
   jobSetsReducer,
-  jobSetHeadersSelector,
-  jobSetsFailedMessageSelector,
+  getJobSetsSelectors,
 } from './jobSetsReducer'
 
 export {
   jobSetsPageReducer,
-  jobSetsPageSelectedItemIdsSelector,
-  jobSetsPageRowsPerPageSelector,
-  jobSetsPagePageIndexSelector,
-  jobSetsPageOrderSelector,
-  jobSetsPageOrderBySelector,
-  jobSetsPageItemsSelector,
-  jobSetsPageItemIdssOfPageSelector,
-  createJobSetsPageItemSelector,
-  createItemIsSelectedSelector,
+  getJobSetsPageSelectors,
 } from './jobSetsPageReducer'
 
 export {
