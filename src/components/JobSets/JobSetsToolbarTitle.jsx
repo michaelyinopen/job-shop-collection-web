@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import clsx from 'clsx'
 import {
   makeStyles,
@@ -15,16 +14,13 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import { NewJobSetLink } from '../../route'
 import {
-  useAppDispatch,
   useAppSelector,
   jobSetsPageSelectedItemIdsSelector,
 } from '../../store'
-import { addNotification } from '../../notifications'
-import { routePaths } from '../../route'
 import { ProgressOverlay } from '../../styles'
+import { useLoadJobSetsCallback } from './useLoadJobSetsCallback'
 import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
 import {
-  getJobSetsTakingThunkAction,
   jobSetsIsLoadingSelector
 } from './store'
 
@@ -81,20 +77,7 @@ const useJobSetsTitleStyles = makeStyles(theme => createStyles({
 const JobSetsTitle = () => {
   const classes = useJobSetsTitleStyles()
   const isExtraSmallScreen = useIsExtraSmallScreen()
-
-  const dispatch = useAppDispatch()
-  const reloadCallback = useCallback(() => {
-    dispatch(getJobSetsTakingThunkAction)
-      .then(result => {
-        if (result?.kind === 'failure') {
-          dispatch(addNotification({
-            summary: "Load Job Sets Failed",
-            matchPath: routePaths.jobSets
-          }))
-        }
-      })
-  }, [dispatch])
-
+  const loadJobSetsCallback = useLoadJobSetsCallback()
   const isLoading = useAppSelector(jobSetsIsLoadingSelector)
 
   return (
@@ -103,7 +86,7 @@ const JobSetsTitle = () => {
         Job Sets
       </Typography>
       <ProgressOverlay isLoading={isLoading}>
-        <IconButton onClick={reloadCallback}>
+        <IconButton onClick={loadJobSetsCallback}>
           <RefreshIcon />
         </IconButton>
       </ProgressOverlay>

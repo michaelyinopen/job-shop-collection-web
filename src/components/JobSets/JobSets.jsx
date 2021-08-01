@@ -4,15 +4,12 @@ import {
   useAppSelector,
   jobSetHeadersSelector,
 } from '../../store'
-import { addNotification } from '../../notifications'
-import { routePaths } from '../../route'
 import {
-  getJobSetsTakingThunkAction,
   jobSetsPageSetItems,
   jobSetsPageReset,
   jobSetsIsLoadingSelector,
 } from './store'
-
+import { useLoadJobSetsCallback } from './useLoadJobSetsCallback'
 import { JobSetsPageContainer } from './JobSetsPageContainer'
 import { JobSetsToolbarTitle } from './JobSetsToolbarTitle'
 import { JobSetsTable } from './JobSetsTable'
@@ -20,17 +17,10 @@ import { JobSetsTablePagination } from './JobSetsTablePagination'
 
 export const JobSets = () => {
   const dispatch = useAppDispatch()
+  const loadJobSetsCallback = useLoadJobSetsCallback()
   useEffect(() => {
-    dispatch(getJobSetsTakingThunkAction)
-      .then(result => {
-        if (result?.kind === 'failure') {
-          dispatch(addNotification({
-            summary: "Load Job Sets Failed",
-            matchPath: routePaths.jobSets
-          }))
-        }
-      })
-  }, [dispatch])
+    loadJobSetsCallback()
+  }, [loadJobSetsCallback])
 
   const isLoading = useAppSelector(jobSetsIsLoadingSelector)
   const jobSetHeaders = useAppSelector(jobSetHeadersSelector)
