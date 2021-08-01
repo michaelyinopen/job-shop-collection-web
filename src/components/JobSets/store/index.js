@@ -9,6 +9,9 @@ export {
 } from './jobSetsPageReducer'
 
 export {
+  getJobSetsSucceeded,
+  getNextJobSetsSucceeded,
+  deleteJobSetSucceeded,
   jobSetsPageSetItems,
   jobSetsPageToggleSort,
   jobSetsPageToggleSelectAll,
@@ -23,3 +26,8 @@ export {
   getJobSetsTakingThunkAction,
   jobSetsIsLoadingSelector,
 } from './getJobSetsTakingThunkAction'
+
+export {
+  deleteJobSetTakingThunkAction,
+  createDeleteJobSetIsLoadingSelector,
+} from './deleteJobSetTakingThunkAction'

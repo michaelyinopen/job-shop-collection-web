@@ -30,6 +30,8 @@ Use `import { createSelector } from '@reduxjs/toolkit'` for memoized and combine
 
 Can use `backwardCompose` to functionally compose selectors.
 
+`createSomethingSelector` creates a selector using input parameters.
+
 ### Circular reference
 Tried to reference parent selector from "feature" reducer file, but failed because got undefined.\
 ~~"feature"'s selector will reference parent(root) reducer's seletor functions,\

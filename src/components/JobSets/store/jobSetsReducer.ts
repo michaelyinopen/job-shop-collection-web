@@ -5,7 +5,7 @@ import type { JobSetHeaderDto } from '../../../api'
 import {
   getJobSetsSucceeded,
   getNextJobSetsSucceeded,
-  getJobSetsFailed
+  deleteJobSetSucceeded,
 } from './actions'
 
 type JobSetState = {
@@ -18,10 +18,6 @@ type JobSetState = {
   timeOptions: string | null;
   isLocked: boolean;
   eTag: string | null;
-  isLoading: boolean;
-  loadFailedMessage: string | null;
-  isUpdating: boolean;
-  updateFailedMessage: string | null;
 }
 
 const jobSetInitialState: Partial<JobSetState> = {
@@ -34,10 +30,6 @@ const jobSetInitialState: Partial<JobSetState> = {
   timeOptions: null,
   isLocked: undefined,
   eTag: undefined,
-  isLoading: false,
-  loadFailedMessage: null,
-  isUpdating: false,
-  updateFailedMessage: null,
 }
 
 const jobSetReducer = createCustomReducer(jobSetInitialState, {
@@ -57,16 +49,11 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
   },
 })
 
-type JobSetsState = EntityState<JobSetState> & {
-  loadFailedMessage: string | null,
-  deletingJobSetIds: string[],
-}
+type JobSetsState = EntityState<JobSetState>
 
 const jobSetsInitialState: JobSetsState = {
   ids: [],
   entities: {},
-  loadFailedMessage: null,
-  deletingJobSetIds: []
 }
 
 export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
@@ -97,8 +84,6 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
         : hasRemoved
           ? state.ids.filter((id) => id in state.entities)
           : state.ids
-
-      state.loadFailedMessage = null
     })
     .addCase(getNextJobSetsSucceeded, (state, action) => {
       const { payload: { jobSetHeaders } } = action
@@ -118,11 +103,13 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
       state.ids = hasCreated
         ? [...state.ids, ...jobSetHeaders.map(jsh => jsh.id)]
         : state.ids
-
-      state.loadFailedMessage = null
     })
-    .addCase(getJobSetsFailed, (state, action) => {
-      state.loadFailedMessage = action.payload.failedMessage
+    .addCase(deleteJobSetSucceeded, (state, { payload: id }) => {
+      const index = state.ids.findIndex(sId => sId === id)
+      if (index !== -1) {
+        state.ids.splice(index, 1)
+        delete state.entities[id]
+      }
     })
 })
 
@@ -139,12 +126,10 @@ export const getJobSetsSelectors = (jobSetsSelector: (rootState: any) => JobSets
     jobSetsSelector,
     (state: JobSetsState) => state.ids
   )
-
   const jobSetEntitiesSelector = backwardCompose(
     jobSetsSelector,
     (state: JobSetsState) => state.entities
   )
-
   const jobSetHeadersSelector = createSelector(
     jobSetIdsSelector,
     jobSetEntitiesSelector,
@@ -161,13 +146,12 @@ export const getJobSetsSelectors = (jobSetsSelector: (rootState: any) => JobSets
       })
     }
   )
-
-  const jobSetsFailedMessageSelector = backwardCompose(
-    jobSetsSelector,
-    (state: JobSetsState) => state.loadFailedMessage
+  const createJobSetSelector = (id: number) => backwardCompose(
+    jobSetEntitiesSelector,
+    (entities: Dictionary<JobSetState>) => entities[id]
   )
   return {
     jobSetHeadersSelector,
-    jobSetsFailedMessageSelector
+    createJobSetSelector,
   }
 }

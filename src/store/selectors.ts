@@ -13,7 +13,7 @@ import {
 
 export const {
   jobSetHeadersSelector,
-  jobSetsFailedMessageSelector
+  createJobSetSelector,
 } = getJobSetsSelectors(jobSetsSelector)
 
 export const {

@@ -23,14 +23,7 @@ export const getNextJobSetsSucceeded = createAction(
   })
 )
 
-export const getJobSetsFailed = createAction(
-  'jobSets/getJobSetsFailed',
-  (failedMessage: string) => ({
-    payload: {
-      failedMessage
-    }
-  })
-)
+export const deleteJobSetSucceeded = createAction<number>('jobSets/deleteJobSetSucceeded')
 
 //#region jobSetsPage
 export const jobSetsPageSetItems = createAction(
