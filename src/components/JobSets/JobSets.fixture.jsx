@@ -40,6 +40,12 @@ const handlers = [
       }),
     )
   }),
+  rest.delete('/api/job-sets/:id', (_req, res, ctx) => {
+    return res(
+      ctx.delay(),
+      ctx.status(200)
+    )
+  }),
 ]
 
 const Decorator = ({ children }) => (

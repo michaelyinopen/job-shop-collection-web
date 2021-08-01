@@ -18,6 +18,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert'
 import ForwardIcon from '@material-ui/icons/Forward'
 import EditIcon from '@material-ui/icons/Edit'
 import OpenInNewIcon from '@material-ui/icons/OpenInNew'
+import DeleteIcon from '@material-ui/icons/Delete'
 import { preventDefaultPropagation } from '../../utility'
 import { routePaths } from '../../route'
 import {
@@ -26,10 +27,14 @@ import {
   createJobSetsPageItemSelector,
   createItemIsSelectedSelector,
 } from '../../store'
+import { ProgressOverlay } from '../../styles'
+import { addNotification } from '../../notifications'
 import { columnStyles } from './columnStyles'
 import {
   jobSetsPageSelectOne,
   jobSetsPageUnselectOne,
+  deleteJobSetTakingThunkAction,
+  createDeleteJobSetIsLoadingSelector,
 } from './store'
 
 const useJobSetRowStyles = makeStyles(theme => createStyles({
@@ -48,6 +53,40 @@ const useJobSetRowStyles = makeStyles(theme => createStyles({
   },
   ...columnStyles(theme)
 }))
+
+const DeleteJobSetRowMenuItem = ({ id }) => {
+  const dispatch = useAppDispatch()
+  const isDeletingSelector = useRef(
+    createDeleteJobSetIsLoadingSelector(id)
+  ).current
+  const isDeleting = useAppSelector(isDeletingSelector)
+  const deleteJobSetRowCallback = useRef(() => {
+    dispatch(deleteJobSetTakingThunkAction(id))
+      .then(result => {
+        if (result?.kind === 'success') {
+          dispatch(addNotification({
+            summary: `Deleted Job Set ${id}`,
+            matchPath: routePaths.jobSets
+          }))
+        } else {
+          dispatch(addNotification({
+            summary: `Failed to delete Job Set ${id}`,
+            matchPath: routePaths.jobSets
+          }))
+        }
+      })
+  }, [dispatch]).current
+  return (
+    <MenuItem onClick={deleteJobSetRowCallback} disabled={isDeleting}>
+      <ListItemIcon>
+        <ProgressOverlay isLoading={isDeleting}>
+          <DeleteIcon />
+        </ProgressOverlay>
+      </ListItemIcon>
+      Delete
+    </MenuItem>
+  )
+}
 
 /**
  * jobSetHeaderId must be kept the same
@@ -85,6 +124,7 @@ export const JobSetRow = (props) => {
     push(generatePath(routePaths.jobSet, { id, edit: "edit" }))
   }).current
 
+  //#region Menu
   const [menuPosition, setMenuPosition] = useState(null)
   const [anchorEl, setAnchorEl] = useState(null)
   const [anchorReference, setAnchorReference] = useState('none')
@@ -110,6 +150,7 @@ export const JobSetRow = (props) => {
     setMenuPosition(null)
     setAnchorEl(null)
   }).current
+  //#endregion Menu
 
   if (!jobSetHeader) {
     return
@@ -169,8 +210,9 @@ export const JobSetRow = (props) => {
         open={menuOpen}
         onClose={handleCloseContextMenu}
         onClick={preventDefaultPropagation}
+        onContextMenu={preventDefaultPropagation}
       >
-        <MenuItem onClick={viewJobSetCallback} onContextMenu={preventDefaultPropagation}>
+        <MenuItem onClick={viewJobSetCallback}>
           <ListItemIcon>
             <ForwardIcon />
           </ListItemIcon>
@@ -178,7 +220,6 @@ export const JobSetRow = (props) => {
         </MenuItem>
         <MenuItem
           onClick={editJobSetCallback}
-          onContextMenu={preventDefaultPropagation}
           disabled={jobSetHeader.isLocked}
         >
           <ListItemIcon>
@@ -186,13 +227,13 @@ export const JobSetRow = (props) => {
           </ListItemIcon>
           Edit
         </MenuItem>
-        <MenuItem onClick={openInNewTabCallback} onContextMenu={preventDefaultPropagation}>
+        <MenuItem onClick={openInNewTabCallback}>
           <ListItemIcon>
             <OpenInNewIcon />
           </ListItemIcon>
           Open in new tab
         </MenuItem>
-        {/* todo add delete here */}
+        <DeleteJobSetRowMenuItem key={`delete/${id}`} id={id} />
       </Menu>
       {/* todo indicate locked */}
     </TableRow >

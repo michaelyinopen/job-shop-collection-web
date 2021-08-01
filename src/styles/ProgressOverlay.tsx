@@ -4,6 +4,7 @@ import type { ReactNode, FunctionComponent } from 'react'
 const useStyles = makeStyles(() => createStyles({
   wrapper: {
     position: 'relative',
+    display: 'inline-flex',
   },
   progress: {
     position: 'absolute',
