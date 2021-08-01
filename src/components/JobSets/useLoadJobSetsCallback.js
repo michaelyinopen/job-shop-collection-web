@@ -16,6 +16,12 @@ export const useLoadJobSetsCallback = () => {
           }))
         }
       })
+      .catch(() => {
+        dispatch(addNotification({
+          summary: "Load Job Sets Failed",
+          matchPath: routePaths.jobSets
+        }))
+      })
   }, [dispatch]).current
 
   return callback

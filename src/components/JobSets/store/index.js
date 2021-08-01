@@ -31,3 +31,8 @@ export {
   deleteJobSetTakingThunkAction,
   createDeleteJobSetIsLoadingSelector,
 } from './deleteJobSetTakingThunkAction'
+
+export {
+  deleteSelectedJobSetsTakingThunkAction,
+  deleteSelectedJobSetsIsLoadingSelector,
+} from './deleteSelectedJobSetsTakingThunkAction'

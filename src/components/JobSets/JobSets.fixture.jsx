@@ -26,7 +26,7 @@ const handlers = [
           { "id": 12, "title": "N test", "description": null, "isLocked": false, "eTag": "AAAAAAAAD6E=" },
           { "id": 13, "title": "N test", "description": null, "isLocked": false, "eTag": "AAAAAAAAD6E=" },
           { "id": 14, "title": "N test", "description": null, "isLocked": false, "eTag": "AAAAAAAAD6E=" },
-          { "id": 15, "title": "N test", "description": null, "isLocked": false, "eTag": "AAAAAAAAD6E=" },
+          { "id": 15, "title": "Will fail to delete", "description": null, "isLocked": false, "eTag": "AAAAAAAAD6E=" },
           { "id": 16, "title": "N test", "description": null, "isLocked": false, "eTag": "AAAAAAAAD6E=" },
           { "id": 17, "title": "N test", "description": null, "isLocked": false, "eTag": "AAAAAAAAD6E=" },
           { "id": 18, "title": "N test", "description": null, "isLocked": false, "eTag": "AAAAAAAAD6E=" },
@@ -40,10 +40,11 @@ const handlers = [
       }),
     )
   }),
-  rest.delete('/api/job-sets/:id', (_req, res, ctx) => {
+  rest.delete('/api/job-sets/:id', (req, res, ctx) => {
+    const { id } = req.params
     return res(
       ctx.delay(),
-      ctx.status(200)
+      ctx.status(id === "15" ? 400 : 200)
     )
   }),
 ]

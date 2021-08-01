@@ -75,7 +75,14 @@ const DeleteJobSetRowMenuItem = ({ id }) => {
           }))
         }
       })
+      .catch(() => {
+        dispatch(addNotification({
+          summary: `Failed to delete Job Set ${id}`,
+          matchPath: routePaths.jobSets
+        }))
+      })
   }, [dispatch]).current
+  
   return (
     <MenuItem onClick={deleteJobSetRowCallback} disabled={isDeleting}>
       <ListItemIcon>

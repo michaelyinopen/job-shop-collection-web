@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import clsx from 'clsx'
 import {
   makeStyles,
@@ -14,13 +15,18 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import { NewJobSetLink } from '../../route'
 import {
+  useAppDispatch,
   useAppSelector,
   jobSetsPageSelectedItemIdsSelector,
 } from '../../store'
+import { routePaths } from '../../route'
+import { addNotification } from '../../notifications'
 import { ProgressOverlay } from '../../styles'
 import { useLoadJobSetsCallback } from './useLoadJobSetsCallback'
 import { useIsExtraSmallScreen } from './useIsExtraSmallScreen'
 import {
+  deleteSelectedJobSetsTakingThunkAction,
+  deleteSelectedJobSetsIsLoadingSelector,
   jobSetsIsLoadingSelector
 } from './store'
 
@@ -33,12 +39,43 @@ const useJobSetsSelectedToolbarStyles = makeStyles(theme => createStyles({
 const JobSetsSelectedToolbar = () => {
   const classes = useJobSetsSelectedToolbarStyles()
 
-  const isLoading = useAppSelector(jobSetsIsLoadingSelector)
   const seletedItemIds = useAppSelector(jobSetsPageSelectedItemIdsSelector)
 
-  // todo
-  const isDeleting = false
-  const deleteSelectedCallback = () => { console.log("deleteSelected") }
+  const isLoading = useAppSelector(jobSetsIsLoadingSelector)
+  const isDeleting = useAppSelector(deleteSelectedJobSetsIsLoadingSelector)
+
+  const dispatch = useAppDispatch()
+  const loadJobSetsCallback = useLoadJobSetsCallback()
+  const deleteSelectedCallback = useCallback(
+    () => {
+      dispatch(deleteSelectedJobSetsTakingThunkAction(seletedItemIds))
+        .then(result => {
+          if (result?.kind === 'success') {
+            dispatch(addNotification({
+              summary: result.success(),
+              matchPath: routePaths.jobSets
+            }))
+            loadJobSetsCallback()
+          }
+          else {
+            dispatch(addNotification({
+              summary: `Error when deleting Job Sets.`,
+              matchPath: routePaths.jobSets
+            }))
+          }
+        })
+        .catch(() => {
+          dispatch(addNotification({
+            summary: `Error when deleting Job Sets.`,
+            matchPath: routePaths.jobSets
+          }))
+        })
+        .finally(() =>
+          loadJobSetsCallback()
+        )
+    },
+    [dispatch, loadJobSetsCallback, seletedItemIds]
+  )
 
   return (
     <>
@@ -50,7 +87,7 @@ const JobSetsSelectedToolbar = () => {
         ? <CircularProgress />
         : (
           <ProgressOverlay isLoading={isDeleting}>
-            <IconButton onClick={deleteSelectedCallback}>
+            <IconButton onClick={deleteSelectedCallback} disabled={isDeleting}>
               <DeleteIcon />
             </IconButton>
           </ProgressOverlay>
