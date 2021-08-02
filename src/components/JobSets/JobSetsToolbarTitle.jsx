@@ -48,7 +48,7 @@ const JobSetsSelectedToolbar = () => {
   const loadJobSetsCallback = useLoadJobSetsCallback()
   const deleteSelectedCallback = useCallback(
     () => {
-      dispatch(deleteSelectedJobSetsTakingThunkAction(seletedItemIds))
+      dispatch(deleteSelectedJobSetsTakingThunkAction)
         .then(result => {
           if (result?.kind === 'success') {
             dispatch(addNotification({
@@ -74,7 +74,7 @@ const JobSetsSelectedToolbar = () => {
           loadJobSetsCallback()
         )
     },
-    [dispatch, loadJobSetsCallback, seletedItemIds]
+    [dispatch, loadJobSetsCallback]
   )
 
   return (
