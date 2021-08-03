@@ -28,6 +28,11 @@ export {
 } from './getJobSetsTakingThunkAction'
 
 export {
+  getJobSetTakingThunkAction,
+  // jobSetsIsLoadingSelector,
+} from './getJobSetTakingThunkAction'
+
+export {
   deleteJobSetTakingThunkAction,
   createDeleteJobSetIsLoadingSelector,
 } from './deleteJobSetTakingThunkAction'

@@ -11,8 +11,9 @@ import { routePaths } from './route'
 import { Layout } from './components/Layout'
 import { Home } from './components/Home'
 import { About } from './components/About'
-import { PageNotFound } from './components/PageNotFound'
 import { JobSets } from './components/JobSets'
+import { JobSet } from './components/JobSet'
+import { PageNotFound } from './components/PageNotFound'
 
 import { AppSnackbar, NotificationDrawer } from './notifications'
 
@@ -27,6 +28,7 @@ export function App() {
               <Route exact path={routePaths.home} component={Home} />
               <Route exact path={routePaths.about} component={About} />
               <Route exact path={routePaths.jobSets} component={JobSets} />
+              <Route exact path={routePaths.jobSet} component={JobSet} />
               <Route component={PageNotFound} />
             </Switch>
             <AppSnackbar />

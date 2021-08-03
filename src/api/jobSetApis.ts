@@ -46,6 +46,58 @@ export async function getJobSetsApiAsync(pageToken?: number): Promise<Result<Get
   return new SuccessResult(responseBody as GetJobSetsResponse)
 }
 
+type GetJobSetResponse = {
+  id: number,
+  title: string,
+  description?: string,
+  content?: string,
+  jobColors?: string,
+  isAutoTimeOptions: boolean,
+  timeOptions?: string,
+  isLocked: boolean
+  eTag?: string
+}
+
+export type GetJobSetParsedResponse = {
+  id: number,
+  title?: string,
+  description?: string,
+  content?: object,
+  jobColors?: object,
+  isAutoTimeOptions: boolean,
+  timeOptions?: object,
+  isLocked: boolean
+  eTag?: string
+}
+
+export const getJobSetUrlTemplate = `${API_URL}/api/job-sets/{id}`
+export async function getJobSetApiAsync(id: number) {
+  const url = template.parse(getJobSetUrlTemplate).expand({ id })
+  let parsedResponse
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      return new FailureResult(new ApiFailure(response.statusText))
+    }
+    let responseBody: GetJobSetResponse = await response.json()
+    parsedResponse = {
+      id: responseBody.id,
+      title: responseBody.title,
+      description: responseBody.description,
+      content: responseBody.content ? JSON.parse(responseBody.content) : undefined,
+      jobColors: responseBody.jobColors ? JSON.parse(responseBody.jobColors) : undefined,
+      isAutoTimeOptions: responseBody.isAutoTimeOptions,
+      timeOptions: responseBody.timeOptions ? JSON.parse(responseBody.timeOptions) : undefined,
+      isLocked: responseBody.isLocked,
+      eTag: responseBody.eTag
+    }
+  }
+  catch (e) {
+    return new FailureResult(new ApiFailure(`Error when getting Job Set. ${e.message}`))
+  }
+  return new SuccessResult(parsedResponse as GetJobSetParsedResponse)
+};
+
 export const deleteJobSetUrlTemplate = `${API_URL}/api/job-sets/{id}`
 export async function deleteJobSetApiAsync(id: number, eTag: string) {
   const url = template.parse(deleteJobSetUrlTemplate).expand({ id })

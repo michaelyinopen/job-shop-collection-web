@@ -87,7 +87,7 @@ export const NotificationDrawer = () => {
           : null}
         <ol className={classes.list}>
           {allNotifications.map(n => (
-            <Card className={classes.card}>
+            <Card key={n.id} className={classes.card}>
               <Typography variant="subtitle2">
                 {n.summary}
               </Typography>

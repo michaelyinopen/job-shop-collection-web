@@ -1,10 +1,11 @@
 import { createReducer, createSelector } from '@reduxjs/toolkit'
 import type { EntityState, EntityId, Dictionary } from '@reduxjs/toolkit'
 import { createCustomReducer, backwardCompose } from '../../../utility'
-import type { JobSetHeaderDto } from '../../../api'
+import type { GetJobSetParsedResponse, JobSetHeaderDto } from '../../../api'
 import {
   getJobSetsSucceeded,
   getNextJobSetsSucceeded,
+  getJobSetSucceeded,
   deleteJobSetSucceeded,
 } from './actions'
 
@@ -47,6 +48,18 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
     state.isLocked = jobSetHeaderFromAction.isLocked
     state.eTag = jobSetHeaderFromAction.eTag ?? null
   },
+  [getJobSetSucceeded.type]: (state, action) => {
+    const jobSet: GetJobSetParsedResponse = action.payload
+    state.id = jobSet.id
+    state.title = jobSet.title ?? null
+    state.description = jobSet.description ?? null
+    state.content = jobSet.content ?? null
+    state.jobColors = jobSet.jobColors ?? null
+    state.isAutoTimeOptions = jobSet.isAutoTimeOptions
+    state.timeOptions = jobSet.timeOptions ?? null
+    state.isLocked = jobSet.isLocked
+    state.eTag = jobSet.eTag ?? null
+  }
 })
 
 type JobSetsState = EntityState<JobSetState>
@@ -110,6 +123,16 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
         state.ids.splice(index, 1)
         delete state.entities[id]
       }
+    })
+    .addCase(getJobSetSucceeded, (state, action) => {
+      const { payload: jobSet } = action
+      const index = state.ids.findIndex(sId => sId === jobSet.id)
+      if (index === -1) {
+        state.ids.push(jobSet.id)
+      }
+      state.entities[jobSet.id] = jobSetReducer(
+        state.entities[jobSet.id],
+        action)
     })
 })
 
