@@ -16,7 +16,7 @@ export const getJobSetTakingThunkAction = (id: number): AppTakingThunkAction => 
   thunk: function* (dispatch: AppDispatch) {
     const getJobSetResult: any = yield getJobSetApiAsync(id)
     if (getJobSetResult.kind === 'success') {
-      dispatch(getJobSetSucceeded(getJobSetResult.success().data))
+      dispatch(getJobSetSucceeded(getJobSetResult.success()))
     } else {
       return getJobSetResult
     }

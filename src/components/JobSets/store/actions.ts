@@ -2,7 +2,7 @@
 import { createAction } from '@reduxjs/toolkit'
 import type {
   JobSetHeaderDto,
-  GetJobSetParsedResponse,
+  GetJobSetResponse,
 } from '../../../api'
 import type { JobSetHeader } from './jobSetsReducer'
 import type { JobSetPageOrderByProperty } from './jobSetsPageReducer'
@@ -26,7 +26,7 @@ export const getNextJobSetsSucceeded = createAction(
   })
 )
 
-export const getJobSetSucceeded = createAction<GetJobSetParsedResponse>('jobSets/getJobSetSucceeded')
+export const getJobSetSucceeded = createAction<GetJobSetResponse>('jobSets/getJobSetSucceeded')
 
 export const deleteJobSetSucceeded = createAction<number>('jobSets/deleteJobSetSucceeded')
 

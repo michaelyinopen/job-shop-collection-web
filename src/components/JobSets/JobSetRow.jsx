@@ -117,18 +117,18 @@ export const JobSetRow = (props) => {
   const viewJobSetCallback = useRef(e => {
     e.stopPropagation()
     e.preventDefault()
-    push(generatePath(routePaths.jobSet, { id }))
+    push(generatePath(routePaths.jobSetEditor, { id }))
   }).current
   const openInNewTabCallback = useRef(e => {
     e.stopPropagation()
     e.preventDefault()
-    const win = window.open(generatePath(routePaths.jobSet, { id }), '_blank')
+    const win = window.open(generatePath(routePaths.jobSetEditor, { id }), '_blank')
     win.focus()
   }).current
   const editJobSetCallback = useRef(e => {
     e.stopPropagation()
     e.preventDefault()
-    push(generatePath(routePaths.jobSet, { id, edit: "edit" }))
+    push(generatePath(routePaths.jobSetEditor, { id, edit: "edit" }))
   }).current
 
   //#region Menu

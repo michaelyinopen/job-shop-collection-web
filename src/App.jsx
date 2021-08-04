@@ -12,7 +12,7 @@ import { Layout } from './components/Layout'
 import { Home } from './components/Home'
 import { About } from './components/About'
 import { JobSets } from './components/JobSets'
-import { JobSet } from './components/JobSet'
+import { JobSetEditor } from './components/JobSetEditor'
 import { PageNotFound } from './components/PageNotFound'
 
 import { AppSnackbar, NotificationDrawer } from './notifications'
@@ -28,7 +28,15 @@ export function App() {
               <Route exact path={routePaths.home} component={Home} />
               <Route exact path={routePaths.about} component={About} />
               <Route exact path={routePaths.jobSets} component={JobSets} />
-              <Route exact path={routePaths.jobSet} component={JobSet} />
+              <Route exact path={routePaths.jobSetEditor}
+                render={({ match }) => (
+                  <JobSetEditor
+                    key={match.params.id}
+                    id={match.params.id}
+                    edit={Boolean(match.params.edit)}
+                  />
+                )}
+              />
               <Route component={PageNotFound} />
             </Switch>
             <AppSnackbar />

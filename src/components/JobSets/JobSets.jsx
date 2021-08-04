@@ -1,16 +1,17 @@
-import { useEffect } from "react"
+import { useEffect } from 'react'
+import { Paper } from '@material-ui/core'
 import {
   useAppDispatch,
   useAppSelector,
   jobSetHeadersSelector,
 } from '../../store'
+import { JobSetsPageContainer } from '../../styles'
 import {
   jobSetsPageSetItems,
   jobSetsPageReset,
   jobSetsIsLoadingSelector,
 } from './store'
 import { useLoadJobSetsCallback } from './useLoadJobSetsCallback'
-import { JobSetsPageContainer } from './JobSetsPageContainer'
 import { JobSetsToolbarTitle } from './JobSetsToolbarTitle'
 import { JobSetsTable } from './JobSetsTable'
 import { JobSetsTablePagination } from './JobSetsTablePagination'
@@ -31,9 +32,11 @@ export const JobSets = () => {
 
   return (
     <JobSetsPageContainer>
-      <JobSetsToolbarTitle />
-      <JobSetsTable />
-      <JobSetsTablePagination />
+      <Paper>
+        <JobSetsToolbarTitle />
+        <JobSetsTable />
+        <JobSetsTablePagination />
+      </Paper>
     </JobSetsPageContainer>
   )
 }

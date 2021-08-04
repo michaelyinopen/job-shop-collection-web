@@ -46,7 +46,7 @@ export async function getJobSetsApiAsync(pageToken?: number): Promise<Result<Get
   return new SuccessResult(responseBody as GetJobSetsResponse)
 }
 
-type GetJobSetResponse = {
+type GetJobSetJsonResponse = {
   id: number,
   title: string,
   description?: string,
@@ -58,7 +58,7 @@ type GetJobSetResponse = {
   eTag?: string
 }
 
-export type GetJobSetParsedResponse = {
+export type GetJobSetResponse = {
   id: number,
   title?: string,
   description?: string,
@@ -79,7 +79,7 @@ export async function getJobSetApiAsync(id: number) {
     if (!response.ok) {
       return new FailureResult(new ApiFailure(response.statusText))
     }
-    let responseBody: GetJobSetResponse = await response.json()
+    let responseBody: GetJobSetJsonResponse = await response.json()
     parsedResponse = {
       id: responseBody.id,
       title: responseBody.title,
@@ -95,7 +95,7 @@ export async function getJobSetApiAsync(id: number) {
   catch (e) {
     return new FailureResult(new ApiFailure(`Error when getting Job Set. ${e.message}`))
   }
-  return new SuccessResult(parsedResponse as GetJobSetParsedResponse)
+  return new SuccessResult(parsedResponse as GetJobSetResponse)
 };
 
 export const deleteJobSetUrlTemplate = `${API_URL}/api/job-sets/{id}`

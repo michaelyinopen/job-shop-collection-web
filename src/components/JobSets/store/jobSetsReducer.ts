@@ -1,7 +1,7 @@
 import { createReducer, createSelector } from '@reduxjs/toolkit'
 import type { EntityState, EntityId, Dictionary } from '@reduxjs/toolkit'
 import { createCustomReducer, backwardCompose } from '../../../utility'
-import type { GetJobSetParsedResponse, JobSetHeaderDto } from '../../../api'
+import type { GetJobSetResponse, JobSetHeaderDto } from '../../../api'
 import {
   getJobSetsSucceeded,
   getNextJobSetsSucceeded,
@@ -49,7 +49,7 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
     state.eTag = jobSetHeaderFromAction.eTag ?? null
   },
   [getJobSetSucceeded.type]: (state, action) => {
-    const jobSet: GetJobSetParsedResponse = action.payload
+    const jobSet: GetJobSetResponse = action.payload
     state.id = jobSet.id
     state.title = jobSet.title ?? null
     state.description = jobSet.description ?? null

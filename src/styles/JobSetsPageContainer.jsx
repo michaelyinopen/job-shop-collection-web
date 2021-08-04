@@ -1,5 +1,5 @@
-import { makeStyles, createStyles, Paper } from '@material-ui/core'
-import { PageContainer } from "../../styles"
+import { makeStyles, createStyles } from '@material-ui/core'
+import { PageContainer } from "."
 
 const useStyles = makeStyles(theme => createStyles({
   pageContainer: {
@@ -16,9 +16,7 @@ export const JobSetsPageContainer = ({ children }) => {
   const classes = useStyles()
   return (
     <PageContainer classes={{ pageContainer: classes.pageContainer }}>
-      <Paper>
-        {children}
-      </Paper>
+      {children}
     </PageContainer>
   )
 }
