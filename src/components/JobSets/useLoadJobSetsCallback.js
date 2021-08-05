@@ -22,7 +22,7 @@ export const useLoadJobSetsCallback = () => {
           matchPath: routePaths.jobSets
         }))
       })
-  }, [dispatch]).current
+  }).current
 
   return callback
 }

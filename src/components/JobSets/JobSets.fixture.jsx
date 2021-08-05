@@ -33,12 +33,10 @@ const persistentBackendMock = (() => {
     { "id": 1, "title": "A Sample Job Set", "description": "A Job Set contains the machines, jobs and procedures of a schedule.", "isLocked": false, "eTag": "AAAAAAAAB9E=" }
   ]
   const getData = () => {
-    console.log({ data })
     return data
   }
   const deleteById = (id) => {
     data = data.filter(d => d.id !== +id)
-    console.log({ deleteData: data })
   }
   return {
     getData,

@@ -57,7 +57,7 @@ const JobSetsSelectedToolbar = () => {
             }))
             loadJobSetsCallback()
           }
-          else {
+          else if (result?.kind === 'failure') {
             dispatch(addNotification({
               summary: `Error when deleting Job Sets.`,
               matchPath: routePaths.jobSets

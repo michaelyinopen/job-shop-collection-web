@@ -32,7 +32,7 @@ export function App() {
                 render={({ match }) => (
                   <JobSetEditor
                     key={match.params.id}
-                    id={match.params.id}
+                    id={+match.params.id}
                     edit={Boolean(match.params.edit)}
                   />
                 )}

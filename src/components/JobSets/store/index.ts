@@ -2,6 +2,10 @@ export {
   jobSetsReducer,
   getJobSetsSelectors,
 } from './jobSetsReducer'
+export type {
+  JobSetHeader,
+  JobSetDetail,
+} from './jobSetsReducer'
 
 export {
   jobSetsPageReducer,

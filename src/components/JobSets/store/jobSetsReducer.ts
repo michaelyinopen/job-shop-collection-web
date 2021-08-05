@@ -19,6 +19,9 @@ type JobSetState = {
   timeOptions: string | null;
   isLocked: boolean;
   eTag: string | null;
+
+  // isLatestContent === false if never getJobSet(with content), or getJobSets returned with eTag different from last getJobSet(with content)
+  isLatestContent: boolean;
 }
 
 const jobSetInitialState: Partial<JobSetState> = {
@@ -31,6 +34,7 @@ const jobSetInitialState: Partial<JobSetState> = {
   timeOptions: null,
   isLocked: undefined,
   eTag: undefined,
+  isLatestContent: false,
 }
 
 const jobSetReducer = createCustomReducer(jobSetInitialState, {
@@ -39,6 +43,9 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
     state.title = jobSetHeaderFromAction.title ?? null
     state.description = jobSetHeaderFromAction.description ?? null
     state.isLocked = jobSetHeaderFromAction.isLocked
+    if (state.isLatestContent && state.eTag !== jobSetHeaderFromAction.eTag) {
+      state.isLatestContent = false
+    }
     state.eTag = jobSetHeaderFromAction.eTag ?? null
   },
   [getNextJobSetsSucceeded.type]: (state, _action, jobSetHeaderFromAction: JobSetHeaderDto) => {
@@ -46,6 +53,9 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
     state.title = jobSetHeaderFromAction.title ?? null
     state.description = jobSetHeaderFromAction.description ?? null
     state.isLocked = jobSetHeaderFromAction.isLocked
+    if (state.isLatestContent && state.eTag !== jobSetHeaderFromAction.eTag) {
+      state.isLatestContent = false
+    }
     state.eTag = jobSetHeaderFromAction.eTag ?? null
   },
   [getJobSetSucceeded.type]: (state, action) => {
@@ -59,6 +69,7 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
     state.timeOptions = jobSet.timeOptions ?? null
     state.isLocked = jobSet.isLocked
     state.eTag = jobSet.eTag ?? null
+    state.isLatestContent = true
   }
 })
 
@@ -144,6 +155,8 @@ export type JobSetHeader = {
   eTag?: string
 }
 
+export type JobSetDetail = JobSetState
+
 export const getJobSetsSelectors = (jobSetsSelector: (rootState: any) => JobSetsState) => {
   const jobSetIdsSelector = backwardCompose(
     jobSetsSelector,
@@ -171,7 +184,7 @@ export const getJobSetsSelectors = (jobSetsSelector: (rootState: any) => JobSets
   )
   const createJobSetSelector = (id: number) => backwardCompose(
     jobSetEntitiesSelector,
-    (entities: Dictionary<JobSetState>) => entities[id]
+    (entities: Dictionary<JobSetState>) => entities[id] as JobSetDetail | undefined 
   )
   return {
     jobSetHeadersSelector,

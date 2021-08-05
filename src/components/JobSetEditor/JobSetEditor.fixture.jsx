@@ -35,13 +35,13 @@ const Decorator = ({ children }) => (
     <ReduxDecorator>
       <ThemeDecorator>
         <RouterDecorator>
-        <PageInLayoutDecorator>
-          {children}
-        </PageInLayoutDecorator>
+          <PageInLayoutDecorator>
+            {children}
+          </PageInLayoutDecorator>
         </RouterDecorator>
       </ThemeDecorator>
     </ReduxDecorator>
   </MswDecorator>
 )
 
-export default <Decorator><JobSetEditor /></Decorator>
+export default <Decorator><JobSetEditor id={1} edit={false} /></Decorator>

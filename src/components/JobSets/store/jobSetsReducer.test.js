@@ -22,10 +22,6 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1010",
-        isLoading: false,
-        loadFailedMessage: null,
-        isUpdating: false,
-        updateFailedMessage: null,
       },
       11: {
         id: 11,
@@ -37,10 +33,6 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1111",
-        isLoading: false,
-        loadFailedMessage: null,
-        isUpdating: false,
-        updateFailedMessage: null,
       }
     })
     expect(nextState).not.toBe(state)
@@ -64,10 +56,6 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1010",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
         },
         11: {
           id: 11,
@@ -79,10 +67,6 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1111",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
         }
       }
     }
@@ -115,10 +99,6 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1010",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
         },
         11: {
           id: 11,
@@ -130,10 +110,6 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1111",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
         }
       }
     }
@@ -155,10 +131,6 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1010",
-        isLoading: false,
-        loadFailedMessage: null,
-        isUpdating: false,
-        updateFailedMessage: null,
       },
       11: {
         id: 11,
@@ -170,10 +142,6 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: true,
         eTag: "9999",
-        isLoading: false,
-        loadFailedMessage: null,
-        isUpdating: false,
-        updateFailedMessage: null,
       }
     })
     expect(nextState).not.toBe(state)
@@ -199,10 +167,6 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1010",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
         },
         11: {
           id: 11,
@@ -214,10 +178,6 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1111",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
         }
       }
     }
@@ -238,10 +198,6 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1111",
-        isLoading: false,
-        loadFailedMessage: null,
-        isUpdating: false,
-        updateFailedMessage: null,
       }
     })
     expect(nextState).not.toBe(state)
@@ -266,10 +222,6 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1010",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
         },
         11: {
           id: 11,
@@ -281,10 +233,6 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1111",
-          isLoading: false,
-          loadFailedMessage: null,
-          isUpdating: false,
-          updateFailedMessage: null,
         }
       }
     }
@@ -306,10 +254,6 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: true,
         eTag: "9999",
-        isLoading: false,
-        loadFailedMessage: null,
-        isUpdating: false,
-        updateFailedMessage: null,
       },
       12: {
         id: 12,
@@ -321,10 +265,6 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1212",
-        isLoading: false,
-        loadFailedMessage: null,
-        isUpdating: false,
-        updateFailedMessage: null,
       }
     })
     expect(nextState).not.toBe(state)

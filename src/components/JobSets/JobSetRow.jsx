@@ -68,7 +68,7 @@ const DeleteJobSetRowMenuItem = ({ id }) => {
             summary: `Deleted Job Set ${id}`,
             matchPath: routePaths.jobSets
           }))
-        } else {
+        } else if (result?.kind === 'failure') {
           dispatch(addNotification({
             summary: `Failed to delete Job Set ${id}`,
             matchPath: routePaths.jobSets
@@ -82,7 +82,7 @@ const DeleteJobSetRowMenuItem = ({ id }) => {
         }))
       })
   }, [dispatch]).current
-  
+
   return (
     <MenuItem onClick={deleteJobSetRowCallback} disabled={isDeleting}>
       <ListItemIcon>
