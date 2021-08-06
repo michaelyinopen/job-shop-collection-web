@@ -1,4 +1,8 @@
-import { createReducer, createSelector } from '@reduxjs/toolkit'
+import {
+  combineReducers,
+  createReducer,
+  createSelector,
+} from '@reduxjs/toolkit'
 import { backwardCompose } from '../../../utility'
 import {
   resetJobSetEditor,
@@ -8,8 +12,21 @@ import {
   failedToLoadJobSet,
   setJobSetFromAppStore,
 } from './actions'
+import { formDataReducer } from './formDataReducer'
+import type { JobSetEditorFormDataState } from './formDataReducer'
+import { jobColorsReducer } from './jobColorsReducer'
+import type { JobColorsState } from './jobColorsReducer'
+import { touchedReducer } from './touchedReducer'
+import type { TouchedState } from './touchedReducer'
 
 type JobSetEditorState = {
+  control: JobSetEditorControlState
+  formData: JobSetEditorFormDataState
+  jobColors: JobColorsState
+  touched: TouchedState
+}
+
+type JobSetEditorControlState = {
   id?: number
   isEdit: boolean
   loaded: boolean
@@ -18,16 +35,16 @@ type JobSetEditorState = {
   jobSet: any //todo
 }
 
-const jobSetEditorInitialState: JobSetEditorState = {
+const jobSetEditorControlInitialState: JobSetEditorControlState = {
   id: undefined,
   isEdit: false,
   loaded: false,
   setFromAppStore: false,
   failedToLoad: false,
-  jobSet: undefined,//todo
+  jobSet: undefined, //todo
 }
 
-export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) => {
+const jobSetEditorControlReducer = createReducer(jobSetEditorControlInitialState, (builder) => {
   builder
     .addCase(resetJobSetEditor, (state) => {
       state.id = undefined
@@ -51,14 +68,22 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       state.failedToLoad = true
     })
     .addCase(setJobSetFromAppStore, (state, { payload: jobSet }) => {
-      if (!state.loaded){
+      if (!state.loaded) {
         return
       }
+      // todo implement
       state.jobSet = jobSet //todo remove
     })
 })
 
-export const jobSetsEditorIsEditSelector = (state: JobSetEditorState) => state.isEdit
-export const jobSetsEditorLoadedSelector = (state: JobSetEditorState) => state.loaded
-export const jobSetsEditorFailedToLoadSelector = (state: JobSetEditorState) => state.failedToLoad
-export const jobSetsEditorJobSetSelector = (state: JobSetEditorState) => state.jobSet //todo
+export const jobSetEditorReducer = combineReducers({
+  control: jobSetEditorControlReducer,
+  formData: formDataReducer,
+  jobColors: jobColorsReducer,
+  touched: touchedReducer,
+})
+
+export const jobSetsEditorIsEditSelector = (state: JobSetEditorState) => state.control.isEdit
+export const jobSetsEditorLoadedSelector = (state: JobSetEditorState) => state.control.loaded
+export const jobSetsEditorFailedToLoadSelector = (state: JobSetEditorState) => state.control.failedToLoad
+export const jobSetsEditorJobSetSelector = (state: JobSetEditorState) => state.control.jobSet //todo

@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useEffect } from 'react'
 import type { ComponentType, FunctionComponent } from 'react'
 import {
   useAppDispatch,
@@ -50,8 +50,7 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
     return () => { editorDispatch(resetJobSetEditor()) }
   }, [editorDispatch, id])
 
-  // todo extract, because the refresh button will use the same
-  const loadJobSetCallback = useRef(() => {
+  useEffect(() => {
     dispatch(getJobSetTakingThunkAction(id))
       .then(result => {
         if (result?.kind === 'success') {
@@ -71,11 +70,7 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
           matchPath: routePaths.jobSetEditor
         }))
       })
-  }).current
-  
-  useEffect(() => {
-    loadJobSetCallback()
-  }, [loadJobSetCallback])
+  }, [dispatch, editorDispatch, id])
 
   const appJobSet = useAppSelector(createJobSetSelector(id))
   const loaded = useJobSetEditorSelector(jobSetsEditorLoadedSelector)

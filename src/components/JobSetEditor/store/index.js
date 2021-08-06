@@ -19,9 +19,39 @@ export {
 
   setJobSetFromAppStore,
 
-  changeTitle,
+  setTitle,
   focusTitle,
 
-  changeDescription,
-  focusDescription,
+  setDescription,
+
+  addMachine,
+  setMachineTitle,
+  focusMachineTitle,
+  setMachineDescription,
+  removeMachine,
+
+  createJob,
+  changeJobColor,
+  deleteJob,
+
+  createProcedure,
+  setProcedureMachineId,
+  focusProcedureMachineId,
+  setProcedureProcessingTime,
+  focusProcedureProcessingTime,
+  moveProcedure,
+  deleteProcedure,
+
+  setIsAutoTimeOptions,
+  setMaxTime,
+  focusMaxTime,
+  setViewStartTime,
+  focusViewStartTime,
+  setViewEndTime,
+  focusViewEndTime,
+  setMinViewDuration,
+  focusMinViewDuration,
+  setMaxViewDuration,
+  focusMaxViewDuration,
+  middlewareCalculatedAutoTimeOptions,
 } from './actions'
