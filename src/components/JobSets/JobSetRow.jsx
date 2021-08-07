@@ -44,7 +44,7 @@ const useJobSetRowStyles = makeStyles(theme => createStyles({
   actionsFlexbox: {
     display: 'flex',
     justifyContent: 'space-evenly',
-    maxWidth: '96px'
+    maxWidth: 96
   },
   textCell: {
     overflow: 'hidden',

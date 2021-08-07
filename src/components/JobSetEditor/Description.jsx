@@ -8,46 +8,43 @@ import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
   jobSetsEditorIsEditSelector,
-  titleSelector,
-  setTitle,
+  descriptionSelector,
+  setDescription,
 } from './store'
 
 const useStyles = makeStyles(theme => createStyles({
   wrapper: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(2),
-    maxWidth: 400,
+    maxWidth: 600,
   },
 }))
 
-export const Title = () => {
+export const Description = () => {
   const classes = useStyles()
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-  const value = useJobSetEditorSelector(titleSelector)
+  const value = useJobSetEditorSelector(descriptionSelector)
   const editorDispatch = useJobSetEditorDispatch()
-  //todo errorSelector
   return (
     <div className={classes.wrapper}>
       <TextField
-        label="Title"
+        label="Description"
         value={value}
-        onFocus={() => { }/*todo */}
-        onChange={e => editorDispatch(setTitle(e.target.value))}
+        onChange={e => editorDispatch(setDescription(e.target.value))}
         required
         size='small'
-        error={false/*todo */}
         variant="filled"
         margin="dense"
         fullWidth
         inputProps={{
-          maxLength: 50,
+          maxLength: 1000,
           ...(!isEdit ? { readOnly: true } : {}),
         }}
         InputProps={(value.length >= 40
           ? {
             endAdornment: (
               <InputAdornment position="end">
-                {`${value.length}/50`}
+                {`${value.length}/1000`}
               </InputAdornment>
             )
           }
