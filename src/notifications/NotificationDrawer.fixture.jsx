@@ -45,7 +45,7 @@ const NotificationDrawerFixture = () => {
           </p>
           <p>
             Each notification is shown with a time span relative to the current time (the time that the drawer is opened).
-            The tiam span is only refreshed if the drawer is closed and re-opened.
+            The time span is only refreshed if the drawer is closed and re-opened.
           </p>
           <p>
             Click away, click the cross button or press the Esc key to close the drawer.

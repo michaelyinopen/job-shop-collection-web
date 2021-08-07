@@ -4,7 +4,7 @@ import {
   Drawer,
   Typography,
   Toolbar,
-  IconButton,
+  Button,
   Card,
 } from '@material-ui/core'
 import { formatDistanceToNow, parseISO } from 'date-fns'
@@ -20,16 +20,22 @@ import { closeDrawer } from './store'
 const useStyles = makeStyles(theme => createStyles({
   drawerContainer: {
     width: 320,
-    backgroundColor: theme.palette.grey[300]
+    backgroundColor: theme.palette.grey[300],
+    overflow: 'overlay',
   },
   drawerContent: {
     paddingTop: 0,
-    paddingRight: theme.spacing(2),
+    paddingRight: theme.spacing(3),
     paddingBottom: theme.spacing(2),
     paddingLeft: theme.spacing(2),
   },
   button: {
-    margin: theme.spacing(1),
+    minWidth: 48,
+    width: 48,
+    height: 48,
+    [theme.breakpoints.down('xs')]: {
+      width: '20vw',
+    },
   },
   separator: { flexGrow: 1 },
   center: {
@@ -72,14 +78,13 @@ export const NotificationDrawer = () => {
           Notifications
         </Typography>
         <div className={classes.separator} />
-        <IconButton
+        <Button
           className={classes.button}
           color="inherit"
-          variant="outlined"
           onClick={() => dispatch(closeDrawer())}
         >
           <CloseIcon />
-        </IconButton>
+        </Button>
       </Toolbar>
       <div className={classes.drawerContent}>
         {allNotifications.length === 0
