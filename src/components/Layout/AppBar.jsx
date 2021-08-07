@@ -3,7 +3,6 @@ import {
   createStyles,
   AppBar as MuiAppBar,
   Toolbar,
-  Typography,
   Button,
   IconButton,
   Tooltip,
@@ -25,15 +24,18 @@ import { LabeledIconButton } from './LabeledIconButton'
 const useStyles = makeStyles(theme => createStyles({
   title: {
     color: 'inherit',
-    textDecoration: 'none',
-    marginRight: theme.spacing(3),
-    alignSelf: 'stretch'
-  },
-  button: {
-    margin: theme.spacing(1),
+    alignSelf: 'stretch',
+    fontSize: 22.5,
   },
   separator: { flexGrow: 1 },
-  narrowAppBar: {
+  wideToolbar: {
+    '& > *': {
+      '&:not(:last-child)': {
+        marginRight: theme.spacing(1)
+      }
+    }
+  },
+  narrowToolbar: {
     display: 'flex',
     justifyContent: 'space-around',
     padding: 0,
@@ -46,15 +48,13 @@ const WideAppBar = ({
 }) => {
   return (
     <MuiAppBar position="static">
-      <Toolbar>
+      <Toolbar className={classes.wideToolbar}>
         <Button
           className={classes.title}
           component={HomeLink}
           color="inherit"
         >
-          <Typography variant="h5">
-            Job Shop Collection
-          </Typography>
+          Job Shop Collection
         </Button>
         <Button
           className={classes.button}
@@ -93,7 +93,7 @@ const WideAppBar = ({
           </IconButton>
         </Tooltip>
       </Toolbar>
-    </MuiAppBar>
+    </MuiAppBar >
   )
 }
 
@@ -103,7 +103,7 @@ const NarrowAppBar = ({
 }) => {
   return (
     <MuiAppBar position="static">
-      <Toolbar className={classes.narrowAppBar}>
+      <Toolbar className={classes.narrowToolbar}>
         <LabeledIconButton
           icon={<HomeIcon fontSize="small" />}
           label="Home"

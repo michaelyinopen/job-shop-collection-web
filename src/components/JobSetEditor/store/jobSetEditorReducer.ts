@@ -4,6 +4,7 @@ import {
   createSelector,
 } from '@reduxjs/toolkit'
 import { backwardCompose } from '../../../utility'
+import { JobSetEditorState } from './store'
 import {
   resetJobSetEditor,
   setJobSetEditorId,
@@ -18,13 +19,6 @@ import { jobColorsReducer } from './jobColorsReducer'
 import type { JobColorsState } from './jobColorsReducer'
 import { touchedReducer } from './touchedReducer'
 import type { TouchedState } from './touchedReducer'
-
-type JobSetEditorState = {
-  control: JobSetEditorControlState
-  formData: JobSetEditorFormDataState
-  jobColors: JobColorsState
-  touched: TouchedState
-}
 
 type JobSetEditorControlState = {
   id?: number
@@ -87,3 +81,7 @@ export const jobSetsEditorIsEditSelector = (state: JobSetEditorState) => state.c
 export const jobSetsEditorLoadedSelector = (state: JobSetEditorState) => state.control.loaded
 export const jobSetsEditorFailedToLoadSelector = (state: JobSetEditorState) => state.control.failedToLoad
 export const jobSetsEditorJobSetSelector = (state: JobSetEditorState) => state.control.jobSet //todo
+
+export const jobSetsEditorFormDataSelector = (state: JobSetEditorState) => state.formData
+export const jobSetsEditorJobColorsSelector = (state: JobSetEditorState) => state.jobColors
+export const jobSetsEditorTouchedSelector = (state: JobSetEditorState) => state.touched

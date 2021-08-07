@@ -6,7 +6,6 @@ export {
 
 export {
   jobSetEditorReducer,
-  jobSetsEditorLoadedSelector,
   jobSetsEditorJobSetSelector, //todo remove
 } from './jobSetEditorReducer'
 
@@ -55,3 +54,5 @@ export {
   focusMaxViewDuration,
   middlewareCalculatedAutoTimeOptions,
 } from './actions'
+
+export * from './selectors'

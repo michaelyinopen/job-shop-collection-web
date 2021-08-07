@@ -68,7 +68,7 @@ export const NotificationDrawer = () => {
       onClose={() => dispatch(closeDrawer())}
     >
       <Toolbar>
-        <Typography variant="h5">
+        <Typography variant="h4">
           Notifications
         </Typography>
         <div className={classes.separator} />
@@ -88,7 +88,7 @@ export const NotificationDrawer = () => {
         <ol className={classes.list}>
           {allNotifications.map(n => (
             <Card key={n.id} className={classes.card}>
-              <Typography variant="subtitle2">
+              <Typography variant="subtitle1">
                 {n.summary}
               </Typography>
               <Typography variant="caption" color="textSecondary">

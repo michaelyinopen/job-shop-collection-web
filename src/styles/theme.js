@@ -3,10 +3,13 @@ import { createMuiTheme, responsiveFontSizes } from '@material-ui/core'
 export const theme = responsiveFontSizes(
   createMuiTheme({
     typography: {
-      fontSize: 16,
       button: {
+        fontSize: "1rem",
         textTransform: 'none'
-      }
+      },
+      body2: {
+        fontSize: "1rem"
+      },
     },
     props: {
       MuiTypography: {
@@ -17,8 +20,8 @@ export const theme = responsiveFontSizes(
           h4: 'h1',
           h5: 'h2',
           h6: 'h3',
-          subtitle1: 'h3',
-          subtitle2: 'h3',
+          subtitle1: 'h2',
+          subtitle2: 'h2',
         },
       },
       MuiFab: {
@@ -48,7 +51,7 @@ export const theme = responsiveFontSizes(
         }
       },
       MuiTypography: {
-        h6: {
+        h5: {
           fontWeight: 700,
         }
       },

@@ -1,8 +1,13 @@
+import { memo } from 'react'
+import { Title } from './Title'
 
-
-export const JobSetEditorForm = () => {
+export const JobSetEditorForm = memo(() => {
   // const disabled = isLoading || isReadonly
   return (
-    <div>Form</div>
+    <div>
+      Form
+      <Title />
+      <Title />
+    </div>
   )
-}
+})

@@ -27,8 +27,8 @@ const useStyles = makeStyles(theme => createStyles({
     marginInlineEnd: 0,
     paddingInlineStart: 0,
     alignItems: "stretch",
-    '& li': {
-      '&:not(last-child)': {
+    '& > li': {
+      '&:not(:last-child)': {
         marginBottom: theme.spacing(2)
       }
     }
@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => createStyles({
     display: 'flex',
     flexWrap: 'wrap-reverse',
     alignItems: 'flex-end'
+  },
+  cardTitle: {
+    fontWeight: theme.typography.fontWeightRegular,
   },
   content: {
     flex: '1 1 auto',
@@ -85,7 +88,7 @@ export const Home = () => {
       </p>
       <Typography
         id="key-features"
-        variant="h6"
+        variant="h5"
         component="h2"
         gutterBottom
       >
@@ -94,7 +97,13 @@ export const Home = () => {
       <ol className={classes.keyFeatures}>
         <Card component="li" raised className={classes.card}>
           <CardContent className={classes.content}>
-            <Typography variant="h5" component="h3">CRUD Application</Typography>
+            <Typography
+              variant="h5"
+              component="h3"
+              className={classes.cardTitle}
+            >
+              CRUD Application
+            </Typography>
             <p>
               This website allows users to view, store and edit scheduling data.
             </p>
@@ -113,7 +122,13 @@ export const Home = () => {
         </Card>
         <Card component="li" raised className={classes.card}>
           <CardContent className={classes.content}>
-            <Typography variant="h5" component="h3">Responsive Layout</Typography>
+            <Typography
+              variant="h5"
+              component="h3"
+              className={classes.cardTitle}
+            >
+              Responsive Layout
+            </Typography>
             <p>
               The layout is responsive to user's device size.
             </p>
@@ -132,7 +147,13 @@ export const Home = () => {
         </Card>
         <Card component="li" raised className={classes.card}>
           <CardContent className={classes.content}>
-            <Typography variant="h5" component="h3">Logical Input</Typography>
+            <Typography
+              variant="h5"
+              component="h3"
+              className={classes.cardTitle}
+            >
+              Logical Input
+            </Typography>
             <p>
               The input form contains logic and shared data among different sections. Redux is used for state management to ensure shared data are updated properly.
             </p>
@@ -151,7 +172,13 @@ export const Home = () => {
         </Card>
         <Card component="li" raised className={classes.card}>
           <CardContent className={classes.content}>
-            <Typography variant="h5" component="h3">Drag & Drop</Typography>
+            <Typography
+              variant="h5"
+              component="h3"
+              className={classes.cardTitle}
+            >
+              Drag & Drop
+            </Typography>
             <p>
               Users can re-order the procedures within a job. Mouse and touch are both supported.
             </p>
@@ -167,7 +194,13 @@ export const Home = () => {
         </Card>
         <Card component="li" raised className={classes.card}>
           <CardContent className={classes.content}>
-            <Typography variant="h5" component="h3">Tests</Typography>
+            <Typography
+              variant="h5"
+              component="h3"
+              className={classes.cardTitle}
+            >
+              Tests
+            </Typography>
             <p>
               Jest.js is used for testing.
             </p>
@@ -189,7 +222,7 @@ export const Home = () => {
       <ViewExamplesButton />
       <Typography
         id="about-the-job-shop-scheduling-problem"
-        variant="h6"
+        variant="h5"
         component="h2"
         gutterBottom
       >
@@ -218,7 +251,7 @@ export const Home = () => {
       </ul>
       <Typography
         id="this-application-is-built-with"
-        variant="h6"
+        variant="h5"
         component="h2"
         gutterBottom
       >

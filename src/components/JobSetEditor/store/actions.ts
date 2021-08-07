@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import type { JobSetDetail } from '../../JobSets'
-import { TimeOptions } from './formDataReducer'
+import type { TimeOptions } from './formDataReducer'
 
 export const resetJobSetEditor = createAction('jobSetEditor/resetJobSetEditor')
 export const setJobSetEditorId = createAction<number>('jobSetEditor/setJobSetEditorId')

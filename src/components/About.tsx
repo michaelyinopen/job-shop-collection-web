@@ -29,7 +29,7 @@ export const About = () => {
       <section className={classes.section}>
         <Typography
           id="source-code"
-          variant="h6"
+          variant="h5"
           component="h2"
           gutterBottom
         >
@@ -49,7 +49,7 @@ export const About = () => {
       <section className={classes.section}>
         <Typography
           id="releases"
-          variant="h6"
+          variant="h5"
           component="h2"
           gutterBottom
         >
