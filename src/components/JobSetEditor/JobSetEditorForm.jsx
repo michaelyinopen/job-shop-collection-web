@@ -11,7 +11,6 @@ export const JobSetEditorForm = memo(() => {
       <Title />
       <Description />
       <TimeOptions />
-      <TimeOptions />
     </div>
   )
 })

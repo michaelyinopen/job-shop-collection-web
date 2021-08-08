@@ -5,6 +5,10 @@ import {
 } from '@material-ui/core'
 import { AutomaticTimeOptions } from './AutomaticTimeOptions'
 import { MaximumTime } from './MaximumTime'
+import { ViewStartTime } from './ViewStartTime'
+import { ViewEndTime } from './ViewEndTime'
+import { MinimumViewDuration } from './MinimumViewDuration'
+import { MaximumViewDuration } from './MaximumViewDuration'
 
 const useStyles = makeStyles(theme => createStyles({
   section: {
@@ -26,6 +30,10 @@ export const TimeOptions = () => {
       <div className={classes.content}>
         <AutomaticTimeOptions />
         <MaximumTime />
+        <ViewStartTime />
+        <ViewEndTime />
+        <MinimumViewDuration />
+        <MaximumViewDuration />
       </div>
     </section >
   )
