@@ -29,15 +29,15 @@ export const Title = () => {
   return (
     <div className={classes.wrapper}>
       <TextField
-        label="Title"
+        label='Title'
         value={value}
         onFocus={() => { }/*todo */}
         onChange={e => editorDispatch(setTitle(e.target.value))}
         error={false/*todo */}
         required
         size='small'
-        variant="filled"
-        margin="dense"
+        variant='filled'
+        margin='dense'
         fullWidth
         inputProps={{
           maxLength: 50,

@@ -28,13 +28,12 @@ export const Description = () => {
   return (
     <div className={classes.wrapper}>
       <TextField
-        label="Description"
+        label='Description'
         value={value}
         onChange={e => editorDispatch(setDescription(e.target.value))}
-        required
         size='small'
-        variant="filled"
-        margin="dense"
+        variant='filled'
+        margin='dense'
         multiline
         fullWidth
         inputProps={{

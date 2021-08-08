@@ -318,11 +318,11 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.machines.ids
   )
-  const machineTitleSelector = (id: number) => backwardCompose(
+  const createMachineTitleSelector = (id: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.machines.entities[id]?.title
   )
-  const machineDescriptionSelector = (id: number) => backwardCompose(
+  const createMachineDescriptionSelector = (id: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.machines.entities[id]?.description
   )
@@ -341,15 +341,15 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
         .filter(p => p.jobId === jobId)
         .map(p => p.id) as number[]
   )
-  const procedureMachineIdSelector = (procedureId: number) => backwardCompose(
+  const createProcedureMachineIdSelector = (procedureId: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.procedures.entities[procedureId]?.machineId
   )
-  const procedureProcessingTimeMsSelector = (procedureId: number) => backwardCompose(
+  const createProcedureProcessingTimeMsSelector = (procedureId: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.procedures.entities[procedureId]?.processingTimeMs
   )
-  const procedureSequenceSelector = (procedureId: number) => backwardCompose(
+  const createProcedureSequenceSelector = (procedureId: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.procedures.entities[procedureId]?.sequence
   )
@@ -381,13 +381,13 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     titleSelector,
     descriptionSelector,
     machineIdsSelector,
-    machineTitleSelector,
-    machineDescriptionSelector,
+    createMachineTitleSelector,
+    createMachineDescriptionSelector,
     jobIdsSelector,
     createProcedureIdsOfJobSelector,
-    procedureMachineIdSelector,
-    procedureProcessingTimeMsSelector,
-    procedureSequenceSelector,
+    createProcedureMachineIdSelector,
+    createProcedureProcessingTimeMsSelector,
+    createProcedureSequenceSelector,
     isAutoTimeOptionsSelector,
     maxTimeMsSelector,
     viewStartTimeMsSelector,
