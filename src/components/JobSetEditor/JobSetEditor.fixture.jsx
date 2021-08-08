@@ -44,4 +44,4 @@ const Decorator = ({ children }) => (
   </MswDecorator>
 )
 
-export default <Decorator><JobSetEditor id={1} edit={false} /></Decorator>
+export default <Decorator><JobSetEditor id={1} edit={true} /></Decorator>

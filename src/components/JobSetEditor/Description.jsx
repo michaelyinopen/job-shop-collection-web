@@ -35,12 +35,13 @@ export const Description = () => {
         size='small'
         variant="filled"
         margin="dense"
+        multiline
         fullWidth
         inputProps={{
           maxLength: 1000,
           ...(!isEdit ? { readOnly: true } : {}),
         }}
-        InputProps={(value.length >= 40
+        InputProps={(value.length >= 980
           ? {
             endAdornment: (
               <InputAdornment position="end">

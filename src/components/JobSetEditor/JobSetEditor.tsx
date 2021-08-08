@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import type { ComponentType, FunctionComponent } from 'react'
+import { makeStyles, createStyles } from '@material-ui/core'
 import {
   useAppDispatch,
   useAppSelector,
@@ -7,7 +8,7 @@ import {
 } from '../../store'
 import { addNotification } from '../../notifications'
 import { routePaths } from '../../route'
-import { JobSetsPageContainer } from '../../styles'
+import { PageContainer } from '../../styles'
 import { getJobSetTakingThunkAction } from '../JobSets'
 import {
   JobSetEditorProvider,
@@ -40,8 +41,21 @@ const WithJobSetEditorProvider: WithJobSetEditorProviderType = (Component) => (p
     </JobSetEditorProvider>
   )
 }
+const useStyles = makeStyles(theme => createStyles({
+  pageContainer: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
+    [theme.breakpoints.down('xs')]: {
+      paddingLeft: theme.spacing(1),
+      paddingRight: theme.spacing(1),
+    }
+  }
+}))
 
 export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEditorProvider(({ id, edit }) => {
+  const classes = useStyles()
   const dispatch = useAppDispatch()
   const editorDispatch = useJobSetEditorDispatch()
 
@@ -84,14 +98,13 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
   }, [editorDispatch, edit])
 
   //todo remove
-  const jobSetEditorJobSet = useJobSetEditorSelector(jobSetsEditorJobSetSelector)
+  const jobSetEditorState = useJobSetEditorSelector(jobSetsEditorJobSetSelector)
   return (
-    <JobSetsPageContainer>
+    <PageContainer classes={{ pageContainer: classes.pageContainer }}>
       <JobSetEditorTitleBar />
       <JobSetEditorForm />
-
       {/*todo remove, will use jobSetEditor's state */}
-      <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(jobSetEditorJobSet, null, 2)}</pre>
-    </JobSetsPageContainer>
+      <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(jobSetEditorState, null, 2)}</pre>
+    </PageContainer>
   )
 })

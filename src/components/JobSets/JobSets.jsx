@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { Paper } from '@material-ui/core'
+import { makeStyles, createStyles, Paper } from '@material-ui/core'
 import {
   useAppDispatch,
   useAppSelector,
   jobSetHeadersSelector,
 } from '../../store'
-import { JobSetsPageContainer } from '../../styles'
+import { PageContainer } from '../../styles'
 import {
   jobSetsPageSetItems,
   jobSetsPageReset,
@@ -16,7 +16,19 @@ import { JobSetsToolbarTitle } from './JobSetsToolbarTitle'
 import { JobSetsTable } from './JobSetsTable'
 import { JobSetsTablePagination } from './JobSetsTablePagination'
 
+const useStyles = makeStyles(theme => createStyles({
+  pageContainer: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    [theme.breakpoints.down('xs')]: {
+      paddingLeft: 0,
+      paddingRight: 0,
+    }
+  }
+}))
+
 export const JobSets = () => {
+  const classes = useStyles()
   const dispatch = useAppDispatch()
   const loadJobSetsCallback = useLoadJobSetsCallback()
   useEffect(() => {
@@ -31,12 +43,12 @@ export const JobSets = () => {
   }, [dispatch, isLoading, jobSetHeaders])
 
   return (
-    <JobSetsPageContainer>
+    <PageContainer classes={{ pageContainer: classes.pageContainer }}>
       <Paper>
         <JobSetsToolbarTitle />
         <JobSetsTable />
         <JobSetsTablePagination />
       </Paper>
-    </JobSetsPageContainer>
+    </PageContainer>
   )
 }

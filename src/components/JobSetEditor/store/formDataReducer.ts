@@ -353,27 +353,27 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.procedures.entities[procedureId]?.sequence
   )
-  const isAutoTimeOptionsSelector = (procedureId: number) => backwardCompose(
+  const isAutoTimeOptionsSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.isAutoTimeOptions
   )
-  const maxTimeMsSelector = (procedureId: number) => backwardCompose(
+  const maxTimeMsSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.timeOptions.maxTimeMs
   )
-  const viewStartTimeMsSelector = (procedureId: number) => backwardCompose(
+  const viewStartTimeMsSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.timeOptions.viewStartTimeMs
   )
-  const viewEndTimeMsSelector = (procedureId: number) => backwardCompose(
+  const viewEndTimeMsSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.timeOptions.viewEndTimeMs
   )
-  const maxViewDurationMsSelector = (procedureId: number) => backwardCompose(
+  const maxViewDurationMsSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.timeOptions.maxViewDurationMs
   )
-  const minViewDurationMsSelector = (procedureId: number) => backwardCompose(
+  const minViewDurationMsSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.timeOptions.minViewDurationMs
   )

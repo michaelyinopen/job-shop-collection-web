@@ -32,7 +32,6 @@ type JobSetEditorControlState = {
 const jobSetEditorControlInitialState: JobSetEditorControlState = {
   id: undefined,
   isEdit: false,
-  loaded: false,
   setFromAppStore: false,
   failedToLoad: false,
   jobSet: undefined, //todo
@@ -66,7 +65,7 @@ const jobSetEditorControlReducer = createReducer(jobSetEditorControlInitialState
         return
       }
       // todo implement
-      state.jobSet = jobSet //todo remove
+      // state.jobSet = jobSet //todo remove
     })
 })
 
@@ -80,7 +79,7 @@ export const jobSetEditorReducer = combineReducers({
 export const jobSetsEditorIsEditSelector = (state: JobSetEditorState) => state.control.isEdit
 export const jobSetsEditorLoadedSelector = (state: JobSetEditorState) => state.control.loaded
 export const jobSetsEditorFailedToLoadSelector = (state: JobSetEditorState) => state.control.failedToLoad
-export const jobSetsEditorJobSetSelector = (state: JobSetEditorState) => state.control.jobSet //todo
+export const jobSetsEditorJobSetSelector = (state: JobSetEditorState) => state //todo
 
 export const jobSetsEditorFormDataSelector = (state: JobSetEditorState) => state.formData
 export const jobSetsEditorJobColorsSelector = (state: JobSetEditorState) => state.jobColors
