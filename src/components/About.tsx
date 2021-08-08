@@ -30,7 +30,6 @@ export const About = () => {
         <Typography
           id="source-code"
           variant="h5"
-          component="h2"
           gutterBottom
         >
           Source Code
@@ -50,7 +49,6 @@ export const About = () => {
         <Typography
           id="releases"
           variant="h5"
-          component="h2"
           gutterBottom
         >
           Releases

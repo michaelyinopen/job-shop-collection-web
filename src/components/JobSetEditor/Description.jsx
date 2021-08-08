@@ -39,7 +39,7 @@ export const Description = () => {
         fullWidth
         inputProps={{
           maxLength: 1000,
-          ...(!isEdit ? { readOnly: true } : {}),
+          readOnly: !isEdit,
         }}
         InputProps={(value.length >= 980
           ? {

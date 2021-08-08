@@ -1,4 +1,6 @@
 import {
+  makeStyles,
+  createStyles,
   FormControl,
   FormLabel,
   RadioGroup,
@@ -13,28 +15,37 @@ import {
   setIsAutoTimeOptions
 } from '../store'
 
+const useStyles = makeStyles(theme => createStyles({
+  formControl: {
+    marginBottom: theme.spacing(1)
+  },
+}))
+
 export const AutomaticTimeOptions = () => {
+  const classes = useStyles()
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
   const value = useJobSetEditorSelector(isAutoTimeOptionsSelector)
-  const dispatch = useJobSetEditorDispatch()
+  const editorDispatch = useJobSetEditorDispatch()
   return (
-    <FormControl component="fieldset">
+    <FormControl component="fieldset" className={classes.formControl}>
       <FormLabel component="legend">Automatic Time Options</FormLabel>
       <RadioGroup
         value={String(value)}
-        onChange={e => dispatch(setIsAutoTimeOptions((e.target.value === 'true')))}
+        onChange={e => editorDispatch(setIsAutoTimeOptions((e.target.value === 'true')))}
         name="automatic-time-options"
       >
         <FormControlLabel
           value='true'
-          control={<Radio />}
-          label="Auto"
-          {...(isEdit ? {} : { disabled: true })} />
+          control={<Radio size='small' />}
+          label="Automatic"
+          disabled={!isEdit}
+        />
         <FormControlLabel
           value='false'
-          control={<Radio />}
+          control={<Radio size='small' />}
           label="Manual"
-          {...(isEdit ? {} : { disabled: true })} />
+          disabled={!isEdit}
+        />
       </RadioGroup>
     </FormControl>
   )

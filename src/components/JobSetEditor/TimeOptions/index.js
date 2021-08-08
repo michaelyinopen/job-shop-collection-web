@@ -1,1 +1,1 @@
-export {TimeOptions} from './TimeOptions'
+export { TimeOptions } from './TimeOptions'

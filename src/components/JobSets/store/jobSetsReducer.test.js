@@ -22,6 +22,7 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1010",
+        isLatestContent: false,
       },
       11: {
         id: 11,
@@ -33,6 +34,7 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1111",
+        isLatestContent: false,
       }
     })
     expect(nextState).not.toBe(state)
@@ -99,6 +101,7 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1010",
+          isLatestContent: false,
         },
         11: {
           id: 11,
@@ -110,6 +113,7 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1111",
+          isLatestContent: false,
         }
       }
     }
@@ -131,6 +135,7 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1010",
+        isLatestContent: false,
       },
       11: {
         id: 11,
@@ -142,6 +147,7 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: true,
         eTag: "9999",
+        isLatestContent: false,
       }
     })
     expect(nextState).not.toBe(state)
@@ -167,6 +173,7 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1010",
+          isLatestContent: false,
         },
         11: {
           id: 11,
@@ -178,6 +185,7 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1111",
+          isLatestContent: false,
         }
       }
     }
@@ -198,6 +206,7 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1111",
+        isLatestContent: false,
       }
     })
     expect(nextState).not.toBe(state)
@@ -222,6 +231,7 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1010",
+          isLatestContent: false,
         },
         11: {
           id: 11,
@@ -233,6 +243,7 @@ describe("getJobSetsSucceeded", () => {
           timeOptions: null,
           isLocked: false,
           eTag: "1111",
+          isLatestContent: false,
         }
       }
     }
@@ -254,6 +265,7 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: true,
         eTag: "9999",
+        isLatestContent: false,
       },
       12: {
         id: 12,
@@ -265,6 +277,7 @@ describe("getJobSetsSucceeded", () => {
         timeOptions: null,
         isLocked: false,
         eTag: "1212",
+        isLatestContent: false,
       }
     })
     expect(nextState).not.toBe(state)

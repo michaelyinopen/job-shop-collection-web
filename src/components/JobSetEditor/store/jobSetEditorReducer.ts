@@ -1,10 +1,8 @@
 import {
   combineReducers,
   createReducer,
-  createSelector,
 } from '@reduxjs/toolkit'
-import { backwardCompose } from '../../../utility'
-import { JobSetEditorState } from './store'
+import type { JobSetEditorState } from './store'
 import {
   resetJobSetEditor,
   setJobSetEditorId,
@@ -14,11 +12,8 @@ import {
   setJobSetFromAppStore,
 } from './actions'
 import { formDataReducer } from './formDataReducer'
-import type { JobSetEditorFormDataState } from './formDataReducer'
 import { jobColorsReducer } from './jobColorsReducer'
-import type { JobColorsState } from './jobColorsReducer'
 import { touchedReducer } from './touchedReducer'
-import type { TouchedState } from './touchedReducer'
 
 type JobSetEditorControlState = {
   id?: number

@@ -6,7 +6,7 @@ import { TimeOptions } from './TimeOptions'
 export const JobSetEditorForm = memo(() => {
   // const disabled = isLoading || isReadonly
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       Form
       <Title />
       <Description />

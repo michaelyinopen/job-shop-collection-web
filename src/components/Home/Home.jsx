@@ -89,7 +89,6 @@ export const Home = () => {
       <Typography
         id="key-features"
         variant="h5"
-        component="h2"
         gutterBottom
       >
         Key Features
@@ -223,7 +222,6 @@ export const Home = () => {
       <Typography
         id="about-the-job-shop-scheduling-problem"
         variant="h5"
-        component="h2"
         gutterBottom
       >
         About The Job Shop Scheduling Problem
@@ -252,7 +250,6 @@ export const Home = () => {
       <Typography
         id="this-application-is-built-with"
         variant="h5"
-        component="h2"
         gutterBottom
       >
         This application is built with

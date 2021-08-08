@@ -33,15 +33,15 @@ export const Title = () => {
         value={value}
         onFocus={() => { }/*todo */}
         onChange={e => editorDispatch(setTitle(e.target.value))}
+        error={false/*todo */}
         required
         size='small'
-        error={false/*todo */}
         variant="filled"
         margin="dense"
         fullWidth
         inputProps={{
           maxLength: 50,
-          ...(!isEdit ? { readOnly: true } : {}),
+          readOnly: !isEdit,
         }}
         InputProps={(value.length >= 40
           ? {
