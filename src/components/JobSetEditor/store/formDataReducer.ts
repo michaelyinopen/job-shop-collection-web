@@ -314,9 +314,12 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.description
   )
-  const machineIdsSelector = backwardCompose(
-    jobSetsEditorFormDataSelector,
-    (state: JobSetEditorFormDataState) => state.machines.ids
+  const machineIdsSelector = createSelector(
+    backwardCompose(
+      jobSetsEditorFormDataSelector,
+      (state: JobSetEditorFormDataState) => state.machines.ids
+    ),
+    machineIds => [...machineIds].sort()
   )
   const createMachineTitleSelector = (id: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
@@ -326,9 +329,12 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.machines.entities[id]?.description
   )
-  const jobIdsSelector = backwardCompose(
-    jobSetsEditorFormDataSelector,
-    (state: JobSetEditorFormDataState) => state.jobs.ids
+  const jobIdsSelector = createSelector(
+    backwardCompose(
+      jobSetsEditorFormDataSelector,
+      (state: JobSetEditorFormDataState) => state.jobs.ids
+    ),
+    jobIds => [...jobIds].sort()
   )
   const proceduresSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
@@ -337,9 +343,10 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
   const createProcedureIdsOfJobSelector = (jobId: number) => createSelector(
     proceduresSelector,
     (procedures: EntityState<ProcedureState>) =>
-      Object.values(procedures)
-        .filter(p => p.jobId === jobId)
-        .map(p => p.id) as number[]
+      Object.values(procedures.entities)
+        .filter(p => p && p.jobId === jobId)
+        .sort((a, b) => a!.sequence - b!.sequence)
+        .map(p => p!.id)
   )
   const createProcedureMachineIdSelector = (procedureId: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
@@ -352,6 +359,13 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
   const createProcedureSequenceSelector = (procedureId: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.procedures.entities[procedureId]?.sequence
+  )
+  const createProceduresAffectedByMachineSelector = (machineId: number) => createSelector(
+    proceduresSelector,
+    (procedures: EntityState<ProcedureState>) =>
+      Object.values(procedures.entities)
+        .filter(p => p && p.machineId === machineId)
+        .sort((a, b) => (a!.jobId - b!.jobId) || (a!.sequence - b!.sequence))
   )
   const isAutoTimeOptionsSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
@@ -388,6 +402,7 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     createProcedureMachineIdSelector,
     createProcedureProcessingTimeMsSelector,
     createProcedureSequenceSelector,
+    createProceduresAffectedByMachineSelector,
     isAutoTimeOptionsSelector,
     maxTimeMsSelector,
     viewStartTimeMsSelector,

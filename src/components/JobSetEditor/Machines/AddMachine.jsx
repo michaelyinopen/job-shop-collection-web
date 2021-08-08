@@ -16,7 +16,10 @@ const useStyles = makeStyles(theme => createStyles({
     paddingBottom: 0,
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
-    margin: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(1),
     display: "flex",
     alignItems: "baseline",
     maxWidth: 600

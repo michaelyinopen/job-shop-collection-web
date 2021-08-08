@@ -23,6 +23,7 @@ export const {
   createProcedureMachineIdSelector,
   createProcedureProcessingTimeMsSelector,
   createProcedureSequenceSelector,
+  createProceduresAffectedByMachineSelector,
   isAutoTimeOptionsSelector,
   maxTimeMsSelector,
   viewStartTimeMsSelector,
