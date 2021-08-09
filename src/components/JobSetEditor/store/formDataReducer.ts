@@ -1,6 +1,10 @@
 import { createReducer, createSelector } from '@reduxjs/toolkit'
 import type { EntityState } from '@reduxjs/toolkit'
-import { createCustomReducer, backwardCompose } from '../../../utility'
+import {
+  createCustomReducer,
+  backwardCompose,
+  getNewJobColor
+} from '../../../utility'
 import {
   resetJobSetEditor,
   setJobSetFromAppStore,
@@ -25,6 +29,7 @@ import {
   setMinViewDuration,
   setMaxViewDuration,
   middlewareCalculatedAutoTimeOptions,
+  changeJobColor,
 } from './actions'
 import type { JobSetEditorState } from './store'
 
@@ -33,9 +38,11 @@ export type JobSetEditorFormDataState = {
   description: string
   machines: EntityState<MachineState>
   jobs: EntityState<JobState>
+  jobColors: EntityState<JobColorState>
   procedures: EntityState<ProcedureState>
   isAutoTimeOptions: boolean
-  timeOptions: TimeOptionsState
+  autoTimeOptions: TimeOptionsState
+  manualTimeOptions: TimeOptionsState
 }
 
 type MachineState = {
@@ -46,6 +53,12 @@ type MachineState = {
 
 type JobState = {
   id: number
+}
+
+type JobColorState = {
+  jobId: number
+  color: string
+  textColor: string
 }
 
 type ProcedureState = {
@@ -87,6 +100,21 @@ const machineReducer = (id: number) => createCustomReducer(
 
 const jobInitialState = (id: number): JobState => ({ id })
 
+const jobColorInitialState = (id: number): JobState => ({ id })
+const jobColorReducer = (id: number) => createCustomReducer(
+  jobColorInitialState(id),
+  {
+    [createJob.type]: (state, _action, { color, textColor }) => {
+      state.color = color
+      state.textColor = textColor
+    },
+    [changeJobColor.type]: (state, _action, { color, textColor }) => {
+      state.color = color
+      state.textColor = textColor
+    }
+  }
+)
+
 const procedureInitialState = (id: number): Partial<ProcedureState> => ({
   id: id,
   jobId: undefined,
@@ -125,12 +153,23 @@ const formDataInitialState: JobSetEditorFormDataState = {
     ids: [],
     entities: {},
   },
+  jobColors: {
+    ids: [],
+    entities: {},
+  },
   procedures: {
     ids: [],
     entities: {},
   },
   isAutoTimeOptions: true,
-  timeOptions: {
+  autoTimeOptions: {
+    maxTimeMs: 0,
+    viewStartTimeMs: 0,
+    viewEndTimeMs: 0,
+    minViewDurationMs: 0,
+    maxViewDurationMs: 0
+  },
+  manualTimeOptions: {
     maxTimeMs: 0,
     viewStartTimeMs: 0,
     viewEndTimeMs: 0,
@@ -188,12 +227,33 @@ export const formDataReducer = createReducer(formDataInitialState, (builder) => 
       const newJob = jobInitialState(newJobId)
       state.jobs.ids.push(newJobId)
       state.jobs.entities[newJobId] = newJob
+
+      const excludeColors = Object.values(state.jobColors.entities)
+        .map(jc => jc!.color)
+      const { color, textColor } = getNewJobColor(excludeColors)
+      state.jobColors.ids.push(newJobId)
+      state.jobColors.entities[newJobId] =
+        jobColorReducer(newJobId)(undefined, action, { color, textColor })
+    })
+    .addCase(changeJobColor, (state, action) => {
+      const { payload: { jobId } } = action
+      const excludeColors = Object.values(state.jobColors.entities)
+        .map(jc => jc!.color)
+      const { color, textColor } = getNewJobColor(excludeColors, state.jobColors.entities[jobId]!.color)
+      state.jobColors.entities[jobId] =
+        jobColorReducer(jobId)(state.jobColors.entities[jobId], action, { color, textColor })
     })
     .addCase(deleteJob, (state, { payload: { jobId } }) => {
       const index = state.jobs.ids.indexOf(jobId)
       if (index !== -1) {
-        state.machines.ids.splice(index, 1)
-        delete state.machines.entities[jobId]
+        state.jobs.ids.splice(index, 1)
+        delete state.jobs.entities[jobId]
+      }
+
+      const jobColorIndex = state.jobColors.ids.indexOf(jobId)
+      if (jobColorIndex !== -1) {
+        state.jobColors.ids.splice(jobColorIndex, 1)
+        delete state.jobColors.entities[jobId]
       }
     })
 
@@ -269,36 +329,36 @@ export const formDataReducer = createReducer(formDataInitialState, (builder) => 
     })
     .addCase(setMaxTime, (state, { payload: { maxTimeMs } }) => {
       if (!state.isAutoTimeOptions) {
-        state.timeOptions.maxTimeMs = maxTimeMs
+        state.manualTimeOptions.maxTimeMs = maxTimeMs
       }
     })
     .addCase(setViewStartTime, (state, { payload: { viewStartTimeMs } }) => {
       if (!state.isAutoTimeOptions) {
-        state.timeOptions.viewStartTimeMs = viewStartTimeMs
+        state.manualTimeOptions.viewStartTimeMs = viewStartTimeMs
       }
     })
     .addCase(setViewEndTime, (state, { payload: { viewEndTimeMs } }) => {
       if (!state.isAutoTimeOptions) {
-        state.timeOptions.viewEndTimeMs = viewEndTimeMs
+        state.manualTimeOptions.viewEndTimeMs = viewEndTimeMs
       }
     })
     .addCase(setMinViewDuration, (state, { payload: { minViewDurationMs } }) => {
       if (!state.isAutoTimeOptions) {
-        state.timeOptions.minViewDurationMs = minViewDurationMs
+        state.manualTimeOptions.minViewDurationMs = minViewDurationMs
       }
     })
     .addCase(setMaxViewDuration, (state, { payload: { maxViewDurationMs } }) => {
       if (!state.isAutoTimeOptions) {
-        state.timeOptions.maxViewDurationMs = maxViewDurationMs
+        state.manualTimeOptions.maxViewDurationMs = maxViewDurationMs
       }
     })
     .addCase(middlewareCalculatedAutoTimeOptions, (state, { payload: { timeOptions } }) => {
       if (state.isAutoTimeOptions) {
-        state.timeOptions.maxTimeMs = timeOptions.maxTimeMs
-        state.timeOptions.viewStartTimeMs = timeOptions.viewStartTimeMs
-        state.timeOptions.viewEndTimeMs = timeOptions.viewEndTimeMs
-        state.timeOptions.minViewDurationMs = timeOptions.minViewDurationMs
-        state.timeOptions.maxViewDurationMs = timeOptions.maxViewDurationMs
+        state.autoTimeOptions.maxTimeMs = timeOptions.maxTimeMs
+        state.autoTimeOptions.viewStartTimeMs = timeOptions.viewStartTimeMs
+        state.autoTimeOptions.viewEndTimeMs = timeOptions.viewEndTimeMs
+        state.autoTimeOptions.minViewDurationMs = timeOptions.minViewDurationMs
+        state.autoTimeOptions.maxViewDurationMs = timeOptions.maxViewDurationMs
       }
     })
 })
@@ -371,25 +431,31 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.isAutoTimeOptions
   )
-  const maxTimeMsSelector = backwardCompose(
+  const timeOptionsSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
-    (state: JobSetEditorFormDataState) => state.timeOptions.maxTimeMs
+    (state: JobSetEditorFormDataState) => state.isAutoTimeOptions
+      ? state.autoTimeOptions
+      : state.manualTimeOptions
+  )
+  const maxTimeMsSelector = backwardCompose(
+    timeOptionsSelector,
+    (timeOptions: TimeOptionsState) => timeOptions.maxTimeMs
   )
   const viewStartTimeMsSelector = backwardCompose(
-    jobSetsEditorFormDataSelector,
-    (state: JobSetEditorFormDataState) => state.timeOptions.viewStartTimeMs
+    timeOptionsSelector,
+    (timeOptions: TimeOptionsState) => timeOptions.viewStartTimeMs
   )
   const viewEndTimeMsSelector = backwardCompose(
-    jobSetsEditorFormDataSelector,
-    (state: JobSetEditorFormDataState) => state.timeOptions.viewEndTimeMs
+    timeOptionsSelector,
+    (timeOptions: TimeOptionsState) => timeOptions.viewEndTimeMs
   )
   const maxViewDurationMsSelector = backwardCompose(
-    jobSetsEditorFormDataSelector,
-    (state: JobSetEditorFormDataState) => state.timeOptions.maxViewDurationMs
+    timeOptionsSelector,
+    (timeOptions: TimeOptionsState) => timeOptions.maxViewDurationMs
   )
   const minViewDurationMsSelector = backwardCompose(
-    jobSetsEditorFormDataSelector,
-    (state: JobSetEditorFormDataState) => state.timeOptions.minViewDurationMs
+    timeOptionsSelector,
+    (timeOptions: TimeOptionsState) => timeOptions.minViewDurationMs
   )
   return {
     titleSelector,

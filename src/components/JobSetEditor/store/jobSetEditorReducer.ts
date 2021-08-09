@@ -12,7 +12,6 @@ import {
   setJobSetFromAppStore,
 } from './actions'
 import { formDataReducer } from './formDataReducer'
-import { jobColorsReducer } from './jobColorsReducer'
 import { touchedReducer } from './touchedReducer'
 
 type JobSetEditorControlState = {
@@ -27,6 +26,7 @@ type JobSetEditorControlState = {
 const jobSetEditorControlInitialState: JobSetEditorControlState = {
   id: undefined,
   isEdit: false,
+  loaded: false,
   setFromAppStore: false,
   failedToLoad: false,
   jobSet: undefined, //todo
@@ -67,7 +67,6 @@ const jobSetEditorControlReducer = createReducer(jobSetEditorControlInitialState
 export const jobSetEditorReducer = combineReducers({
   control: jobSetEditorControlReducer,
   formData: formDataReducer,
-  jobColors: jobColorsReducer,
   touched: touchedReducer,
 })
 
@@ -77,5 +76,4 @@ export const jobSetsEditorFailedToLoadSelector = (state: JobSetEditorState) => s
 export const jobSetsEditorJobSetSelector = (state: JobSetEditorState) => state //todo
 
 export const jobSetsEditorFormDataSelector = (state: JobSetEditorState) => state.formData
-export const jobSetsEditorJobColorsSelector = (state: JobSetEditorState) => state.jobColors
 export const jobSetsEditorTouchedSelector = (state: JobSetEditorState) => state.touched
