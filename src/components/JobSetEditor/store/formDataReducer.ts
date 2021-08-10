@@ -230,7 +230,8 @@ export const formDataReducer = createReducer(formDataInitialState, (builder) => 
 
       const excludeColors = Object.values(state.jobColors.entities)
         .map(jc => jc!.color)
-      const { color, textColor } = getNewJobColor(excludeColors)
+      const lastColor = excludeColors[excludeColors.length - 1]
+      const { color, textColor } = getNewJobColor(excludeColors, lastColor)
       state.jobColors.ids.push(newJobId)
       state.jobColors.entities[newJobId] =
         jobColorReducer(newJobId)(undefined, action, { color, textColor })

@@ -1,7 +1,6 @@
 import { rest } from 'msw'
 import {
   MswDecorator,
-  PageInLayoutDecorator,
   ReduxDecorator,
   ThemeDecorator,
   RouterDecorator,
@@ -35,9 +34,7 @@ const Decorator = ({ children }) => (
     <ReduxDecorator>
       <ThemeDecorator>
         <RouterDecorator>
-          <PageInLayoutDecorator>
-            {children}
-          </PageInLayoutDecorator>
+          {children}
         </RouterDecorator>
       </ThemeDecorator>
     </ReduxDecorator>
