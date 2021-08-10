@@ -103,7 +103,7 @@ const MachineDescription = ({ id }) => {
 }
 
 const useMachineStyles = makeStyles(theme => createStyles({
-  machine: {
+  machineCard: {
     paddingTop: 0,
     paddingBottom: 0,
     paddingRight: theme.spacing(1),
@@ -123,7 +123,7 @@ export const Machine = ({ id }) => {
   const classes = useMachineStyles()
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
   return (
-    <Card className={classes.machine}>
+    <Card className={classes.machineCard}>
       <MachineTitle id={id} />
       <MachineDescription id={id} />
       <div className={classes.separator} />

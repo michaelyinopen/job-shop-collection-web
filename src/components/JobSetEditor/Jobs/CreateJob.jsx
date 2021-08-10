@@ -7,22 +7,17 @@ import {
 import AddIcon from '@material-ui/icons/Add'
 import {
   useJobSetEditorDispatch,
-  addMachine,
+  createJob,
 } from '../store'
 
 const useStyles = makeStyles(theme => createStyles({
-  machineCard: {
-    paddingTop: 0,
-    paddingBottom: 0,
-    paddingRight: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    marginRight: theme.spacing(2),
-    marginLeft: theme.spacing(1),
-    display: "flex",
-    alignItems: "baseline",
-    maxWidth: 600
+  jobCard: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    paddingRight: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+    margin: theme.spacing(1),
+    maxWidth: 800,
   },
   addButton: {
     margin: theme.spacing(1),
@@ -32,19 +27,19 @@ const useStyles = makeStyles(theme => createStyles({
   },
 }))
 
-export const AddMachine = () => {
+export const CreateJob = () => {
   const classes = useStyles()
   const editorDispatch = useJobSetEditorDispatch()
   return (
-    <Card className={classes.machineCard}>
+    <Card className={classes.jobCard}>
       <Button
         variant="contained"
         color="primary"
-        onClick={() => { editorDispatch(addMachine()) }}
+        onClick={() => { editorDispatch(createJob()) }}
         className={classes.addButton}
       >
         <AddIcon className={classes.addIcon} />
-        Machine
+        Job
       </Button>
     </Card>
   )

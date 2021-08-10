@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { Title } from './Title'
 import { Description } from './Description'
 import { Machines } from './Machines'
+import { Jobs } from './Jobs'
 import { TimeOptions } from './TimeOptions'
 
 export const JobSetEditorForm = memo(() => {
@@ -12,6 +13,7 @@ export const JobSetEditorForm = memo(() => {
       <Title />
       <Description />
       <Machines />
+      <Jobs />
       <TimeOptions />
     </div>
   )

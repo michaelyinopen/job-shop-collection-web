@@ -396,6 +396,14 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     ),
     jobIds => [...jobIds].sort()
   )
+  const createJobColorSelector = (id: number) => backwardCompose(
+    jobSetsEditorFormDataSelector,
+    (state: JobSetEditorFormDataState) => state.jobColors.entities[id]?.color,
+  )
+  const createJobTextColorSelector = (id: number) => backwardCompose(
+    jobSetsEditorFormDataSelector,
+    (state: JobSetEditorFormDataState) => state.jobColors.entities[id]?.textColor,
+  )
   const proceduresSelector = backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.procedures
@@ -464,6 +472,8 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     createMachineTitleSelector,
     createMachineDescriptionSelector,
     jobIdsSelector,
+    createJobColorSelector,
+    createJobTextColorSelector,
     createProcedureIdsOfJobSelector,
     createProcedureMachineIdSelector,
     createProcedureProcessingTimeMsSelector,

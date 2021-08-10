@@ -19,6 +19,8 @@ export const {
   createMachineTitleSelector,
   createMachineDescriptionSelector,
   jobIdsSelector,
+  createJobColorSelector,
+  createJobTextColorSelector,
   createProcedureIdsOfJobSelector,
   createProcedureMachineIdSelector,
   createProcedureProcessingTimeMsSelector,
