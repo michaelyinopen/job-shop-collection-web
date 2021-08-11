@@ -295,12 +295,12 @@ export const formDataReducer = createReducer(formDataInitialState, (builder) => 
     .addCase(setProcedureMachineId, (state, action) => {
       const { payload: { procedureId } } = action
       state.procedures.entities[procedureId] =
-        machineReducer(procedureId)(state.machines.entities[procedureId], action)
+        procedureReducer(procedureId)(state.procedures.entities[procedureId], action)
     })
     .addCase(setProcedureProcessingTime, (state, action) => {
       const { payload: { procedureId } } = action
       state.procedures.entities[procedureId] =
-        machineReducer(procedureId)(state.machines.entities[procedureId], action)
+        procedureReducer(procedureId)(state.procedures.entities[procedureId], action)
     })
     .addCase(moveProcedure, (state, action) => {
       // targetSequence is this procedure's sequence after move
@@ -403,6 +403,13 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     ),
     machineIds => [...machineIds].sort()
   )
+  const machinesSelector = createSelector(
+    backwardCompose(
+      jobSetsEditorFormDataSelector,
+      (state: JobSetEditorFormDataState) => state.machines.entities
+    ),
+    machines => Object.values(machines).sort((a, b) => a!.id - b!.id)
+  )
   const createMachineTitleSelector = (id: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
     (state: JobSetEditorFormDataState) => state.machines.entities[id]?.title
@@ -437,6 +444,10 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
         .filter(p => p && p.jobId === jobId)
         .sort((a, b) => a!.sequence - b!.sequence)
         .map(p => p!.id)
+  )
+  const createProcedureJobIdSelector = (procedureId: number) => backwardCompose(
+    jobSetsEditorFormDataSelector,
+    (state: JobSetEditorFormDataState) => state.procedures.entities[procedureId]?.jobId
   )
   const createProcedureMachineIdSelector = (procedureId: number) => backwardCompose(
     jobSetsEditorFormDataSelector,
@@ -491,12 +502,14 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
     titleSelector,
     descriptionSelector,
     machineIdsSelector,
+    machinesSelector,
     createMachineTitleSelector,
     createMachineDescriptionSelector,
     jobIdsSelector,
     createJobColorSelector,
     createJobTextColorSelector,
     createProcedureIdsOfJobSelector,
+    createProcedureJobIdSelector,
     createProcedureMachineIdSelector,
     createProcedureProcessingTimeMsSelector,
     createProcedureSequenceSelector,

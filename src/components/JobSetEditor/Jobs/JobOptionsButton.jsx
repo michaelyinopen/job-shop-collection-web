@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import throttle from 'lodash/throttle'
 import {
+  makeStyles,
+  createStyles,
   ClickAwayListener,
   Tooltip,
   IconButton,
@@ -11,7 +13,17 @@ import {
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz'
 import { JobOptions } from './JobOptions'
 
+const useStyles = makeStyles(theme => createStyles({
+  transformOriginTop: {
+    transformOrigin: 'top'
+  },
+  popper: {
+    zIndex: 1
+  },
+}))
+
 export const JobOptionsButton = ({ id }) => {
+  const classes = useStyles()
   const [anchorEl, setAnchorEl] = useState(null)
 
   const throttledClosePopper = useRef(
@@ -54,11 +66,12 @@ export const JobOptionsButton = ({ id }) => {
           anchorEl={anchorEl}
           placement='bottom-start'
           transition
+          className={classes.popper}
         >
           {({ TransitionProps }) => (
             <Grow
               {...TransitionProps}
-              style={{ transformOrigin: 'top' }}
+              className={classes.transformOriginTop}
             >
               <Paper>
                 <JobOptions id={id} />
@@ -67,6 +80,6 @@ export const JobOptionsButton = ({ id }) => {
           )}
         </Popper>
       </div>
-    </ClickAwayListener>
+    </ClickAwayListener >
   )
 }
