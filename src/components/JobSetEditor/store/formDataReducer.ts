@@ -138,6 +138,11 @@ const procedureReducer = (id: number) => createCustomReducer(
     },
     [moveProcedure.type]: (state, _action, { sequence }) => {
       state.sequence = sequence
+    },
+    [removeMachine.type]: (state, { payload: { machineId } }) => {
+      if (state.machineI === machineId) {
+        state.machineId = null
+      }
     }
   }
 )
@@ -212,11 +217,19 @@ export const formDataReducer = createReducer(formDataInitialState, (builder) => 
       state.machines.entities[machineId] =
         machineReducer(machineId)(state.machines.entities[machineId], action)
     })
-    .addCase(removeMachine, (state, { payload: { machineId } }) => {
+    .addCase(removeMachine, (state, action) => {
+      const { payload: { machineId } } = action
       const index = state.machines.ids.indexOf(machineId)
       if (index !== -1) {
         state.machines.ids.splice(index, 1)
         delete state.machines.entities[machineId]
+      }
+
+      const proceduresOfMachine = Object.values(state.procedures.entities)
+        .filter(p => p!.machineId === machineId)
+      for (const procedure of proceduresOfMachine) {
+        state.procedures.entities[procedure!.id] =
+          procedureReducer(procedure!.id)(state.procedures.entities[procedure!.id], action)
       }
     })
 
@@ -255,6 +268,14 @@ export const formDataReducer = createReducer(formDataInitialState, (builder) => 
       if (jobColorIndex !== -1) {
         state.jobColors.ids.splice(jobColorIndex, 1)
         delete state.jobColors.entities[jobId]
+      }
+
+      const proceduresOfJob = Object.values(state.procedures.entities)
+        .filter(p => p!.jobId === jobId)
+      for (const procedure of proceduresOfJob) {
+        const procedureIndex = state.procedures.ids.indexOf(procedure!.id)
+        state.procedures.ids.splice(procedureIndex, 1)
+        delete state.procedures.entities[procedure!.id]
       }
     })
 

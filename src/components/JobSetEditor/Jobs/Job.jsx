@@ -71,7 +71,7 @@ export const Job = ({ id }) => {
           {isEdit && <DeleteJobButton id={id} />}
         </aside>
       </div>
-      <Procedures jobId={id} />
+      <Procedures key={id} jobId={id} />
     </Card>
   )
 }
