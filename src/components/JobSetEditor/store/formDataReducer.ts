@@ -140,7 +140,7 @@ const procedureReducer = (id: number) => createCustomReducer(
       state.sequence = sequence
     },
     [removeMachine.type]: (state, { payload: { machineId } }) => {
-      if (state.machineI === machineId) {
+      if (state.machineId === machineId) {
         state.machineId = null
       }
     }

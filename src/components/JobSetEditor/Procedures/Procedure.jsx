@@ -6,9 +6,8 @@ import {
   Tooltip,
   MenuItem,
   InputAdornment,
-  IconButton
+  NativeSelect,
 } from '@material-ui/core'
-import OpenWithIcon from '@material-ui/icons/OpenWith'
 import TimeField from 'react-simple-timefield'
 import { msToFormattedTime, formattedTimeToMs } from '../../../utility'
 import {
@@ -19,24 +18,32 @@ import {
   createProcedureSequenceSelector,
   createProcedureProcessingTimeMsSelector,
   createJobColorSelector,
-  createJobTextColorSelector,
   createProcedureMachineIdSelector,
   machinesSelector,
-
+  setProcedureMachineId,
   setProcedureProcessingTime,
 } from '../store'
 import { DeleteProcedureButton } from './DeleteProcedureButton'
 
-const useStyles = makeStyles(theme => createStyles({
+const useProcedureMachineStyles = makeStyles(theme => createStyles({
+  procedureMachineRoot: {
+    display: "flex",
+    alignItems: "center",
+  },
   machineLabel: {
     verticalAlign: "top",
     paddingRight: 0,
     color: "black",
     backgroundColor: "white",
-    minWidth: 0, paddingLeft: theme.spacing(1)
+    minWidth: 0,
+    paddingLeft: theme.spacing(1)
   },
   machineLabelTextField: {
     width: theme.spacing(24)
+  },
+  emptyMenuItemText: {
+    color: theme.palette.text.hint,
+    fontStyle: 'italic'
   },
   machineLabelSeparator: {
     position: "relative",
@@ -56,65 +63,56 @@ const useStyles = makeStyles(theme => createStyles({
       borderLeft: `${theme.spacing(4)}px solid white`,
     }
   },
-  sameLine: {
-    display: "flex",
-    alignItems: "center",
-  },
 }))
 
-const useProcedureMachineStyles = makeStyles(theme => createStyles({
-  wrapper: {
-    marginRight: theme.spacing(2),
-    width: '12rem',
-  }
-}))
+const ProcedureMachine = ({ id }) => {
+  const classes = useProcedureMachineStyles()
+  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const machines = useJobSetEditorSelector(machinesSelector)
+  const procedureMachineIdSelector = useRef(createProcedureMachineIdSelector(id)).current
+  const procedureMachineId = useJobSetEditorSelector(procedureMachineIdSelector)
+  const editorDispatch = useJobSetEditorDispatch()
 
-const ProcedureMachine = () => (<div> Procedure Machine </div>)
-
-// const ProcedureMachine = ({ id }) => {
-//   const classes = useProcessingTimeStyles()
-//   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-//   const procedureMachineIdSelector = useRef(createProcedureMachineIdSelector(id)).current
-//   const procedureMachineId = useJobSetEditorSelector(procedureMachineIdSelector)
-
-//   const machines = useJobSetEditorSelector(machinesSelector)
-//   return (
-//     <div className={classes.sameLine}>
-//       <div className={classes.machineLabel}>
-//         <TextField
-//           label="Machine"
-//           select
-//           value={procedureMachineId}
-//           onFocus={() => { }/*todo */}
-//           onChange={onMachineSelectChangeCallback}
-//           error={!machineId}
-//           required
-//           size='small'
-//           variant="outlined"
-//           margin="dense"
-//           className={classes.machineLabelTextField}
-//           SelectProps={{
-//             SelectDisplayProps: {
-//               style: { height: "1.1875em" }
-//             }
-//           }}
-//           inputProps={{
-//             readOnly: !isEdit
-//           }}
-//         >
-//           {machines.map(m => (
-//             <MenuItem key={m.id} value={m.id}>
-//               <Tooltip title={m.description ? m.description : ""} placement="right">
-//                 <div style={{ width: "100%" }}>{m.title}</div>
-//               </Tooltip>
-//             </MenuItem>
-//           ))}
-//         </TextField>
-//       </div>
-//       <div className={classes.machineLabelSeparator} />
-//     </div>
-//   )
-// }
+  return (
+    <div className={classes.procedureMachineRoot}>
+      <div className={classes.machineLabel}>
+        <TextField
+          label="Machine"
+          select
+          value={procedureMachineId ?? ""}
+          onFocus={() => { }/*todo */}
+          onChange={e => {
+            const machineIdValue = e.target.value === ""
+              ? null
+              : e.target.value ?? null
+            editorDispatch(setProcedureMachineId(id, machineIdValue))
+          }}
+          error={false/*todo */}
+          required
+          size='small'
+          variant="outlined"
+          margin="dense"
+          className={classes.machineLabelTextField}
+          inputProps={{
+            readOnly: !isEdit
+          }}
+        >
+          <MenuItem value="">
+            <div className={classes.emptyMenuItemText}>(empty)</div>
+          </MenuItem>
+          {machines.map(m => (
+            <MenuItem key={m.id} value={m.id}>
+              <Tooltip title={m.description ? m.description : ""} placement="right">
+                <div style={{ width: "100%" }}>{m.title}</div>
+              </Tooltip>
+            </MenuItem>
+          ))}
+        </TextField>
+      </div>
+      <div className={classes.machineLabelSeparator} />
+    </div >
+  )
+}
 
 const useProcessingTimeStyles = makeStyles(theme => createStyles({
   wrapper: {

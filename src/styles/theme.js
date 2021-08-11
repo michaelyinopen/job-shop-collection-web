@@ -11,6 +11,9 @@ export const theme = responsiveFontSizes(
         fontSize: "1rem"
       },
     },
+    zIndex: {
+      popper: 900
+    },
     props: {
       MuiTypography: {
         variantMapping: {

@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => createStyles({
     transformOrigin: 'top'
   },
   popper: {
-    zIndex: 1
+    zIndex: theme.zIndex.popper
   },
 }))
 
@@ -51,7 +51,7 @@ export const JobOptionsButton = ({ id }) => {
         onMouseEnter={e => { throttledClosePopper.cancel?.() }}
         onMouseLeave={e => { throttledClosePopper() }}
       >
-        <Tooltip title='Job options' placement="right-end">
+        <Tooltip title='Job options' placement="bottom">
           <IconButton
             onClick={(event) => {
               setAnchorEl(anchorEl ? null : event.currentTarget)
