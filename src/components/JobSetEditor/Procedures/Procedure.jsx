@@ -6,7 +6,11 @@ import {
   Tooltip,
   MenuItem,
   InputAdornment,
-  NativeSelect,
+  FormControl,
+  InputLabel,
+  Button, // todo remove
+  Input, //todo remove
+
 } from '@material-ui/core'
 import TimeField from 'react-simple-timefield'
 import { msToFormattedTime, formattedTimeToMs } from '../../../utility'
@@ -75,44 +79,36 @@ const ProcedureMachine = ({ id }) => {
 
   return (
     <div className={classes.procedureMachineRoot}>
-      <div className={classes.machineLabel}>
-        <TextField
-          label="Machine"
-          select
-          value={procedureMachineId ?? ""}
-          onFocus={() => { }/*todo */}
-          onChange={e => {
-            const machineIdValue = e.target.value === ""
-              ? null
-              : e.target.value ?? null
-            editorDispatch(setProcedureMachineId(id, machineIdValue))
-          }}
-          error={false/*todo */}
-          required
-          size='small'
-          variant="outlined"
-          margin="dense"
-          className={classes.machineLabelTextField}
+      <FormControl variant="outlined" className={classes.machineLabel}>
+        <InputLabel>Machine</InputLabel>
+        <Input value={""} onChange={() => { }} />
+        {/* <Select
+          native
+          value={state.age}
+          onChange={handleChange}
+          label="Age"
           inputProps={{
-            readOnly: !isEdit
+            name: 'age',
+            id: 'outlined-age-native-simple',
           }}
         >
-          <MenuItem value="">
-            <div className={classes.emptyMenuItemText}>(empty)</div>
-          </MenuItem>
-          {machines.map(m => (
-            <MenuItem key={m.id} value={m.id}>
-              <Tooltip title={m.description ? m.description : ""} placement="right">
-                <div style={{ width: "100%" }}>{m.title}</div>
-              </Tooltip>
-            </MenuItem>
-          ))}
-        </TextField>
+          <option aria-label="None" value="" />
+          <option value={10}>Ten</option>
+          <option value={20}>Twenty</option>
+          <option value={30}>Thirty</option>
+        </Select> */}
+      </FormControl>
+
+
+
+      <div className={classes.machineLabel}>
+
       </div>
       <div className={classes.machineLabelSeparator} />
     </div >
   )
 }
+
 
 const useProcessingTimeStyles = makeStyles(theme => createStyles({
   wrapper: {
