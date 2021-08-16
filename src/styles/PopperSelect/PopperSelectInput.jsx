@@ -1,12 +1,15 @@
 import * as React from 'react'
 import clsx from 'clsx'
-
 import {
   ownerDocument,
   capitalize,
   useForkRef,
   useControlled,
-  Menu,//todo replace with popper
+  Popper,
+  Grow,
+  ClickAwayListener,
+  Paper,
+  MenuList,
 } from '@material-ui/core'
 
 function isFilled(obj) {
@@ -68,7 +71,7 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
   })
 
   const inputRef = React.useRef(null)
-  const [displayNode, setDisplayNode] = React.useState(null)
+  const displayNodeRef = React.useRef(null)
   const { current: isOpenControlled } = React.useRef(openProp != null)
   const [menuMinWidthState, setMenuMinWidthState] = React.useState()
   const [openState, setOpenState] = React.useState(false)
@@ -78,27 +81,27 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
     handleRef,
     () => ({
       focus: () => {
-        displayNode.focus()
+        displayNodeRef.current.focus()
       },
       node: inputRef.current,
       value,
     }),
-    [displayNode, value],
+    [value],
   )
 
   React.useEffect(() => {
-    if (autoFocus && displayNode) {
-      displayNode.focus()
+    if (autoFocus && displayNodeRef.current) {
+      displayNodeRef.current.focus()
     }
-  }, [autoFocus, displayNode])
+  }, [autoFocus])
 
   React.useEffect(() => {
-    if (displayNode) {
-      const label = ownerDocument(displayNode).getElementById(labelId)
+    if (displayNodeRef.current) {
+      const label = ownerDocument(displayNodeRef.current).getElementById(labelId)
       if (label) {
-        const handler = () => {
+        const handler = (e) => {
           if (getSelection().isCollapsed) {
-            displayNode.focus()
+            displayNodeRef.current.focus()
           }
         }
         label.addEventListener('click', handler)
@@ -109,7 +112,7 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
     }
 
     return undefined
-  }, [labelId, displayNode])
+  }, [labelId])
 
   const update = (open, event) => {
     if (open) {
@@ -121,7 +124,7 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
     }
 
     if (!isOpenControlled) {
-      setMenuMinWidthState(autoWidth ? null : displayNode.clientWidth)
+      setMenuMinWidthState(autoWidth ? null : displayNodeRef.current.clientWidth)
       setOpenState(open)
     }
   }
@@ -133,7 +136,7 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
     }
     // Hijack the default focus behavior.
     event.preventDefault()
-    displayNode.focus()
+    displayNodeRef.current.focus()
 
     update(true, event)
   }
@@ -201,7 +204,16 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
     }
   }
 
-  const open = displayNode !== null && (isOpenControlled ? openProp : openState)
+  const open = displayNodeRef.current !== null && (isOpenControlled ? openProp : openState)
+
+  // return focus to the button when we transitioned from !open -> open
+  const prevOpen = React.useRef(open)
+  React.useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      displayNodeRef.current.focus()
+    }
+    prevOpen.current = open
+  }, [open])
 
   const handleBlur = (event) => {
     // if open event.stopImmediatePropagation
@@ -293,8 +305,8 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
   // Avoid performing a layout computation in the render method.
   let menuMinWidth = menuMinWidthState
 
-  if (!autoWidth && isOpenControlled && displayNode) {
-    menuMinWidth = displayNode.clientWidth
+  if (!autoWidth && isOpenControlled && displayNodeRef.current) {
+    menuMinWidth = displayNodeRef.current.clientWidth
   }
 
   let tabIndex
@@ -306,83 +318,110 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
 
   const buttonId = SelectDisplayProps.id || (name ? `mui-component-select-${name}` : undefined)
 
+  function handleListKeyDown(event) {
+    if (event.key === 'Tab') {
+      event.preventDefault()
+      handleClose()
+    }
+  }
+
   return (
     <React.Fragment>
-      <div
-        className={clsx(
-          classes.root, // TODO v5: merge root and select
-          classes.select,
-          classes.selectMenu,
-          classes[variant],
-          {
-            [classes.disabled]: disabled,
-          },
-          className,
-        )}
-        ref={setDisplayNode}
-        tabIndex={tabIndex}
-        role="button"
-        aria-disabled={disabled ? 'true' : undefined}
-        aria-expanded={open ? 'true' : undefined}
-        aria-haspopup="listbox"
-        aria-label={ariaLabel}
-        aria-labelledby={[labelId, buttonId].filter(Boolean).join(' ') || undefined}
-        onKeyDown={handleKeyDown}
-        onMouseDown={disabled || readOnly ? null : handleMouseDown}
-        onBlur={handleBlur}
-        onFocus={onFocus}
-        {...SelectDisplayProps}
-        // The id is required for proper a11y
-        id={buttonId}
+      <ClickAwayListener
+        onClickAway={handleClose}
       >
-        {/* So the vertical align positioning algorithm kicks in. */}
-        {isEmpty(display) ? (
-          // eslint-disable-next-line react/no-danger
-          <span dangerouslySetInnerHTML={{ __html: '&#8203' }} />
-        ) : (
-          display
-        )}
-      </div>
-      <input
-        value={Array.isArray(value) ? value.join(',') : value}
-        name={name}
-        ref={inputRef}
-        aria-hidden
-        onChange={handleChange}
-        tabIndex={-1}
-        className={classes.nativeInput}
-        autoFocus={autoFocus}
-        {...other}
-      />
-      <IconComponent
-        className={clsx(classes.icon, classes[`icon${capitalize(variant)}`], {
-          [classes.iconOpen]: open,
-          [classes.disabled]: disabled,
-        })}
-      />
-      <Menu
-        id={`menu-${name || ''}`}
-        anchorEl={displayNode}
-        open={open}
-        onClose={handleClose}
-        {...MenuProps}
-        MenuListProps={{
-          'aria-labelledby': labelId,
-          role: 'listbox',
-          disableListWrap: true,
-          ...MenuProps.MenuListProps,
-        }}
-        PaperProps={{
-          ...MenuProps.PaperProps,
-          style: {
-            minWidth: menuMinWidth,
-            ...(MenuProps.PaperProps != null ? MenuProps.PaperProps.style : null),
-          },
-        }}
-      >
-        {items}
-      </Menu>
-    </React.Fragment>
+        <div style={{ display: 'inline-flex', width: '100%', position: 'relative' }}>
+          <div
+            className={clsx(
+              classes.root, // TODO v5: merge root and select
+              classes.select,
+              classes.selectMenu,
+              classes[variant],
+              {
+                [classes.disabled]: disabled,
+              },
+              className,
+            )}
+            ref={displayNodeRef}
+            tabIndex={tabIndex}
+            role="button"
+            aria-disabled={disabled ? 'true' : undefined}
+            aria-expanded={open ? 'true' : undefined}
+            aria-controls={open ? 'menu-list-grow' : undefined}
+            aria-haspopup="listbox"
+            aria-label={ariaLabel}
+            aria-labelledby={[labelId, buttonId].filter(Boolean).join(' ') || undefined}
+            onKeyDown={handleKeyDown}
+            onMouseDown={disabled || readOnly ? null : handleMouseDown}
+            onBlur={handleBlur}
+            onFocus={onFocus}
+            {...SelectDisplayProps}
+            // The id is required for proper a11y
+            id={buttonId}
+          >
+            {/* So the vertical align positioning algorithm kicks in. */}
+            {isEmpty(display) ? (
+              // eslint-disable-next-line react/no-danger
+              <span dangerouslySetInnerHTML={{ __html: '&#8203' }} />
+            ) : (
+              display
+            )}
+          </div>
+          <input
+            value={Array.isArray(value) ? value.join(',') : value}
+            name={name}
+            ref={inputRef}
+            aria-hidden
+            onChange={handleChange}
+            tabIndex={-1}
+            className={classes.nativeInput}
+            autoFocus={autoFocus}
+            {...other}
+          />
+          <IconComponent
+            className={clsx(classes.icon, classes[`icon${capitalize(variant)}`], {
+              [classes.iconOpen]: open,
+              [classes.disabled]: disabled,
+            })}
+          />
+          <Popper
+            open={open}
+            anchorEl={displayNodeRef.current}
+            placement='bottom-start'
+            transition
+            disablePortal
+            style={{ zIndex: 900 }}
+          >
+            {({ TransitionProps }) => (
+              <Grow
+                {...TransitionProps}
+                style={{ transformOrigin: 'top' }}
+              >
+                <Paper
+                  {...MenuProps.PaperProps}
+                  style={{
+                    minWidth: menuMinWidth,
+                    ...(MenuProps.PaperProps != null ? MenuProps.PaperProps.style : null),
+                  }}
+                >
+                  <MenuList
+                    autoFocusItem={open}
+                    aria-labelledby={labelId}
+                    id="menu-list-grow"
+                    role='listbox'
+                    disableListWrap
+                    {...MenuProps.MenuListProps}
+                    onKeyDown={handleListKeyDown}
+                  >
+                    {items}
+                  </MenuList>
+                </Paper>
+              </Grow >
+            )}
+          </Popper>
+        </div>
+      </ClickAwayListener>
+    </React.Fragment >
   )
 })
 

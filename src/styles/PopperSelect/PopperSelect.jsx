@@ -14,6 +14,9 @@ import { PopperSelectInput } from './PopperSelectInput'
 
 export const styles = nativeSelectStyles
 
+/**
+ * variant is always outlined
+ */
 let PopperSelect = forwardRef(function Select(props, ref) {
   const {
     autoWidth = false,
