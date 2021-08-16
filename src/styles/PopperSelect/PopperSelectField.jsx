@@ -5,7 +5,6 @@ import {
   MenuItem,
   Select,
 } from '@material-ui/core'
-import SelectInput from '@material-ui/core/Select/SelectInput'
 import { PopperSelect } from './PopperSelect'
 /**
  * variant is always outlined
@@ -14,6 +13,12 @@ import { PopperSelect } from './PopperSelect'
 export const PopperSelectField = () => {
   return (
     <div>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <h2>Text Field</h2>
       <FormControl variant="outlined">
         <InputLabel htmlFor="component-outlined">Name</InputLabel>
         <OutlinedInput
@@ -22,8 +27,7 @@ export const PopperSelectField = () => {
           inputComponent='input'
         />
       </FormControl>
-      <br/>
-      <br/>
+      <h2>Popper Select</h2>
       <FormControl variant="outlined">
         <InputLabel id="demo-simple-select-outlined-label">Age</InputLabel>
         <PopperSelect
@@ -40,8 +44,7 @@ export const PopperSelectField = () => {
           <MenuItem value={30}>Thirty</MenuItem>
         </PopperSelect>
       </FormControl>
-      <br/>
-      <br/>
+      <h2>MUI Select</h2>
       <FormControl variant="outlined">
         <InputLabel id="demo-simple-select-outlined-label">Age</InputLabel>
         <Select
@@ -58,23 +61,29 @@ export const PopperSelectField = () => {
           <MenuItem value={30}>Thirty</MenuItem>
         </Select>
       </FormControl>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      Somthing to show scroll
     </div>
-    // <FormControl variant="outlined">
-    //   <InputLabel htmlFor="component-outlined">Age</InputLabel>
-    //   <OutlinedInput id="component-outlined"/>
-    //   <Select
-    //     labelId="demo-simple-select-filled-label"
-    //     id="demo-simple-select-filled"
-    //     value={age}
-    //     onChange={handleChange}
-    //   >
-    //     <MenuItem value="">
-    //       <em>None</em>
-    //     </MenuItem>
-    //     <MenuItem value={10}>Ten</MenuItem>
-    //     <MenuItem value={20}>Twenty</MenuItem>
-    //     <MenuItem value={30}>Thirty</MenuItem>
-    //   </Select>
-    // </FormControl>
   )
 }
