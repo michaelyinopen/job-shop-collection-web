@@ -3,14 +3,10 @@ import {
   makeStyles,
   createStyles,
   TextField,
-  Tooltip,
   MenuItem,
   InputAdornment,
   FormControl,
   InputLabel,
-  Button, // todo remove
-  Input, //todo remove
-
 } from '@material-ui/core'
 import TimeField from 'react-simple-timefield'
 import { msToFormattedTime, formattedTimeToMs } from '../../../utility'
@@ -77,30 +73,9 @@ const ProcedureMachine = ({ id }) => {
   const procedureMachineIdSelector = useRef(createProcedureMachineIdSelector(id)).current
   const procedureMachineId = useJobSetEditorSelector(procedureMachineIdSelector)
   const editorDispatch = useJobSetEditorDispatch()
-
-  console.log({ machines })
-
   return (
     <div className={classes.procedureMachineRoot}>
       <div className={classes.machineLabel}>
-        {/* <TextField
-        label="Machine"
-        value={machineId}
-        variant="outlined"
-        margin="dense"
-        select
-        onChange={onMachineSelectChangeCallback}
-        required
-        error={!machineId}
-        className={classes.machineLabelTextField}
-        SelectProps={{
-          SelectDisplayProps: {
-            style: { height: "1.1875em" }
-          }
-        }}
-        inputProps={readOnly ? { readOnly: true } : {}}
-      > */}
-
         <FormControl
           variant="outlined"
           margin="dense"
@@ -113,13 +88,13 @@ const ProcedureMachine = ({ id }) => {
             id="machine-select-outlined"
             label="Machine *"
             value={procedureMachineId ?? ''}
+            onFocus={() => { }/*todo */}
             onChange={e => editorDispatch(setProcedureMachineId(id, e.target.value))}
+            inputProps={{ readOnly: !isEdit }}
           >
             {machines.map(m => (
               <MenuItem key={m.id} value={m.id}>
-                <Tooltip title={m.description ? m.description : ""} placement="right">
-                  <div style={{ width: "100%" }}>{m.title}</div>
-                </Tooltip>
+                <div>{m.title}</div>
               </MenuItem>
             ))}
           </PopperSelect>
@@ -181,6 +156,9 @@ const useProcedureStyles = makeStyles(theme => createStyles({
     display: "flex",
     alignItems: "center",
     overflow: "hidden",
+    [theme.breakpoints.down('xs')]: {
+      flexWrap: 'wrap-reverse',
+    }
   },
   machineAndTime: {
     display: "flex",
@@ -190,7 +168,8 @@ const useProcedureStyles = makeStyles(theme => createStyles({
       '&:not(:last-child)': {
         marginRight: theme.spacing(1)
       }
-    }
+    },
+    minWidth: 248
   },
   sequeneAndActions: {
     height: "48px",
