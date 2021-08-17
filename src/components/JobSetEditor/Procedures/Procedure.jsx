@@ -89,14 +89,13 @@ const ProcedureMachine = ({ id }) => {
             label="Machine *"
             value={procedureMachineId ?? ''}
             onFocus={() => { }/*todo */}
-            onChange={e => editorDispatch(setProcedureMachineId(id, e.target.value))}
+            onChange={e => editorDispatch(setProcedureMachineId(id, e.target.value ?? null))}
             inputProps={{ readOnly: !isEdit }}
           >
             {machines.map(m => (
-              <MenuItem key={m.id} value={m.id}>
-                <div>{m.title}</div>
-              </MenuItem>
+              <MenuItem key={m.id} value={m.id}>{m.title}</MenuItem>
             ))}
+            <MenuItem key='empty' value='' className={classes.emptyMenuItemText}>(empty)</MenuItem>
           </PopperSelect>
         </FormControl>
       </div>
