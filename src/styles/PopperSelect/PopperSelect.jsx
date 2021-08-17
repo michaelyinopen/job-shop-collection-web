@@ -9,7 +9,6 @@ import {
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 
 import { styles as nativeSelectStyles } from '@material-ui/core/NativeSelect/NativeSelect' // use internal of MUI
-import SelectInput from '@material-ui/core/Select/SelectInput' //todo replace by PopperSelectInput
 import { PopperSelectInput } from './PopperSelectInput'
 
 export const styles = nativeSelectStyles
