@@ -64,6 +64,7 @@ export const DeleteProcedureButton = ({ id }) => {
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
+        disableScrollLock
       >
         {open && (
           <DeleteProcedureDialogContent

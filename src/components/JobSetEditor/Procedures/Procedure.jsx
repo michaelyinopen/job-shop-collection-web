@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core'
 import TimeField from 'react-simple-timefield'
 import { msToFormattedTime, formattedTimeToMs } from '../../../utility'
+import { PopperSelect } from '../../../styles'
 import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
@@ -77,32 +78,52 @@ const ProcedureMachine = ({ id }) => {
   const procedureMachineId = useJobSetEditorSelector(procedureMachineIdSelector)
   const editorDispatch = useJobSetEditorDispatch()
 
+  console.log({ machines })
+
   return (
     <div className={classes.procedureMachineRoot}>
-      <FormControl variant="outlined" className={classes.machineLabel}>
-        <InputLabel>Machine</InputLabel>
-        <Input value={""} onChange={() => { }} />
-        {/* <Select
-          native
-          value={state.age}
-          onChange={handleChange}
-          label="Age"
-          inputProps={{
-            name: 'age',
-            id: 'outlined-age-native-simple',
-          }}
-        >
-          <option aria-label="None" value="" />
-          <option value={10}>Ten</option>
-          <option value={20}>Twenty</option>
-          <option value={30}>Thirty</option>
-        </Select> */}
-      </FormControl>
-
-
-
       <div className={classes.machineLabel}>
+        {/* <TextField
+        label="Machine"
+        value={machineId}
+        variant="outlined"
+        margin="dense"
+        select
+        onChange={onMachineSelectChangeCallback}
+        required
+        error={!machineId}
+        className={classes.machineLabelTextField}
+        SelectProps={{
+          SelectDisplayProps: {
+            style: { height: "1.1875em" }
+          }
+        }}
+        inputProps={readOnly ? { readOnly: true } : {}}
+      > */}
 
+        <FormControl
+          variant="outlined"
+          margin="dense"
+          error={false/*todo */}
+          className={classes.machineLabelTextField}
+        >
+          <InputLabel id="machine-select-outlined-label">Machine *</InputLabel>
+          <PopperSelect
+            labelId="machine-select-outlined-label"
+            id="machine-select-outlined"
+            label="Machine *"
+            value={procedureMachineId ?? ''}
+            onChange={e => editorDispatch(setProcedureMachineId(id, e.target.value))}
+          >
+            {machines.map(m => (
+              <MenuItem key={m.id} value={m.id}>
+                <Tooltip title={m.description ? m.description : ""} placement="right">
+                  <div style={{ width: "100%" }}>{m.title}</div>
+                </Tooltip>
+              </MenuItem>
+            ))}
+          </PopperSelect>
+        </FormControl>
       </div>
       <div className={classes.machineLabelSeparator} />
     </div >

@@ -118,6 +118,7 @@ export const RemoveMachineButton = ({ id }) => {
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
+        disableScrollLock
       >
         {open && (
           <RemoveMachineDialogContent

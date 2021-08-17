@@ -49,6 +49,7 @@ export const DeleteJobButton = ({ id }) => {
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
+        disableScrollLock
       >
         {open && (
           <DeleteJobDialogContent

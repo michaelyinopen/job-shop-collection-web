@@ -389,7 +389,6 @@ const PopperSelectInput = React.forwardRef(function SelectInput(props, ref) {
             anchorEl={displayNodeRef.current}
             placement='bottom-start'
             transition
-            disablePortal
             style={{ zIndex: 900 }}
           >
             {({ TransitionProps }) => (
