@@ -422,7 +422,7 @@ export const getFormDataSelectors = (jobSetsEditorFormDataSelector: JobSetsEdito
       jobSetsEditorFormDataSelector,
       (state: JobSetEditorFormDataState) => state.machines.ids
     ),
-    machineIds => [...machineIds].sort()
+    machineIds => [...machineIds].sort((a, b) => (+a) - (+b))
   )
   const machinesSelector = createSelector(
     backwardCompose(
