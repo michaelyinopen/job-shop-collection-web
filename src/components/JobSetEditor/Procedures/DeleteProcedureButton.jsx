@@ -23,7 +23,7 @@ const DeleteProcedureDialogContent = ({ id, closeCallback }) => {
   }
   return (
     <>
-      <DialogTitle>{`Delete Procedure ${id}?`}</DialogTitle>
+      <DialogTitle>{`Delete Procedure?`}</DialogTitle>
       <DialogActions>
         <Button onClick={closeCallback} variant="outlined" color="primary">
           Cancel
@@ -52,7 +52,7 @@ export const DeleteProcedureButton = ({ id }) => {
   return (
     <div>
       <Tooltip
-        title={`Delete Procedure ${id}`}
+        title={`Delete Procedure`}
         placement="right-end"
       >
         <IconButton onClick={() => setOpen(true)}>

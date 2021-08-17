@@ -139,6 +139,9 @@ const procedureReducer = (id: number) => createCustomReducer(
     [moveProcedure.type]: (state, _action, { sequence }) => {
       state.sequence = sequence
     },
+    [deleteProcedure.type]: (state, _action, { sequence }) => {
+      state.sequence = sequence
+    },
     [removeMachine.type]: (state, { payload: { machineId } }) => {
       if (state.machineId === machineId) {
         state.machineId = null
@@ -284,7 +287,9 @@ export const formDataReducer = createReducer(formDataInitialState, (builder) => 
       const newProcedureId = state.procedures.ids.length
         ? Math.max(...state.procedures.ids.map(id => +id)) + 1
         : 1
-      const existingSequences = Object.values(state.procedures.entities).map(p => p!.sequence)
+      const existingSequences = Object.values(state.procedures.entities)
+        .filter(p => p?.jobId === jobId)
+        .map(p => p!.sequence)
       const sequence = existingSequences.length
         ? Math.max(...existingSequences) + 1
         : 1
@@ -338,11 +343,27 @@ export const formDataReducer = createReducer(formDataInitialState, (builder) => 
         }
       }
     })
-    .addCase(deleteProcedure, (state, { payload: { procedureId } }) => {
+    .addCase(deleteProcedure, (state, action) => {
+      const { payload: { procedureId } } = action
       const index = state.procedures.ids.indexOf(procedureId)
       if (index !== -1) {
+        const jobId = state.procedures.entities[procedureId]!.jobId
+        const sequenceOfDelete = state.procedures.entities[procedureId]!.sequence
+
         state.procedures.ids.splice(index, 1)
         delete state.procedures.entities[procedureId]
+
+        const otherProceduresOfTheSameJob = Object.values(state.procedures.entities)
+          .filter(p => p!.jobId === jobId && p!.id !== procedureId)
+          .map(p => p!)
+        for (const procedure of otherProceduresOfTheSameJob) {
+          const pId = procedure.id
+          // update sequence of other procedures in the same job
+          if (procedure.sequence > sequenceOfDelete) {
+            state.procedures.entities[pId] =
+              procedureReducer(pId)(state.procedures.entities[pId], action, { sequence: procedure.sequence - 1 })
+          }
+        }
       }
     })
 
