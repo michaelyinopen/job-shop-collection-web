@@ -2,7 +2,7 @@
 
 A Component that replaces MUI's `Select` component.
 
-MUI's `Select` does not work with `overflow:overlay` css, because it uses `Menu` which uses `Popper` internally. The page annoyingly scrolls to the top when opening a `Popper`.
+MUI's `Select` does not work with `overflow:overlay` css, because it uses `Menu` which uses `Popover` and `Model` internally. The page annoyingly scrolls to the top when opening a `Popper`.
 
 `PopperSelect` solves the problem by using `Popper` internaly.
 
