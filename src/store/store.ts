@@ -3,6 +3,10 @@ import {
   createImmutableStateInvariantMiddleware,
   createSerializableStateInvariantMiddleware,
 } from '@reduxjs/toolkit'
+import type {
+  ThunkAction,
+  Action
+} from '@reduxjs/toolkit'
 import thunkMiddleware from 'redux-thunk'
 import { createReduxTakingThunkMiddleware } from '../utility/redux-taking-thunk'
 import type { TakingThunkAction } from '../utility/redux-taking-thunk'
@@ -25,4 +29,10 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>
 export type AppTakingThunkAction = TakingThunkAction<RootState>
