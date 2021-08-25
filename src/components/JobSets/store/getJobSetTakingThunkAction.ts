@@ -24,4 +24,4 @@ export const getJobSetTakingThunkAction = (id: number): AppTakingThunkAction => 
   }
 })
 
-export const jobSetsIsLoadingSelector = createIsLoadingSelector('getJobSets')
+export const createJobSetIsLoadingSelector = (id: number) => createIsLoadingSelector(`getJobSet/${id}`)

@@ -27,7 +27,7 @@ import { JobSetEditorTitleBar } from './JobSetEditorTitleBar'
 import { JobSetEditorForm } from './JobSetEditorForm'
 
 type JobSetEditorProps = {
-  id: number
+  id: number// undefined for new?
   edit: boolean
 }
 
@@ -65,6 +65,10 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
   }, [editorDispatch, id])
 
   useEffect(() => {
+    editorDispatch(setJobSetEditorIsEdit(edit))
+  }, [editorDispatch, edit])
+
+  useEffect(() => {
     dispatch(getJobSetTakingThunkAction(id))
       .then(result => {
         if (result?.kind === 'success') {
@@ -92,10 +96,6 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
   useEffect(() => {
     editorDispatch(setJobSetFromAppStore(appJobSet))
   }, [editorDispatch, appJobSet, loaded])
-
-  useEffect(() => {
-    editorDispatch(setJobSetEditorIsEdit(edit))
-  }, [editorDispatch, edit])
 
   //todo remove
   const jobSetEditorState = useJobSetEditorSelector(jobSetsEditorJobSetSelector)

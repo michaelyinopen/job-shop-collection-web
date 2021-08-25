@@ -3,7 +3,7 @@ import type { JobSetDetail } from '../../JobSets'
 import type { TimeOptions } from './formDataReducer'
 
 export const resetJobSetEditor = createAction('jobSetEditor/resetJobSetEditor')
-export const setJobSetEditorId = createAction<number>('jobSetEditor/setJobSetEditorId')
+export const setJobSetEditorId = createAction<number | undefined>('jobSetEditor/setJobSetEditorId')
 export const setJobSetEditorIsEdit = createAction<boolean>('jobSetEditor/setJobSetEditorIsEdit')
 export const loadedJobSet = createAction('jobSetEditor/loadedJobSet')
 export const failedToLoadJobSet = createAction('jobSetEditor/failedToLoadJobSet')
