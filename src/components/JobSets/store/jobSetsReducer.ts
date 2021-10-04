@@ -12,64 +12,72 @@ import {
 type JobSetState = {
   id: number;
   title: string;
-  description: string | null;
-  content: string | null;
-  jobColors: string | null;
+  description?: string;
+  content?: string;
+  jobColors?: string;
   isAutoTimeOptions: boolean;
-  timeOptions: string | null;
+  timeOptions?: string;
   isLocked: boolean;
-  eTag: string | null;
-
-  // isLatestContent === false if never getJobSet(with content), or getJobSets returned with eTag different from last getJobSet(with content)
-  isLatestContent: boolean;
+  versionToken: string;
+  // hasDetail === false if never getJobSet(with content)
+  // or getJobSets returned with versionToken different from last getJobSet(with content)
+  hasDetail: boolean;
 }
 
 const jobSetInitialState: Partial<JobSetState> = {
   id: undefined,
   title: undefined,
-  description: null,
-  content: null,
-  jobColors: null,
+  description: undefined,
+  content: undefined,
+  jobColors: undefined,
   isAutoTimeOptions: false,
-  timeOptions: null,
+  timeOptions: undefined,
   isLocked: undefined,
-  eTag: undefined,
-  isLatestContent: false,
+  versionToken: undefined,
+  hasDetail: false,
 }
 
 const jobSetReducer = createCustomReducer(jobSetInitialState, {
   [getJobSetsSucceeded.type]: (state, _action, jobSetHeaderFromAction: JobSetHeaderDto) => {
     state.id = jobSetHeaderFromAction.id
-    state.title = jobSetHeaderFromAction.title ?? null
-    state.description = jobSetHeaderFromAction.description ?? null
+    state.title = jobSetHeaderFromAction.title
+    state.description = jobSetHeaderFromAction.description ?? undefined
     state.isLocked = jobSetHeaderFromAction.isLocked
-    if (state.isLatestContent && state.eTag !== jobSetHeaderFromAction.eTag) {
-      state.isLatestContent = false
+    if (state.hasDetail && state.versionToken !== jobSetHeaderFromAction.versionToken) {
+      state.hasDetail = false
+      state.content = jobSetInitialState.content
+      state.jobColors = jobSetInitialState.jobColors
+      state.isAutoTimeOptions = jobSetInitialState.isAutoTimeOptions
+      state.timeOptions = jobSetInitialState.timeOptions
     }
-    state.eTag = jobSetHeaderFromAction.eTag ?? null
+    state.versionToken = jobSetHeaderFromAction.versionToken
   },
   [getNextJobSetsSucceeded.type]: (state, _action, jobSetHeaderFromAction: JobSetHeaderDto) => {
     state.id = jobSetHeaderFromAction.id
-    state.title = jobSetHeaderFromAction.title ?? null
-    state.description = jobSetHeaderFromAction.description ?? null
+    state.title = jobSetHeaderFromAction.title
+    state.description = jobSetHeaderFromAction.description ?? undefined
     state.isLocked = jobSetHeaderFromAction.isLocked
-    if (state.isLatestContent && state.eTag !== jobSetHeaderFromAction.eTag) {
-      state.isLatestContent = false
+    if (state.hasDetail && state.versionToken !== jobSetHeaderFromAction.versionToken) {
+      state.hasDetail = false
+      state.content = jobSetInitialState.content
+      state.jobColors = jobSetInitialState.jobColors
+      state.isAutoTimeOptions = jobSetInitialState.isAutoTimeOptions
+      state.timeOptions = jobSetInitialState.timeOptions
     }
-    state.eTag = jobSetHeaderFromAction.eTag ?? null
+    state.versionToken = jobSetHeaderFromAction.versionToken
   },
   [getJobSetSucceeded.type]: (state, action) => {
     const jobSet: GetJobSetResponse = action.payload
     state.id = jobSet.id
-    state.title = jobSet.title ?? null
-    state.description = jobSet.description ?? null
-    state.content = jobSet.content ?? null
-    state.jobColors = jobSet.jobColors ?? null
+    state.title = jobSet.title
+    state.description = jobSet.description ?? undefined
+    state.content = jobSet.content ?? undefined
+    state.jobColors = jobSet.jobColors ?? undefined
     state.isAutoTimeOptions = jobSet.isAutoTimeOptions
-    state.timeOptions = jobSet.timeOptions ?? null
+    state.timeOptions = jobSet.timeOptions ?? undefined
     state.isLocked = jobSet.isLocked
-    state.eTag = jobSet.eTag ?? null
-    state.isLatestContent = true
+    state.versionToken = jobSet.versionToken
+    state.hasDetail = true
   }
 })
 
@@ -177,7 +185,7 @@ export const getJobSetsSelectors = (jobSetsSelector: (rootState: any) => JobSets
           title: entity.title,
           description: entity.description,
           isLocked: entity.isLocked,
-          eTag: entity.eTag,
+          versionToken: entity.versionToken,
         }
       })
     }
