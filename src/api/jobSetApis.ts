@@ -49,9 +49,7 @@ export async function getJobSetsApiAsync(pageToken?: number): Promise<Result<Get
 type GetJobSetJsonResponse = {
   status: 'ok',
   data: GetJobSetResponse
-} | {
-  status: 'not found'
-}
+} | { status: 'not found' }
 
 export type GetJobSetResponse = {
   id: number,
@@ -82,11 +80,11 @@ export async function getJobSetApiAsync(id: number) {
     getJobSetResponse = {
       id: data.id,
       title: data.title,
-      description: data.description ?? null,
-      content: data.content ?? null,
-      jobColors: data.jobColors ?? null,
+      description: data.description,
+      content: data.content,
+      jobColors: data.jobColors,
       isAutoTimeOptions: data.isAutoTimeOptions,
-      timeOptions: data.timeOptions ?? null,
+      timeOptions: data.timeOptions,
       isLocked: data.isLocked,
       versionToken: data.versionToken
     }
@@ -97,59 +95,122 @@ export async function getJobSetApiAsync(id: number) {
   return new SuccessResult(getJobSetResponse)
 };
 
-////////////////////////////////////
-// type GetJobSetJsonResponse = {
-//   status: 'ok',
-//   data: GetJobSetResponse
-// } | {
-//   status: 'not found'
-// }
+export type CreateJobSetRequest = {
+  title: string,
+  description?: string | null,
+  content?: string | null,
+  jobColors?: string | null,
+  isAutoTimeOptions: boolean,
+  timeOptions?: string | null,
+}
 
-// export type GetJobSetResponse = {
-//   id: number,
-//   title: string,
-//   description?: string | null,
-//   content?: string | null,
-//   jobColors?: string | null,
-//   isAutoTimeOptions: boolean,
-//   timeOptions?: string | null,
-//   isLocked: boolean
-//   versionToken: string
-// }
-
-
-export const updateJobSetUrlTemplate = `${API_URL}/api/job-sets/{id}`
-export async function updateJobSetApiAsync(id: number) {
-  const url = template.parse(getJobSetUrlTemplate).expand({ id })
-  let parsedResponse: GetJobSetResponse
+export const createJobSetUrlTemplate = `${API_URL}/api/job-sets`
+export async function createJobSetApiAsync(id: number, jobSet: CreateJobSetRequest) {
+  const url = template.parse(createJobSetUrlTemplate).expand({ id })
   try {
-    const response = await fetch(url)
+    const response = await fetch(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jobSet)
+      })
     if (!response.ok) {
       return new FailureResult(new ApiFailure(response.statusText))
     }
-    let responseBody: GetJobSetJsonResponse = await response.json()
-    if (responseBody.status === 'not found') {
-      return new FailureResult(new ApiFailure('not found'))
+    let responseBody: GetJobSetResponse = await response.json()
+    const createJobSetResponse = {
+      id: responseBody.id,
+      title: responseBody.title,
+      description: responseBody.description,
+      content: responseBody.content,
+      jobColors: responseBody.jobColors,
+      isAutoTimeOptions: responseBody.isAutoTimeOptions,
+      timeOptions: responseBody.timeOptions,
+      isLocked: responseBody.isLocked,
+      versionToken: responseBody.versionToken
     }
-    const { data } = responseBody
-    parsedResponse = {
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      content: data.content ? JSON.parse(data.content) : undefined,
-      jobColors: data.jobColors ? JSON.parse(data.jobColors) : undefined,
-      isAutoTimeOptions: data.isAutoTimeOptions,
-      timeOptions: data.timeOptions ? JSON.parse(data.timeOptions) : undefined,
-      isLocked: data.isLocked,
-      versionToken: data.versionToken
-    }
+    return new SuccessResult(createJobSetResponse)
   }
   catch (e) {
     return new FailureResult(new ApiFailure(`Error when getting Job Set. ${e instanceof Error ? e.message : ''}`))
   }
-  return new SuccessResult(parsedResponse)
-};
-///////////////////////////////
+}
+
+export type UpdateJobSetRequest = {
+  id: number,
+  title: string,
+  description?: string | null,
+  content?: string | null,
+  jobColors?: string | null,
+  isAutoTimeOptions: boolean,
+  timeOptions?: string | null,
+  versionToken: string
+}
+
+type UpdateJobSetJsonResponse = {
+  status: 'done',
+  updatedJobSet: GetJobSetResponse
+} | {
+  status: 'version condition failed',
+  savedJobSet: GetJobSetResponse
+} | { status: 'not found' }
+  | { status: 'forbidden because locked' }
+
+export const updateJobSetUrlTemplate = `${API_URL}/api/job-sets/{id}`
+export async function updateJobSetApiAsync(id: number, jobSet: UpdateJobSetRequest) {
+  const url = template.parse(updateJobSetUrlTemplate).expand({ id })
+  try {
+    const response = await fetch(
+      url,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jobSet)
+      })
+    if (!response.ok) {
+      return new FailureResult(new ApiFailure(response.statusText))
+    }
+    let responseBody: UpdateJobSetJsonResponse = await response.json()
+    if (responseBody.status === 'not found') {
+      return new FailureResult(new ApiFailure('not found'))
+    }
+    if (responseBody.status === 'forbidden because locked') {
+      return new FailureResult({
+        failureType: 'forbidden because locked',
+      })
+    }
+    if (responseBody.status === 'version condition failed') {
+      return new FailureResult({
+        failureType: 'version condition failed',
+        savedJobSet: responseBody.savedJobSet
+      })
+    }
+    if (responseBody.status === 'done') {
+      const updatedJobSet = responseBody.updatedJobSet
+      return new SuccessResult({
+        id: updatedJobSet.id,
+        title: updatedJobSet.title,
+        description: updatedJobSet.description,
+        content: updatedJobSet.content,
+        jobColors: updatedJobSet.jobColors,
+        isAutoTimeOptions: updatedJobSet.isAutoTimeOptions,
+        timeOptions: updatedJobSet.timeOptions,
+        isLocked: updatedJobSet.isLocked,
+        versionToken: updatedJobSet.versionToken
+      })
+    }
+    return new FailureResult(new ApiFailure('Unknown status in response body'))
+  }
+  catch (e) {
+    return new FailureResult(new ApiFailure(`Error when getting Job Set. ${e instanceof Error ? e.message : ''}`))
+  }
+}
+
 export const deleteJobSetUrlTemplate = `${API_URL}/api/job-sets/{id}`
 export async function deleteJobSetApiAsync(id: number, eTag: string) {
   const url = template.parse(deleteJobSetUrlTemplate).expand({ id })
