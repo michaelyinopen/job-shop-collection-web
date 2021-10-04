@@ -31,81 +31,81 @@ beforeEach(() => {
 })
 
 test('Can dispatch simple action', () => {
-  store.dispatch({ type: actionTypes.todoSetAll, payload: ['Alfa', 'Bravo'] })
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
+  store.dispatch({ type: actionTypes.productsSetAll, payload: ['Alfa', 'Bravo'] })
+  expect(store.getState().products.items).toEqual(['Alfa', 'Bravo'])
 })
 
 test('Redux-thunk dispatch function still works', async () => {
   await store.dispatch(async function (dispatch) {
-    const newTodos = await api.get_AB_oneSecond()
-    dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+    const newProducts = await api.get_AB_oneSecond()
+    dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
   })
 
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
+  expect(store.getState().products.items).toEqual(['Alfa', 'Bravo'])
 })
 
 test('Can dispatch function thunk', async () => {
   const takingThunkAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: function (dispatch) {
-      dispatch({ type: actionTypes.todoSetAll, payload: ['Alfa', 'Bravo'] })
+      dispatch({ type: actionTypes.productsSetAll, payload: ['Alfa', 'Bravo'] })
       return 'i can return'
     }
   }
   const returned = await store.dispatch(takingThunkAction)
 
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
+  expect(store.getState().products.items).toEqual(['Alfa', 'Bravo'])
   expect(returned).toEqual('i can return')
 })
 
 test('Can dispatch async function thunk', async () => {
   const takingThunkAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
       return 'i can return'
     }
   }
   const returned = await store.dispatch(takingThunkAction)
 
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
+  expect(store.getState().products.items).toEqual(['Alfa', 'Bravo'])
   expect(returned).toEqual('i can return')
 })
 
 test('Can dispatch generator function thunk', async () => {
   const takingThunkAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: function* (dispatch) {
-      const newTodos = yield api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = yield api.get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
       return 'i can return'
     }
   }
   const returned = await store.dispatch(takingThunkAction)
 
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
+  expect(store.getState().products.items).toEqual(['Alfa', 'Bravo'])
   expect(returned).toEqual('i can return')
 })
 
 test('Can dispatch async generator function thunk', async () => {
   const takingThunkAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function* (dispatch) {
       const ms = 100
       await new Promise(resolve => setTimeout(resolve, ms))
-      const newTodos = yield api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = yield api.get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
       return 'i can return'
     }
   }
   const returned = await store.dispatch(takingThunkAction)
 
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
+  expect(store.getState().products.items).toEqual(['Alfa', 'Bravo'])
   expect(returned).toEqual('i can return')
 })
 
@@ -114,29 +114,29 @@ test('Can dispatch multiple async function thunks', async () => {
   const second_get_BCD_twoSecond = jest.fn(api.get_BCD_twoSecond)
   const third_get_BCDE_oneSecond = jest.fn(api.get_BCDE_oneSecond)
   const firstAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await first_get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await first_get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const firstDispatchPromise = store.dispatch(firstAction)
   const secondAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await second_get_BCD_twoSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await second_get_BCD_twoSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const secondDispatchPromise = store.dispatch(secondAction)
   const thirdAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await third_get_BCDE_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await third_get_BCDE_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const thirdDispatchPromise = store.dispatch(thirdAction)
@@ -146,7 +146,7 @@ test('Can dispatch multiple async function thunks', async () => {
     thirdDispatchPromise
   ])
 
-  expect(store.getState().todo.items).toEqual(['Bravo', 'Charlie', 'Delta'])
+  expect(store.getState().products.items).toEqual(['Bravo', 'Charlie', 'Delta'])
   expect(first_get_AB_oneSecond.mock.calls.length).toBe(1)
   expect(second_get_BCD_twoSecond.mock.calls.length).toBe(1)
   expect(third_get_BCDE_oneSecond.mock.calls.length).toBe(1)
@@ -154,26 +154,26 @@ test('Can dispatch multiple async function thunks', async () => {
 
 test('Default take type is every', async () => {
   const firstAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const firstDispatchPromise = store.dispatch(firstAction)
   const secondAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_BCD_twoSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_BCD_twoSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const secondDispatchPromise = store.dispatch(secondAction)
   const thirdAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_BCDE_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_BCDE_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const thirdDispatchPromise = store.dispatch(thirdAction)
@@ -183,7 +183,7 @@ test('Default take type is every', async () => {
     thirdDispatchPromise
   ])
 
-  expect(store.getState().todo.items).toEqual(['Bravo', 'Charlie', 'Delta'])
+  expect(store.getState().products.items).toEqual(['Bravo', 'Charlie', 'Delta'])
 })
 
 test('Can use getState and extraArgument', async () => {
@@ -196,48 +196,48 @@ test('Can use getState and extraArgument', async () => {
       createSerializableStateInvariantMiddleware()
     ]
   })
-  store.dispatch({ type: actionTypes.todoSetAll, payload: ['Alfa'] })
+  store.dispatch({ type: actionTypes.productsSetAll, payload: ['Alfa'] })
 
   const takingThunkAction = {
     name: 'getStateExtraArgument',
     takeType: 'every',
     thunk: async function (dispatch, getState, extraArgument) {
-      const originaltStateItems = getState().todo.items
-      const fetchedTodos = await api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: [...fetchedTodos, extraArgument] })
+      const originaltStateItems = getState().products.items
+      const fetchedProducts = await api.get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: [...fetchedProducts, extraArgument] })
       return originaltStateItems
     }
   }
   const returned = await store.dispatch(takingThunkAction)
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo', "my extra argument"])
+  expect(store.getState().products.items).toEqual(['Alfa', 'Bravo', "my extra argument"])
   expect(returned).toEqual(['Alfa'])
 })
 
 test.skip('Mixing take types will have unpredictable execution', async () => {
   const firstAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const firstDispatchPromise = store.dispatch(firstAction)
   const secondAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'leading',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_BCD_twoSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_BCD_twoSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const secondDispatchPromise = store.dispatch(secondAction)
   const thirdAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'latest',
     thunk: function* (dispatch) {
-      const newTodos = yield api.get_BCDE_twoSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = yield api.get_BCDE_twoSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const thirdDispatchPromise = store.dispatch(thirdAction)
@@ -247,12 +247,12 @@ test.skip('Mixing take types will have unpredictable execution', async () => {
     thirdDispatchPromise
   ])
 
-  expect(store.getState().todo.items).toEqual(['Alfa', 'Bravo'])
+  expect(store.getState().products.items).toEqual(['Alfa', 'Bravo'])
 })
 
 test('Thrown error will return rejected promise', async () => {
   const takingThunkAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
       throw new Error("thrown error went wrong")
@@ -269,34 +269,34 @@ test('Thrown error will return rejected promise', async () => {
 })
 
 test('isLoading will be true if there are thunks waiting', async () => {
-  const selector = createIsLoadingSelector("fetchTodos")
+  const selector = createIsLoadingSelector("fetchProducts")
   let isLoading = selector(store.getState())
   expect(isLoading).toBeFalsy()
 
   const firstAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const firstDispatchPromise = store.dispatch(firstAction)
   const secondAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_BCD_twoSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_BCD_twoSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const secondDispatchPromise = store.dispatch(secondAction)
   const thirdAction = {
-    name: 'fetchTodos',
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_BCDE_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_BCDE_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
   const thirdDispatchPromise = store.dispatch(thirdAction)
@@ -316,25 +316,25 @@ test('isLoading will be true if there are thunks waiting', async () => {
   isLoading = selector(store.getState())
   expect(isLoading).toBeFalsy()
 
-  expect(store.getState().todo.items).toEqual(['Bravo', 'Charlie', 'Delta'])
+  expect(store.getState().products.items).toEqual(['Bravo', 'Charlie', 'Delta'])
 })
 
 test('Different names do not interfere', async () => {
-  const fetchTodoSelector = createIsLoadingSelector("fetchTodos")
-  let fetchTodosLoading = fetchTodoSelector(store.getState())
-  expect(fetchTodosLoading).toBeFalsy()
+  const fetchProductSelector = createIsLoadingSelector("fetchProducts")
+  let fetchProductsLoading = fetchProductSelector(store.getState())
+  expect(fetchProductsLoading).toBeFalsy()
 
-  const fetchTodoAction = {
-    name: 'fetchTodos',
+  const fetchProductAction = {
+    name: 'fetchProducts',
     takeType: 'every',
     thunk: async function (dispatch) {
-      const newTodos = await api.get_AB_oneSecond()
-      dispatch({ type: actionTypes.todoSetAll, payload: newTodos })
+      const newProducts = await api.get_AB_oneSecond()
+      dispatch({ type: actionTypes.productsSetAll, payload: newProducts })
     }
   }
-  const dispatchFetchTodoActionPromise = store.dispatch(fetchTodoAction)
-  fetchTodosLoading = fetchTodoSelector(store.getState())
-  expect(fetchTodosLoading).toBeTruthy()
+  const dispatchFetchProductActionPromise = store.dispatch(fetchProductAction)
+  fetchProductsLoading = fetchProductSelector(store.getState())
+  expect(fetchProductsLoading).toBeTruthy()
 
   const someOtherAction = {
     name: 'someOther',
@@ -346,14 +346,14 @@ test('Different names do not interfere', async () => {
   }
   const dispatchSomeOtherActionPromise = store.dispatch(someOtherAction)
 
-  await dispatchFetchTodoActionPromise
-  fetchTodosLoading = fetchTodoSelector(store.getState())
-  expect(fetchTodosLoading).toBeFalsy()
+  await dispatchFetchProductActionPromise
+  fetchProductsLoading = fetchProductSelector(store.getState())
+  expect(fetchProductsLoading).toBeFalsy()
 
   await Promise.all([
-    dispatchFetchTodoActionPromise,
+    dispatchFetchProductActionPromise,
     dispatchSomeOtherActionPromise
   ])
-  fetchTodosLoading = fetchTodoSelector(store.getState())
-  expect(fetchTodosLoading).toBeFalsy()
+  fetchProductsLoading = fetchProductSelector(store.getState())
+  expect(fetchProductsLoading).toBeFalsy()
 })

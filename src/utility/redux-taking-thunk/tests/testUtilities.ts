@@ -2,22 +2,22 @@ import { combineReducers } from 'redux'
 import { reduxTakingThunkReducer } from '../'
 
 export const actionTypes = {
-  todoSetAll: "todoSetAll", // payload is an array of string
-  todoSetAllError: "todoSetAllError", // payload is null or a string
+  productsSetAll: "productsSetAll", // payload is an array of string
+  productsSetAllError: "productsSetAllError", // payload is null or a string
 }
 
-const todoInitialState = {
+const productsInitialState = {
   items: [],
   setAllError: null,
 }
-const todoReducer = (state = todoInitialState as any, action) => {
-  if (action.type === actionTypes.todoSetAll) {
+const productsReducer = (state = productsInitialState as any, action) => {
+  if (action.type === actionTypes.productsSetAll) {
     return {
       ...state,
       items: [...action.payload],
       setAllError: null,
     }
-  } else if (action.type === actionTypes.todoSetAllError) {
+  } else if (action.type === actionTypes.productsSetAllError) {
     return {
       ...state,
       setAllError: action.payload,
@@ -27,7 +27,7 @@ const todoReducer = (state = todoInitialState as any, action) => {
 }
 
 export const reducer = combineReducers({
-  todo: todoReducer,
+  products: productsReducer,
   reduxTakingThunk: reduxTakingThunkReducer
 })
 

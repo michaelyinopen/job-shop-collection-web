@@ -102,14 +102,14 @@ dispatch(a: TakingThunkAction) => Promise<any>
 
 ```
 const takingThunkAction = {
-  name: 'fetchTodos',
+  name: 'fetchProducts',
   takeType: 'latest',
   thunk: function*(dispatch){
     try {
-      const response = yield fetch('http://example.com/todos.json')
-      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+      const response = yield fetch('http://example.com/products.json')
+      dispatch({type: 'fetchProductSuccess', products: response.json()})
     } catch(e) {
-      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+      dispatch({type: 'fetchProductsError', error: 'failed to fetch products'})
     }
   }
 }
@@ -178,7 +178,7 @@ This `dispatch` overload returns a Promise. (see [thunk return value](#thunk-ret
 E.g. call `then` on the returned Promise.
 
 ```
-dispatch(takingThunkAction).then(() => alert('got todos!!'))
+dispatch(takingThunkAction).then(() => alert('got porducts!!'))
 ```
 
 ## `createIsLoadingSelector` API
@@ -237,41 +237,41 @@ When using Redux Thunk to make API requests, how to handle concurrency?
 One way is to just call the thunks, without caring the order of dispatch. The order of promise resolve is not controlled. For example a slow first dispatch, could resolve later than a fast second dispatch.
 ```
 // take every
-async function fetchTodos(dispatch, getsState){
-  dispatch({type: 'fetchTodoStart'})
+async function fetchProducts(dispatch, getsState){
+  dispatch({type: 'fetchProductStart'})
   try {
-    const response = await fetch('http://example.com/todos.json')
-    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    const response = await fetch('http://example.com/products.json')
+    dispatch({type: 'fetchProductSuccess', products: response.json()})
   } catch(e) {
-    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    dispatch({type: 'fetchProductError', error: 'failed to fetch products'})
   }
 }
 
 // with redux-thunk
-dispatch(fetchTodos) // first
-dispatch(fetchTodos) // second, both respond will update state, but do not know which will be the last
+dispatch(fetchProducts) // first
+dispatch(fetchProducts) // second, both respond will update state, but do not know which will be the last
 ```
 
 A common pattern to handle concurrency is to block the late dispatch if state already is loading.
 
 ```
 // take leading
-async function fetchTodos(dispatch, getsState){
-  if(getsState().todoIsLoading === true){
+async function fetchProducts(dispatch, getsState){
+  if(getsState().productIsLoading === true){
     return
   }
-  dispatch({type: 'fetchTodoStart'})
+  dispatch({type: 'fetchProductsStart'})
   try {
-    const response = await fetch('http://example.com/todos.json')
-    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    const response = await fetch('http://example.com/products.json')
+    dispatch({type: 'fetchProductsSuccess', products: response.json()})
   } catch(e) {
-    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    dispatch({type: 'fetchProductsError', error: 'failed to fetch products'})
   }
 }
 
 // with redux-thunk
-dispatch(fetchTodos) // first
-dispatch(fetchTodos) // second, will be blocked if first is not resolved
+dispatch(fetchProducts) // first
+dispatch(fetchProducts) // second, will be blocked if first is not resolved
 ```
 
 An interesting way is take latest.
@@ -285,12 +285,12 @@ However, how to skip the code after the API request? We will transform the async
 ```
 // take latest
 // not care about the loading state
-function* fetchTodos(dispatch, getsState){
+function* fetchProducts(dispatch, getsState){
   try {
-    const response = yield fetch('http://example.com/todos.json')
-    dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+    const response = yield fetch('http://example.com/products.json')
+    dispatch({type: 'fetchProductsSuccess', products: response.json()})
   } catch(e) {
-    dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+    dispatch({type: 'fetchProductsoError', error: 'failed to fetch products'})
   }
 }
 ```
@@ -306,14 +306,14 @@ With `redux-taking-thunk` the examples will become
 ```
 // take every
 const takingThunkAction = {
-  name: 'fetchTodos',
+  name: 'fetchProducts',
   takeType: 'every',
   thunk: async function(dispatch){
     try {
-      const response = await fetch('http://example.com/todos.json')
-      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+      const response = await fetch('http://example.com/products.json')
+      dispatch({type: 'fetchProductsSuccess', products: response.json()})
     } catch(e) {
-      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+      dispatch({type: 'fetchProductsError', error: 'failed to fetch products'})
     }
   }
 }
@@ -324,14 +324,14 @@ dispatch(takingThunkAction) // second, both respond will update state, but do no
 ```
 // take leading
 const takingThunkAction = {
-  name: 'fetchTodos',
+  name: 'fetchProducts',
   takeType: 'leading',
   thunk: async function(dispatch){
     try {
-      const response = await fetch('http://example.com/todos.json')
-      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+      const response = await fetch('http://example.com/products.json')
+      dispatch({type: 'fetchProductsoSuccess', products: response.json()})
     } catch(e) {
-      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+      dispatch({type: 'fetchProductsError', error: 'failed to fetch products'})
     }
   }
 }
@@ -342,14 +342,14 @@ dispatch(takingThunkAction) // second, not called if first is not resolved
 ```
 // take latest
 const takingThunkAction = {
-  name: 'fetchTodos',
+  name: 'fetchProducts',
   takeType: 'latest',
   thunk: function*(dispatch){
     try {
-      const response = yield fetch('http://example.com/todos.json')
-      dispatch({type: 'fetchTodoSuccess', todos: response.json()})
+      const response = yield fetch('http://example.com/products.json')
+      dispatch({type: 'fetchProductsSuccess', products: response.json()})
     } catch(e) {
-      dispatch({type: 'fetchTodoError', error: 'failed to fetch todos'})
+      dispatch({type: 'fetchProductsError', error: 'failed to fetch products'})
     }
   }
 }
