@@ -105,11 +105,10 @@ export type CreateJobSetRequest = {
 }
 
 export const createJobSetUrlTemplate = `${API_URL}/api/job-sets`
-export async function createJobSetApiAsync(id: number, jobSet: CreateJobSetRequest) {
-  const url = template.parse(createJobSetUrlTemplate).expand({ id })
+export async function createJobSetApiAsync(jobSet: CreateJobSetRequest) {
   try {
     const response = await fetch(
-      url,
+      createJobSetUrlTemplate,
       {
         method: 'POST',
         headers: {
@@ -177,7 +176,9 @@ export async function updateJobSetApiAsync(id: number, jobSet: UpdateJobSetReque
     }
     let responseBody: UpdateJobSetJsonResponse = await response.json()
     if (responseBody.status === 'not found') {
-      return new FailureResult(new ApiFailure('not found'))
+      return new FailureResult({
+        failureType: 'not found',
+      })
     }
     if (responseBody.status === 'forbidden because locked') {
       return new FailureResult({
