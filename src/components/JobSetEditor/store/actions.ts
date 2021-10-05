@@ -1,5 +1,4 @@
 import { createAction } from '@reduxjs/toolkit'
-import type { JobSetDetail } from '../../JobSets'
 import type { TimeOptions } from './formDataReducer'
 
 export const resetJobSetEditor = createAction('jobSetEditor/resetJobSetEditor')
@@ -8,11 +7,36 @@ export const setJobSetEditorIsEdit = createAction<boolean>('jobSetEditor/setJobS
 export const loadedJobSet = createAction('jobSetEditor/loadedJobSet')
 export const failedToLoadJobSet = createAction('jobSetEditor/failedToLoadJobSet')
 
+export type AppStoreJobSetHeader = {
+  id: number
+  title: string
+  description?: string
+  versionToken: string
+  isLocked: boolean
+  hasDetail: false
+}
+
+export type AppStoreJobSetDetail = {
+  id: number
+  title: string
+  description?: string
+  content: string
+  jobColors: string
+  isAutoTimeOptions: boolean
+  timeOptions: string
+  isLocked: boolean
+  versionToken: string
+  hasDetail: true
+}
+
+export type AppStoreJobSet = AppStoreJobSetHeader | AppStoreJobSetDetail
+
 export const setJobSetFromAppStore = createAction(
   'jobSetEditor/setJobSetFromAppStore',
-  (jobSet: JobSetDetail | undefined) => ({
+  (jobSet: AppStoreJobSet | undefined, loaded: boolean) => ({
     payload: {
-      jobSet
+      jobSet,
+      loaded
     }
   })
 )
