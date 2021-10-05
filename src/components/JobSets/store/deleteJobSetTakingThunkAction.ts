@@ -18,14 +18,10 @@ export const deleteJobSetTakingThunkAction = (id: number): AppTakingThunkAction 
     takeType: 'leading',
     thunk: async function (dispatch: AppDispatch, getState: () => RootState) {
       const jobSet = jobSetSelector(getState())
-      const eTag = jobSet?.eTag
-      if (!eTag) {
-        return new FailureResult({ failureType: 'Unsupported Operation', errorMesage: `Job Set id: ${id} is out of sync or already deleted.` })
-      }
       if (jobSet?.isLocked) {
-        return new FailureResult({ failureType: 'Unsupported Operation', errorMesage: `Job Set id: ${id} is locked and cannot be deleted, please unlock first.` })
+        return new FailureResult({ failureType: 'Unsupported Operation' })
       }
-      const deleteJobSetResult: any = await deleteJobSetApiAsync(id, eTag)
+      const deleteJobSetResult: any = await deleteJobSetApiAsync(id)
       if (deleteJobSetResult.kind === 'success') {
         dispatch(deleteJobSetSucceeded(id))
         return new SuccessResult(undefined)

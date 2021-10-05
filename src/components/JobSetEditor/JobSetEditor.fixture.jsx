@@ -22,7 +22,7 @@ const handlers = [
           isAutoTimeOptions: true,
           timeOptions: "{\"referenceDate\":\"1970-01-01T00:00:00.000Z\",\"maxTime\":\"1970-01-01T00:58:00.000Z\",\"viewStartTime\":\"1970-01-01T00:00:00.000Z\",\"viewEndTime\":\"1970-01-01T00:58:00.000Z\",\"minViewDuration\":360000,\"maxViewDuration\":3480000}",
           isLocked: false,
-          eTag: "AAAAAAAAB9E="
+          versionToken: "AAAAAAAAB9E="
         }),
       )
     }

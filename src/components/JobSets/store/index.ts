@@ -37,6 +37,16 @@ export {
 } from './getJobSetTakingThunkAction'
 
 export {
+  createJobSetTakingThunkAction,
+  createJobSetIsLoadingSelector,
+} from './createJobSetTakingThunkAction'
+
+export {
+  updateJobSetTakingThunkAction,
+  updateJobSetIsLoadingSelector,
+} from './updateJobSetTakingThunkAction'
+
+export {
   deleteJobSetTakingThunkAction,
   createDeleteJobSetIsLoadingSelector,
 } from './deleteJobSetTakingThunkAction'

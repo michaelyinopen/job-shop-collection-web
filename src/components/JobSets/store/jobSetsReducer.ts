@@ -160,7 +160,7 @@ export type JobSetHeader = {
   title?: string,
   description?: string,
   isLocked: boolean,
-  eTag?: string
+  versionToken: string
 }
 
 export type JobSetDetail = JobSetState

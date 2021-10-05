@@ -213,7 +213,7 @@ export async function updateJobSetApiAsync(id: number, jobSet: UpdateJobSetReque
 }
 
 export const deleteJobSetUrlTemplate = `${API_URL}/api/job-sets/{id}`
-export async function deleteJobSetApiAsync(id: number, eTag: string) {
+export async function deleteJobSetApiAsync(id: number) {
   const url = template.parse(deleteJobSetUrlTemplate).expand({ id })
   try {
     const response = await fetch(
