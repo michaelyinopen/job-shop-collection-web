@@ -25,7 +25,7 @@ export const getNextJobSetsSucceeded = createAction(
   })
 )
 
-export const getJobSetSucceeded = createAction<GetJobSetResponse>('jobSets/getJobSetSucceeded')
+export const fetchedJobSet = createAction<GetJobSetResponse>('jobSets/fetchedJobSet')
 
 export const deleteJobSetSucceeded = createAction<number>('jobSets/deleteJobSetSucceeded')
 

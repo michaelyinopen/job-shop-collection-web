@@ -2,7 +2,7 @@ import { createIsLoadingSelector } from '../../../utility/redux-taking-thunk'
 import { SuccessResult } from '../../../utility'
 import type { AppDispatch, AppTakingThunkAction } from '../../../store'
 import { getJobSetApiAsync } from '../../../api'
-import { getJobSetSucceeded } from './actions'
+import { fetchedJobSet } from './actions'
 
 /** 
  * Function that takes parameter id and returns the TakingThunkAction
@@ -16,7 +16,7 @@ export const getJobSetTakingThunkAction = (id: number): AppTakingThunkAction => 
   thunk: function* (dispatch: AppDispatch) {
     const getJobSetResult: any = yield getJobSetApiAsync(id)
     if (getJobSetResult.kind === 'success') {
-      dispatch(getJobSetSucceeded(getJobSetResult.success()))
+      dispatch(fetchedJobSet(getJobSetResult.success()))
     } else {
       return getJobSetResult
     }

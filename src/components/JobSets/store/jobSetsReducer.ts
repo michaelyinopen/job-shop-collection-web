@@ -5,7 +5,7 @@ import type { GetJobSetResponse, JobSetHeaderDto } from '../../../api'
 import {
   getJobSetsSucceeded,
   getNextJobSetsSucceeded,
-  getJobSetSucceeded,
+  fetchedJobSet,
   deleteJobSetSucceeded,
 } from './actions'
 
@@ -66,7 +66,7 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
     }
     state.versionToken = jobSetHeaderFromAction.versionToken
   },
-  [getJobSetSucceeded.type]: (state, action) => {
+  [fetchedJobSet.type]: (state, action) => {
     const jobSet: GetJobSetResponse = action.payload
     state.id = jobSet.id
     state.title = jobSet.title
@@ -143,7 +143,7 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
         delete state.entities[id]
       }
     })
-    .addCase(getJobSetSucceeded, (state, action) => {
+    .addCase(fetchedJobSet, (state, action) => {
       const { payload: jobSet } = action
       const index = state.ids.findIndex(sId => sId === jobSet.id)
       if (index === -1) {
