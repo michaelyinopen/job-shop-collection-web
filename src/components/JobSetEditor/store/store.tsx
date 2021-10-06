@@ -14,8 +14,6 @@ export const useJobSetEditorSelector = createSelectorHook(jobSetEditorContext)
 
 const jobSetEditorStore = createStore(jobSetEditorReducer)
 
-export type JobSetEditorState = ReturnType<typeof jobSetEditorStore.getState>
-
 export function JobSetEditorProvider({ children }) {
   return (
     <Provider context={jobSetEditorContext} store={jobSetEditorStore}>
