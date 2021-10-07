@@ -279,3 +279,8 @@ export const middlewareCalculatedAutoTimeOptions = createAction(
   })
 )
 //#endregion TimeOptions
+
+// potential:
+// move machines
+// set job title
+// move jobs
