@@ -15,10 +15,10 @@ import {
   deleteProcedure,
 } from '../store'
 
-const DeleteProcedureDialogContent = ({ id, closeCallback }) => {
+const DeleteProcedureDialogContent = ({ jobId, id, closeCallback }) => {
   const editorDispatch = useJobSetEditorDispatch()
   const confirmCallback = () => {
-    editorDispatch(deleteProcedure(id))
+    editorDispatch(deleteProcedure(jobId, id))
     closeCallback()
   }
   return (
@@ -46,7 +46,7 @@ const useDeleteProcedureButtonStyles = makeStyles(theme => createStyles({
   }
 }))
 
-export const DeleteProcedureButton = ({ id }) => {
+export const DeleteProcedureButton = ({ jobId, id }) => {
   const classes = useDeleteProcedureButtonStyles()
   const [open, setOpen] = useState(false)
   return (
@@ -68,6 +68,7 @@ export const DeleteProcedureButton = ({ id }) => {
       >
         {open && (
           <DeleteProcedureDialogContent
+            jobId={jobId}
             id={id}
             closeCallback={() => setOpen(false)}
           />

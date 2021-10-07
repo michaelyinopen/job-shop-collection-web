@@ -1,5 +1,6 @@
 import type { JobSetEditorState } from './jobSetEditorReducer'
 
+export const jobSetsEditorIdSelector = (state: JobSetEditorState) => state.id
 export const jobSetsEditorIsLockedSelector = (state: JobSetEditorState) => state.isLocked
 export const jobSetsEditorIsEditSelector = (state: JobSetEditorState) => state.isEdit
 export const jobSetsEditorHasDetailSelector = (state: JobSetEditorState) => state.hasDetail
@@ -43,22 +44,22 @@ export const createProceduresAffectedByMachineSelector = (machineId: string) =>
 export const isAutoTimeOptionsSelector = (state: JobSetEditorState) => state.formData.isAutoTimeOptions
 export const maxTimeMsSelector = (state: JobSetEditorState) =>
   state.formData.isAutoTimeOptions
-    ? state.formData.autoTimeOptions!.maxTimeMs
+    ? state.formData.autoTimeOptions?.maxTimeMs
     : state.formData.manualTimeOptions.maxTimeMs
 export const viewStartTimeMsSelector = (state: JobSetEditorState) =>
   state.formData.isAutoTimeOptions
-    ? state.formData.autoTimeOptions!.viewStartTimeMs
+    ? state.formData.autoTimeOptions?.viewStartTimeMs
     : state.formData.manualTimeOptions.viewStartTimeMs
 export const viewEndTimeMsSelector = (state: JobSetEditorState) =>
   state.formData.isAutoTimeOptions
-    ? state.formData.autoTimeOptions!.viewEndTimeMs
+    ? state.formData.autoTimeOptions?.viewEndTimeMs
     : state.formData.manualTimeOptions.viewEndTimeMs
 export const maxViewDurationMsSelector = (state: JobSetEditorState) =>
   state.formData.isAutoTimeOptions
-    ? state.formData.autoTimeOptions!.maxViewDurationMs
+    ? state.formData.autoTimeOptions?.maxViewDurationMs
     : state.formData.manualTimeOptions.maxViewDurationMs
 export const minViewDurationMsSelector = (state: JobSetEditorState) =>
   state.formData.isAutoTimeOptions
-    ? state.formData.autoTimeOptions!.minViewDurationMs
+    ? state.formData.autoTimeOptions?.minViewDurationMs
     : state.formData.manualTimeOptions.minViewDurationMs
 //#endregion formData

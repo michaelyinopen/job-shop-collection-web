@@ -15,8 +15,7 @@ import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
   jobSetsEditorIsEditSelector,
-  createProcedureJobIdSelector,
-  createProcedureSequenceSelector,
+  createProcedureIndexSelector,
   createProcedureProcessingTimeMsSelector,
   createJobColorSelector,
   createProcedureMachineIdSelector,
@@ -66,11 +65,11 @@ const useProcedureMachineStyles = makeStyles(theme => createStyles({
   },
 }))
 
-const ProcedureMachine = ({ id }) => {
+const ProcedureMachine = ({ jobId, id }) => {
   const classes = useProcedureMachineStyles()
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
   const machines = useJobSetEditorSelector(machinesSelector)
-  const procedureMachineIdSelector = useRef(createProcedureMachineIdSelector(id)).current
+  const procedureMachineIdSelector = useRef(createProcedureMachineIdSelector(jobId, id)).current
   const procedureMachineId = useJobSetEditorSelector(procedureMachineIdSelector)
   const editorDispatch = useJobSetEditorDispatch()
   return (
@@ -89,7 +88,7 @@ const ProcedureMachine = ({ id }) => {
             label="Machine *"
             value={procedureMachineId ?? ''}
             onFocus={() => { }/*todo */}
-            onChange={e => editorDispatch(setProcedureMachineId(id, e.target.value ?? null))}
+            onChange={e => editorDispatch(setProcedureMachineId(jobId, id, e.target.value ?? null))}
             inputProps={{ readOnly: !isEdit }}
           >
             {machines.map(m => (
@@ -114,10 +113,10 @@ const useProcessingTimeStyles = makeStyles(theme => createStyles({
   }
 }))
 
-const ProcedureProcessingTime = ({ id }) => {
+const ProcedureProcessingTime = ({ jobId, id }) => {
   const classes = useProcessingTimeStyles()
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-  const procedureProcessingTimeMsSelector = useRef(createProcedureProcessingTimeMsSelector(id)).current
+  const procedureProcessingTimeMsSelector = useRef(createProcedureProcessingTimeMsSelector(jobId, id)).current
   const valueMs = useJobSetEditorSelector(procedureProcessingTimeMsSelector)
   const editorDispatch = useJobSetEditorDispatch()
   return (
@@ -125,7 +124,7 @@ const ProcedureProcessingTime = ({ id }) => {
       <TimeField
         showSeconds
         value={msToFormattedTime(valueMs)}
-        onChange={(_e, valueFormattedTime) => editorDispatch(setProcedureProcessingTime(id, formattedTimeToMs(valueFormattedTime)))}
+        onChange={(_e, valueFormattedTime) => editorDispatch(setProcedureProcessingTime(jobId, id, formattedTimeToMs(valueFormattedTime)))}
         onFocus={() => { }/*todo */}
         input={
           <TextField
@@ -198,19 +197,18 @@ const useProcedureStyles = makeStyles(theme => createStyles({
   separator: { flexGrow: 1 },
 }))
 
-export const Procedure = memo(({ id }) => {
+export const Procedure = memo(({ jobId, id }) => {
   const classes = useProcedureStyles()
-  const opacity = 1// todo drragging: 0.4
+  const opacity = 1// todo dragging: 0.4
 
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-  const procedureJobIdSelector = useRef(createProcedureJobIdSelector(id)).current
-  const jobId = useJobSetEditorSelector(procedureJobIdSelector)
 
   const jobColorSelector = useRef(createJobColorSelector(jobId)).current
   const jobColor = useJobSetEditorSelector(jobColorSelector)
 
-  const procedureSequenceSelector = useRef(createProcedureSequenceSelector(id)).current
-  const sequence = useJobSetEditorSelector(procedureSequenceSelector)
+  const procedureIndexSelector = useRef(createProcedureIndexSelector(jobId, id)).current
+  const procedureIndex = useJobSetEditorSelector(procedureIndexSelector)
+  const sequence = procedureIndex + 1
 
   return (
     <div
@@ -218,15 +216,15 @@ export const Procedure = memo(({ id }) => {
       style={{ opacity, backgroundColor: jobColor }}
     >
       <div className={classes.machineAndTime}>
-        <ProcedureMachine id={id} />
-        <ProcedureProcessingTime id={id} />
+        <ProcedureMachine jobId={jobId} id={id} />
+        <ProcedureProcessingTime jobId={jobId} id={id} />
       </div>
       <div className={classes.sequeneAndActions}>
         <div className={classes.sequenceLabel}>
           {sequence}
         </ div>
         <div className={classes.separator} />
-        {isEdit && <DeleteProcedureButton id={id} />}
+        {isEdit && <DeleteProcedureButton jobId={jobId} id={id} />}
       </div>
     </div>
   )

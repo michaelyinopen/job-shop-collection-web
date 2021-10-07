@@ -190,9 +190,9 @@ export const getJobSetsSelectors = (jobSetsSelector: (rootState: any) => JobSets
       })
     }
   )
-  const createJobSetSelector = (id: number) => backwardCompose(
+  const createJobSetSelector = (id?: number) => backwardCompose(
     jobSetEntitiesSelector,
-    (entities: Dictionary<JobSetState>) => entities[id] as JobSetDetail | undefined 
+    (entities: Dictionary<JobSetState>) => id !== undefined ? entities[id] as JobSetDetail : undefined
   )
   return {
     jobSetHeadersSelector,

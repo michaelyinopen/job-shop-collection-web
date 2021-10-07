@@ -6,11 +6,12 @@ import {
   createSelectorHook
 } from 'react-redux'
 import { jobSetEditorReducer } from './jobSetEditorReducer'
+import type { JobSetEditorState } from './jobSetEditorReducer'
 
 const jobSetEditorContext = React.createContext<any>(null)
 
 export const useJobSetEditorDispatch = createDispatchHook(jobSetEditorContext)
-export const useJobSetEditorSelector = createSelectorHook(jobSetEditorContext)
+export const useJobSetEditorSelector = createSelectorHook<JobSetEditorState>(jobSetEditorContext)
 
 const jobSetEditorStore = createStore(jobSetEditorReducer)
 

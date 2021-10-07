@@ -66,7 +66,7 @@ export const Procedures = ({ jobId }) => {
         </div>
       )}
       <ol className={classes.list}>
-        {procedureIdsOfJob.map(id => <li key={id}><Procedure key={id} id={id} /></li>)}
+        {procedureIdsOfJob.map(id => <li key={id}><Procedure key={id} jobId={jobId} id={id} /></li>)}
       </ol>
       {isEdit && <CreateProcedure jobId={jobId} />}
     </section>

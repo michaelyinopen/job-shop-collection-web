@@ -4,10 +4,9 @@ import { makeStyles, createStyles } from '@material-ui/core'
 import {
   useAppDispatch,
   useAppSelector,
-  createJobSetSelector
+  createJobSetSelector,
 } from '../../store'
 import { addNotification } from '../../notifications'
-import { routePaths } from '../../route'
 import { PageContainer } from '../../styles'
 import { getJobSetTakingThunkAction } from '../JobSets'
 import {
@@ -20,11 +19,13 @@ import {
   setJobSetEditorId,
   setJobSetEditorIsEdit,
   setJobSetFromAppStore,
-  jobSetsEditorLoadedSelector,
-  jobSetsEditorJobSetSelector,
+  jobSetsEditorLoadStatusSelector,
 } from './store'
+import type { AppStoreJobSet } from './store'
 import { JobSetEditorTitleBar } from './JobSetEditorTitleBar'
 import { JobSetEditorForm } from './JobSetEditorForm'
+import { JobSetEditorState } from './JobSetEditorState'
+import { ExitPrompt } from './ExitPrompt'
 
 type JobSetEditorProps = {
   id: number// undefined for new?
@@ -54,57 +55,65 @@ const useStyles = makeStyles(theme => createStyles({
   }
 }))
 
-export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEditorProvider(({ id, edit }) => {
-  const classes = useStyles()
-  const dispatch = useAppDispatch()
-  const editorDispatch = useJobSetEditorDispatch()
+export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEditorProvider(
+  ({ id, edit }) => {
+    const classes = useStyles()
+    const isNew = id === undefined
+    const dispatch = useAppDispatch()
+    const editorDispatch = useJobSetEditorDispatch()
 
-  useEffect(() => {
-    editorDispatch(setJobSetEditorId(id))
-    return () => { editorDispatch(resetJobSetEditor()) }
-  }, [editorDispatch, id])
-
-  useEffect(() => {
-    editorDispatch(setJobSetEditorIsEdit(edit))
-  }, [editorDispatch, edit])
-
-  useEffect(() => {
-    dispatch(getJobSetTakingThunkAction(id))
-      .then(result => {
-        if (result?.kind === 'success') {
-          editorDispatch(loadedJobSet())
-        } else if (result?.kind === 'failure') {
-          editorDispatch(failedToLoadJobSet())
-          dispatch(addNotification({
-            summary: `Load Job Set ${id} Failed`,
-            matchPath: routePaths.jobSetEditor
-          }))
+    useEffect(() => {
+      editorDispatch(setJobSetEditorId(id))
+      return () => {
+        if (!isNew) { // does not reset if change from new to an activity with id
+          editorDispatch(resetJobSetEditor())
         }
-      })
-      .catch(() => {
-        editorDispatch(failedToLoadJobSet())
-        dispatch(addNotification({
-          summary: `Load Job Set ${id} Failed`,
-          matchPath: routePaths.jobSetEditor
-        }))
-      })
-  }, [dispatch, editorDispatch, id])
+      }
+    }, [editorDispatch, id, isNew])
 
-  const appJobSet = useAppSelector(createJobSetSelector(id))
-  const loaded = useJobSetEditorSelector(jobSetsEditorLoadedSelector)
+    useEffect(() => {
+      editorDispatch(setJobSetEditorIsEdit(edit))
+    }, [editorDispatch, edit])
 
-  useEffect(() => {
-    editorDispatch(setJobSetFromAppStore(appJobSet))
-  }, [editorDispatch, appJobSet, loaded])
+    const loadStatus = useJobSetEditorSelector(jobSetsEditorLoadStatusSelector)
+    const isLoaded = loadStatus === 'loaded'
 
-  //todo remove
-  const jobSetEditorState = useJobSetEditorSelector(jobSetsEditorJobSetSelector)
-  return (
-    <PageContainer classes={{ pageContainer: classes.pageContainer }}>
-      <JobSetEditorTitleBar />
-      <JobSetEditorForm />
-      {/*todo remove, will use jobSetEditor's state */}
-      <pre style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(jobSetEditorState, null, 2)}</pre>
-    </PageContainer>
-  )
-})
+    useEffect(() => {
+      if (!isNew && id && !isLoaded) {
+        dispatch(getJobSetTakingThunkAction(id))
+          .then(result => {
+            if (result === true) {
+              editorDispatch(loadedJobSet())
+            }
+            else if (result === false) {
+              dispatch(addNotification({
+                summary: `Failed to get Job Set #${id}`
+              }))
+              editorDispatch(failedToLoadJobSet())
+            }
+          })
+          .catch(() => {
+            dispatch(addNotification({
+              summary: `Failed to get Job Set #${id}`
+            }))
+          })
+      }
+    }, [dispatch, editorDispatch, isNew, id, isLoaded])
+
+    const appJobSet = useAppSelector(createJobSetSelector(id))
+
+    useEffect(() => {
+      if (!isNew) {
+        editorDispatch(setJobSetFromAppStore(appJobSet as AppStoreJobSet, isLoaded))
+      }
+    }, [isNew, editorDispatch, appJobSet, isLoaded])
+
+    return (
+      <PageContainer classes={{ pageContainer: classes.pageContainer }}>
+        <ExitPrompt />
+        <JobSetEditorTitleBar />
+        <JobSetEditorForm />
+        <JobSetEditorState />
+      </PageContainer>
+    )
+  })
