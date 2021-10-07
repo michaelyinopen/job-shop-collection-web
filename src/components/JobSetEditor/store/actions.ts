@@ -1,5 +1,6 @@
+import { nanoid } from 'nanoid'
 import { createAction } from '@reduxjs/toolkit'
-import type { TimeOptions } from './formDataReducer'
+import type { TimeOptions } from './jobSetEditorReducer'
 
 export const resetJobSetEditor = createAction('jobSetEditor/resetJobSetEditor')
 export const setJobSetEditorId = createAction<number | undefined>('jobSetEditor/setJobSetEditorId')
@@ -46,11 +47,18 @@ export const focusTitle = createAction('jobSetEditor/focusTitle')
 
 export const setDescription = createAction<string>('jobSetEditor/setDescription')
 
-export const addMachine = createAction('jobSetEditor/addMachine')
+export const addMachine = createAction(
+  'jobSetEditor/addMachine',
+  () => ({
+    payload: {
+      id: nanoid()
+    }
+  })
+)
 
 export const setMachineTitle = createAction(
   'jobSetEditor/setMachineTitle',
-  (machineId: number, value: string) => ({
+  (machineId: string, value: string) => ({
     payload: {
       machineId,
       value
@@ -59,7 +67,7 @@ export const setMachineTitle = createAction(
 )
 export const focusMachineTitle = createAction(
   'jobSetEditor/focusMachineTitle',
-  (machineId: number) => ({
+  (machineId: string) => ({
     payload: {
       machineId
     }
@@ -68,7 +76,7 @@ export const focusMachineTitle = createAction(
 
 export const setMachineDescription = createAction(
   'jobSetEditor/setMachineDescription',
-  (machineId: number, value: string) => ({
+  (machineId: string, value: string) => ({
     payload: {
       machineId,
       value
@@ -78,7 +86,7 @@ export const setMachineDescription = createAction(
 
 export const removeMachine = createAction(
   'jobSetEditor/removeMachine',
-  (machineId: number) => ({
+  (machineId: string) => ({
     payload: {
       machineId
     }
@@ -86,11 +94,18 @@ export const removeMachine = createAction(
 )
 
 //#region Job
-export const createJob = createAction('jobSetEditor/createJob')
+export const createJob = createAction(
+  'jobSetEditor/createJob',
+  () => ({
+    payload: {
+      id: nanoid()
+    }
+  })
+)
 
 export const changeJobColor = createAction(
   'jobSetEditor/changeJobColor',
-  (jobId: number) => ({
+  (jobId: string) => ({
     payload: {
       jobId
     }
@@ -99,7 +114,7 @@ export const changeJobColor = createAction(
 
 export const deleteJob = createAction(
   'jobSetEditor/deletePdeleteJobrocedure',
-  (jobId: number) => ({
+  (jobId: string) => ({
     payload: {
       jobId
     }
@@ -110,17 +125,23 @@ export const deleteJob = createAction(
 //#region Procedure
 export const createProcedure = createAction(
   'jobSetEditor/createProcedure',
-  (jobId: number) => ({
+  (jobId: string) => ({
     payload: {
-      jobId
+      jobId,
+      id: nanoid()
     }
   })
 )
 
 export const setProcedureMachineId = createAction(
   'jobSetEditor/setProcedureMachineId',
-  (procedureId: number, machineIdValue: number | null) => ({
+  (
+    jobId: string,
+    procedureId: string,
+    machineIdValue: string | null
+  ) => ({
     payload: {
+      jobId,
       procedureId,
       machineIdValue
     }
@@ -128,8 +149,12 @@ export const setProcedureMachineId = createAction(
 )
 export const focusProcedureMachineId = createAction(
   'jobSetEditor/focusProcedureMachineId',
-  (procedureId: number) => ({
+  (
+    jobId: string,
+    procedureId: string
+  ) => ({
     payload: {
+      jobId,
       procedureId
     }
   })
@@ -137,8 +162,13 @@ export const focusProcedureMachineId = createAction(
 
 export const setProcedureProcessingTime = createAction(
   'jobSetEditor/setProcedureProcessingTime',
-  (procedureId: number, processingTimeMs: number) => ({
+  (
+    jobId: string,
+    procedureId: string,
+    processingTimeMs: number
+  ) => ({
     payload: {
+      jobId,
       procedureId,
       processingMs: processingTimeMs
     }
@@ -146,8 +176,12 @@ export const setProcedureProcessingTime = createAction(
 )
 export const focusProcedureProcessingTime = createAction(
   'jobSetEditor/focusProcedureProcessingTime',
-  (procedureId: number) => ({
+  (
+    jobId: string,
+    procedureId: string
+  ) => ({
     payload: {
+      jobId,
       procedureId
     }
   })
@@ -155,19 +189,28 @@ export const focusProcedureProcessingTime = createAction(
 
 export const moveProcedure = createAction(
   'jobSetEditor/moveProcedure',
-  // targetSequence is this procedure's sequence after move
-  (procedureId: number, targetSequence: number) => ({
+  // targetIndex is this procedure's index after move
+  (
+    jobId: string,
+    procedureId: string,
+    targetIndex: number
+  ) => ({
     payload: {
+      jobId,
       procedureId,
-      targetSequence
+      targetIndex
     }
   })
 )
 
 export const deleteProcedure = createAction(
   'jobSetEditor/deleteProcedure',
-  (procedureId: number) => ({
+  (
+    jobId: string,
+    procedureId: string
+  ) => ({
     payload: {
+      jobId,
       procedureId
     }
   })

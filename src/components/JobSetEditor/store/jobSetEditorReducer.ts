@@ -1,7 +1,7 @@
 import {
-  combineReducers,
   createReducer,
 } from '@reduxjs/toolkit'
+import { getNewJobColor } from '../../../utility'
 import {
   resetJobSetEditor,
   setJobSetEditorId,
@@ -9,76 +9,29 @@ import {
   loadedJobSet,
   failedToLoadJobSet,
   setJobSetFromAppStore,
+  setTitle,
+  setDescription,
+  addMachine,
+  setMachineTitle,
+  setMachineDescription,
+  removeMachine,
+  createJob,
+  changeJobColor,
+  deleteJob,
+  createProcedure,
+  setProcedureMachineId,
+  setProcedureProcessingTime,
+  moveProcedure,
+  deleteProcedure,
+  setIsAutoTimeOptions,
+  setMaxTime,
+  setViewStartTime,
+  setViewEndTime,
+  setMinViewDuration,
+  setMaxViewDuration,
+  middlewareCalculatedAutoTimeOptions,
 } from './actions'
-import type { AppStoreJobSetDetail } from './actions'
-import { formDataReducer } from './formDataReducer'
-import { appStoreJobSet_To_FormData, mergeUninitializedJobSet } from './utility'
-
-type JobSetEditorControlState = {
-  id?: number
-  isEdit: boolean
-  loaded: boolean
-  setFromAppStore: boolean
-  failedToLoad: boolean
-  jobSet: any //todo
-}
-
-const jobSetEditorControlInitialState: JobSetEditorControlState = {
-  id: undefined,
-  isEdit: false,
-  loaded: false,
-  setFromAppStore: false,
-  failedToLoad: false,
-  jobSet: undefined, //todo
-}
-
-const jobSetEditorControlReducer = createReducer(jobSetEditorControlInitialState, (builder) => {
-  builder
-    .addCase(resetJobSetEditor, (state) => {
-      state.id = undefined
-      state.isEdit = false
-      state.loaded = false
-      state.setFromAppStore = false
-      state.failedToLoad = false
-    })
-    .addCase(setJobSetEditorId, (state, { payload: id }) => {
-      state.id = id
-    })
-    .addCase(setJobSetEditorIsEdit, (state, { payload: isEdit }) => {
-      state.isEdit = isEdit
-    })
-    .addCase(loadedJobSet, (state) => {
-      state.loaded = true
-      state.failedToLoad = false
-    })
-    .addCase(failedToLoadJobSet, (state) => {
-      state.loaded = false
-      state.failedToLoad = true
-    })
-    .addCase(setJobSetFromAppStore, (state, { payload: jobSet }) => {
-      if (!state.loaded) {
-        return
-      }
-      // todo implement
-      // state.jobSet = jobSet //todo remove
-    })
-})
-
-export const jobSetEditorReducer = combineReducers({
-  control: jobSetEditorControlReducer,
-  formData: formDataReducer,
-  touched: touchedReducer,
-})
-
-export const jobSetsEditorIsEditSelector = (state: JobSetEditorState) => state.control.isEdit
-export const jobSetsEditorLoadedSelector = (state: JobSetEditorState) => state.control.loaded
-export const jobSetsEditorFailedToLoadSelector = (state: JobSetEditorState) => state.control.failedToLoad
-export const jobSetsEditorJobSetSelector = (state: JobSetEditorState) => state //todo
-
-export const jobSetsEditorFormDataSelector = (state: JobSetEditorState) => state.formData
-export const jobSetsEditorTouchedSelector = (state: JobSetEditorState) => state.touched
-
-////////////////////////////////////////////////////////////////////
+import { mergeUninitializedJobSet } from './utility'
 
 type Step = any // todo
 
@@ -211,7 +164,7 @@ const jobSetEditorInitialState: JobSetEditorState = {
   versions: [],
 }
 
-const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) => {
+export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) => {
   builder
     .addCase(resetJobSetEditor, (state) => {
       state.id = undefined
@@ -255,6 +208,7 @@ const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) =>
         || !jobSet.hasDetail) {
         return
       }
+      // todo
       // const refreshedStep = calculateRefreshedStep(
       //   state.versions[state.versions.length - 1].formData,
       //   state.formData,
@@ -274,4 +228,150 @@ const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) =>
         formData: state.formData
       })
     })
+    //#region edit form actions
+    .addCase(setTitle, (state, { payload }) => {
+      state.formData.title = payload
+    })
+    .addCase(setDescription, (state, { payload }) => {
+      state.formData.description = payload
+    })
+    .addCase(addMachine, (state, { payload: { id } }) => {
+      state.formData.machines.ids.push(id)
+      state.formData.machines.entities[id] = {
+        id: id,
+        title: `M${id}`,
+        description: `Machine ${id}`,
+      }
+    })
+    .addCase(setMachineTitle, (state, { payload: { machineId, value } }) => {
+      state.formData.machines.entities[machineId].title = value
+    })
+    .addCase(setMachineDescription, (state, { payload: { machineId, value } }) => {
+      state.formData.machines.entities[machineId].description = value
+    })
+    // move machines
+    .addCase(removeMachine, (state, { payload: { machineId } }) => {
+      const index = state.formData.machines.ids.findIndex(mId => mId === machineId)
+      if (index !== -1) {
+        state.formData.machines.ids.splice(index, 1)
+      }
+      delete state.formData.machines.entities[machineId]
+    })
+    .addCase(createJob, (state, { payload: { id } }) => {
+      state.formData.jobs.ids.push(id)
+      state.formData.jobs.entities[id] = {
+        id,
+        title: state.formData.jobs.ids.length.toString(),
+        procedures: {
+          ids: [],
+          entities: {}
+        }
+      }
+      // jobColor
+      const excludeColors = Object.values(state.formData.jobColors.entities)
+        .map(jc => jc!.color)
+      const lastColor = excludeColors[excludeColors.length - 1]
+      const { color, textColor } = getNewJobColor(excludeColors, lastColor)
+      state.formData.jobColors.ids.push(id)
+      state.formData.jobColors.entities[id] = {
+        jobId: id,
+        color,
+        textColor,
+      }
+    })
+    // set job title
+    // move jobs
+    .addCase(changeJobColor, (state, { payload: { jobId } }) => {
+      const excludeColors = Object.values(state.formData.jobColors.entities)
+        .map(jc => jc!.color)
+      const lastColor = state.formData.jobColors.entities[jobId]!.color
+      const { color, textColor } = getNewJobColor(excludeColors, lastColor)
+      state.formData.jobColors.entities[jobId] = {
+        jobId,
+        color,
+        textColor,
+      }
+    })
+    .addCase(deleteJob, (state, { payload: { jobId } }) => {
+      const jobIndex = state.formData.jobs.ids.findIndex(jId => jId === jobId)
+      if (jobIndex !== -1) {
+        state.formData.jobs.ids.splice(jobIndex, 1)
+      }
+      delete state.formData.jobs.entities[jobId]
+      // jobColor
+      const jobColorIndex = state.formData.jobColors.ids.findIndex(jId => jId === jobId)
+      if (jobColorIndex !== -1) {
+        state.formData.jobColors.ids.splice(jobColorIndex, 1)
+      }
+      delete state.formData.jobColors.entities[jobId]
+    })
+    .addCase(createProcedure, (state, { payload: { jobId, id } }) => {
+      state.formData.jobs.entities[jobId].procedures.ids.push(id)
+      state.formData.jobs.entities[jobId].procedures.entities[id] = {
+        id,
+        jobId,
+        machineId: null,
+        processingTimeMs: 0,
+      }
+    })
+    .addCase(setProcedureMachineId, (state, action) => {
+      const { payload: { jobId, procedureId, machineIdValue } } = action
+      state.formData.jobs.entities[jobId].procedures.entities[procedureId].machineId
+        = machineIdValue
+    })
+    .addCase(setProcedureProcessingTime, (state, action) => {
+      const { payload: { jobId, procedureId, processingMs } } = action
+      state.formData.jobs.entities[jobId].procedures.entities[procedureId].processingTimeMs
+        = processingMs
+    })
+    .addCase(moveProcedure, (state, action) => {
+      const { payload: { jobId, procedureId, targetIndex } } = action
+      const originalIndex = state.formData.jobs.entities[jobId].procedures.ids.indexOf(procedureId)
+      if (originalIndex > targetIndex) {
+        state.formData.jobs.entities[jobId].procedures.ids = [
+          ...state.formData.jobs.entities[jobId].procedures.ids.slice(0, targetIndex),
+          procedureId,
+          ...state.formData.jobs.entities[jobId].procedures.ids.slice(targetIndex, originalIndex),
+          ...state.formData.jobs.entities[jobId].procedures.ids.slice(originalIndex + 1)
+        ]
+      } else if (originalIndex < targetIndex) {
+        state.formData.jobs.entities[jobId].procedures.ids = [
+          ...state.formData.jobs.entities[jobId].procedures.ids.slice(0, originalIndex),
+          ...state.formData.jobs.entities[jobId].procedures.ids.slice(originalIndex + 1, targetIndex + 1),
+          procedureId,
+          ...state.formData.jobs.entities[jobId].procedures.ids.slice(targetIndex + 1),
+        ]
+      }
+    })
+    .addCase(deleteProcedure, (state, { payload: { jobId, procedureId } }) => {
+      const index = state.formData.jobs.entities[jobId].procedures.ids.findIndex(pId => pId === procedureId)
+      if (index !== -1) {
+        state.formData.jobs.entities[jobId].procedures.ids.splice(index, 1)
+      }
+      delete state.formData.jobs.entities[jobId].procedures.entities[procedureId]
+    })
+    .addCase(setIsAutoTimeOptions, (state, { payload }) => {
+      state.formData.isAutoTimeOptions = payload
+    })
+    .addCase(setMaxTime, (state, { payload: { maxTimeMs } }) => {
+      state.formData.manualTimeOptions.maxTimeMs = maxTimeMs
+    })
+    .addCase(setViewStartTime, (state, { payload: { viewStartTimeMs } }) => {
+      state.formData.manualTimeOptions.viewStartTimeMs = viewStartTimeMs
+    })
+    .addCase(setViewEndTime, (state, { payload: { viewEndTimeMs } }) => {
+      state.formData.manualTimeOptions.viewEndTimeMs = viewEndTimeMs
+    })
+    .addCase(setMinViewDuration, (state, { payload: { minViewDurationMs } }) => {
+      state.formData.manualTimeOptions.minViewDurationMs = minViewDurationMs
+    })
+    .addCase(setMaxViewDuration, (state, { payload: { maxViewDurationMs } }) => {
+      state.formData.manualTimeOptions.maxViewDurationMs = maxViewDurationMs
+    })
+    .addCase(middlewareCalculatedAutoTimeOptions, (state, { payload: { timeOptions } }) => {
+      state.formData.autoTimeOptions = {
+        ...timeOptions
+      }
+    })
+  //#endregion edit form actions
 })
