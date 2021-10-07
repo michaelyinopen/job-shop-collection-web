@@ -237,10 +237,16 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
     })
     .addCase(addMachine, (state, { payload: { id } }) => {
       state.formData.machines.ids.push(id)
+      const machineNumber = (Math.max(
+        0,
+        ...Object.values(state.formData.machines.entities)
+          .map(m => parseInt(m.title.substring(1)))
+          .filter(n => Number.isInteger(n))
+      ) + 1).toString()
       state.formData.machines.entities[id] = {
         id: id,
-        title: `M${id}`,
-        description: `Machine ${id}`,
+        title: `M${machineNumber}`,
+        description: `Machine ${machineNumber}`,
       }
     })
     .addCase(setMachineTitle, (state, { payload: { machineId, value } }) => {
@@ -256,12 +262,23 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         state.formData.machines.ids.splice(index, 1)
       }
       delete state.formData.machines.entities[machineId]
+
+      const proceduresOfMachine = Object.values(state.formData.jobs.entities)
+        .flatMap(j => Object.values(j.procedures.entities))
+        .filter(p => p!.machineId === machineId)
+      for (const procedure of proceduresOfMachine) {
+        procedure.machineId = null
+      }
     })
     .addCase(createJob, (state, { payload: { id } }) => {
       state.formData.jobs.ids.push(id)
+      const jobTitle = (Math.max(
+        0,
+        ...Object.values(state.formData.jobs.entities)
+          .map(j => parseInt(j.title))) + 1).toString()
       state.formData.jobs.entities[id] = {
         id,
-        title: state.formData.jobs.ids.length.toString(),
+        title: jobTitle,
         procedures: {
           ids: [],
           entities: {}

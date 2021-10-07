@@ -27,7 +27,20 @@ import {
   createMachineTitleSelector,
   createProceduresAffectedByMachineSelector,
   removeMachine,
+  createJobTitleSelector,
+  createProcedureIndexSelector,
 } from '../store'
+
+const ProcedureListItemText = ({ procedure }) => {
+  const jobTitle = useJobSetEditorSelector(createJobTitleSelector(procedure.jobId))
+  const procedureIndex = useJobSetEditorSelector(createProcedureIndexSelector(procedure.jobId, procedure.id))
+  const sequence = procedureIndex + 1
+  return (
+    <ListItemText
+      primary={`Job ${jobTitle}, sequence ${sequence}, time: ${msToFormattedTime(procedure.processingTimeMs)}`}
+    />
+  )
+}
 
 const useRemoveMachineDialogContentStyles = makeStyles(theme => createStyles({
   dialogContent: {
@@ -79,9 +92,7 @@ const RemoveMachineDialogContent = ({ id, machineTitle, closeCallback }) => {
               <List dense className={classes.list}>
                 {proceduresAffectedByMachine.map(p => (
                   <ListItem key={p.id}>
-                    <ListItemText
-                      primary={`Job ${p.jobId}, sequence ${p.sequence}, time: ${msToFormattedTime(p.processingTimeMs)}`}
-                    />
+                    <ProcedureListItemText procedure={p} />
                   </ListItem>
                 ))}
               </List>
