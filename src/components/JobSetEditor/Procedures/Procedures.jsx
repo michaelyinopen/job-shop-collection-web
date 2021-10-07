@@ -8,6 +8,7 @@ import {
 import {
   useJobSetEditorSelector,
   jobSetsEditorIsEditSelector,
+  createJobTitleSelector,
   createProcedureIdsOfJobSelector,
 } from '../store'
 import { Procedure } from './Procedure'
@@ -48,13 +49,14 @@ const useStyles = makeStyles(theme => createStyles({
 export const Procedures = ({ jobId }) => {
   const classes = useStyles()
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const jobTitle = useJobSetEditorSelector(createJobTitleSelector(jobId))
   const procedureIdsOfJobSelector = useRef(createProcedureIdsOfJobSelector(jobId)).current
   const procedureIdsOfJob = useJobSetEditorSelector(procedureIdsOfJobSelector)
   return (
     <section className={classes.root}>
       <div className={classes.proceduresTitle}>
-        Job {jobId} Procedures
-        <Tooltip title={`${procedureIdsOfJob.length} procedures in Job ${jobId}`}>
+        Job {jobTitle} Procedures
+        <Tooltip title={`${procedureIdsOfJob.length} procedures in Job ${jobTitle}`}>
           <span className={classes.countMessage}>
             {procedureIdsOfJob.length === 0 ? "" : ` (${procedureIdsOfJob.length})`}
           </span>
@@ -62,7 +64,7 @@ export const Procedures = ({ jobId }) => {
       </div>
       {procedureIdsOfJob.length === 0 && (
         <div className={classes.noProceduresMessage}>
-          {`No procedures in Job ${jobId}`}
+          {`No procedures in Job ${jobTitle}`}
         </div>
       )}
       <ol className={classes.list}>

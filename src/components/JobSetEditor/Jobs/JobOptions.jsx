@@ -11,6 +11,7 @@ import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
   jobSetsEditorIsEditSelector,
+  createJobTitleSelector,
   createJobColorSelector,
   createJobTextColorSelector,
   changeJobColor,
@@ -51,10 +52,9 @@ const useStyles = makeStyles(theme => createStyles({
 export const JobOptions = ({ id }) => {
   const classes = useStyles()
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-  const jobColorSelector = useRef(createJobColorSelector(id)).current
-  const jobColor = useJobSetEditorSelector(jobColorSelector)
-  const jobTextColorSelector = useRef(createJobTextColorSelector(id)).current
-  const jobTextColor = useJobSetEditorSelector(jobTextColorSelector)
+  const jobTitle = useJobSetEditorSelector(createJobTitleSelector(id))
+  const jobColor = useJobSetEditorSelector(createJobColorSelector(id))
+  const jobTextColor = useJobSetEditorSelector(createJobTextColorSelector(id))
 
   const editorDispatch = useJobSetEditorDispatch()
   return (
@@ -65,7 +65,7 @@ export const JobOptions = ({ id }) => {
           className={classes.jobTitleColorBox}
           style={{ backgroundColor: jobColor, color: jobTextColor }}
         >
-          {id}
+          {jobTitle}
         </span>
         Options
       </Typography>

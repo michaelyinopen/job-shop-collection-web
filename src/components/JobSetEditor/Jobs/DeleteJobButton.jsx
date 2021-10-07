@@ -10,10 +10,12 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete'
 import {
   useJobSetEditorDispatch,
+  useJobSetEditorSelector,
+  createJobTitleSelector,
   deleteJob,
 } from '../store'
 
-const DeleteJobDialogContent = ({ id, closeCallback }) => {
+const DeleteJobDialogContent = ({ id, jobTitle, closeCallback }) => {
   const editorDispatch = useJobSetEditorDispatch()
   const confirmCallback = () => {
     editorDispatch(deleteJob(id))
@@ -21,7 +23,7 @@ const DeleteJobDialogContent = ({ id, closeCallback }) => {
   }
   return (
     <>
-      <DialogTitle>{`Delete Job ${id}?`}</DialogTitle>
+      <DialogTitle>{`Delete Job ${jobTitle}?`}</DialogTitle>
       <DialogActions>
         <Button onClick={closeCallback} variant="outlined" color="primary">
           Cancel
@@ -36,10 +38,11 @@ const DeleteJobDialogContent = ({ id, closeCallback }) => {
 
 export const DeleteJobButton = ({ id }) => {
   const [open, setOpen] = useState(false)
+  const jobTitle = useJobSetEditorSelector(createJobTitleSelector(id))
   return (
     <div>
       <Tooltip
-        title={`Delete Job ${id}`}
+        title={`Delete Job ${jobTitle}`}
         placement="right-end"
       >
         <IconButton onClick={() => setOpen(true)}>
@@ -54,6 +57,7 @@ export const DeleteJobButton = ({ id }) => {
         {open && (
           <DeleteJobDialogContent
             id={id}
+            jobTitle={jobTitle}
             closeCallback={() => setOpen(false)}
           />
         )}

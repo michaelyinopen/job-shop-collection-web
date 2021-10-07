@@ -21,6 +21,8 @@ export const createMachineDescriptionSelector = (id: string) => (state: JobSetEd
   return state.formData.machines.entities[id].description
 }
 export const jobIdsSelector = (state: JobSetEditorState) => state.formData.jobs.ids
+export const createJobTitleSelector = (id: string) => (state: JobSetEditorState) =>
+  state.formData.jobs.entities[id].title
 export const createJobColorSelector = (id: string) => (state: JobSetEditorState) =>
   state.formData.jobColors.entities[id].color
 export const createJobTextColorSelector = (id: string) => (state: JobSetEditorState) =>

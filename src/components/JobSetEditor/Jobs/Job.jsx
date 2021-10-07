@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import {
   makeStyles,
   createStyles,
@@ -8,6 +7,7 @@ import {
 import {
   useJobSetEditorSelector,
   jobSetsEditorIsEditSelector,
+  createJobTitleSelector,
   createJobColorSelector,
   createJobTextColorSelector,
 } from '../store'
@@ -49,10 +49,9 @@ const useStyles = makeStyles(theme => createStyles({
 export const Job = ({ id }) => {
   const classes = useStyles()
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-  const jobColorSelector = useRef(createJobColorSelector(id)).current
-  const jobColor = useJobSetEditorSelector(jobColorSelector)
-  const jobTextColorSelector = useRef(createJobTextColorSelector(id)).current
-  const jobTextColor = useJobSetEditorSelector(jobTextColorSelector)
+  const jobTitle = useJobSetEditorSelector(createJobTitleSelector(id))
+  const jobColor = useJobSetEditorSelector(createJobColorSelector(id))
+  const jobTextColor = useJobSetEditorSelector(createJobTextColorSelector(id))
   return (
     <Card component="section" className={classes.jobCard}>
       <div className={classes.headerRow}>
@@ -62,7 +61,7 @@ export const Job = ({ id }) => {
             className={classes.jobTitleColorBox}
             style={{ backgroundColor: jobColor, color: jobTextColor }}
           >
-            {id}
+            {jobTitle}
           </div>
         </Typography>
         <div className={classes.separator} />
