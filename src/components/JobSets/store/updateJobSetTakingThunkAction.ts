@@ -20,7 +20,8 @@ export const updateJobSetTakingThunkAction = (
     if (updateJobSetResult.kind === 'success') {
       const updatedJobSet = updateJobSetResult.success()
       dispatch(fetchedJobSet(updatedJobSet))
-    } else if (updateJobSetResult.failure().failureType === 'version condition failed') {
+    } else if (updateJobSetResult.failure().failureType === 'version condition failed'
+      || updateJobSetResult.failure().failureType === 'forbidden because locked') {
       const savedJobSet = updateJobSetResult.failure().savedJobSet
       dispatch(fetchedJobSet(savedJobSet))
     }

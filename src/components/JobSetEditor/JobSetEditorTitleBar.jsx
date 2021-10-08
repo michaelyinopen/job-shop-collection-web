@@ -1,3 +1,5 @@
+
+import { generatePath } from 'react-router-dom'
 import {
   makeStyles,
   createStyles,
@@ -9,6 +11,7 @@ import {
 } from '@material-ui/core'
 import SyncIcon from '@material-ui/icons/Sync'
 import SaveIcon from '@material-ui/icons/Save'
+import { routePaths } from '../../route'
 import { ProgressOverlay } from '../../styles'
 import {
   useAppSelector,
@@ -18,16 +21,23 @@ import { addNotification } from '../../notifications'
 import {
   getJobSetIsLoadingSelector,
   getJobSetTakingThunkAction,
+  createDeleteJobSetIsLoadingSelector,
+  deleteJobSetTakingThunkAction,
+  updateJobSetIsLoadingSelector,
+  updateJobSetTakingThunkAction,
 } from '../JobSets/store'
 import {
   useJobSetEditorSelector,
-  useJobSetEditorDispatch,
   jobSetsEditorIdSelector,
   jobSetsEditorIsEditSelector,
+  currentStepIndexSelector,
   jobSetsEditorIsLockedSelector,
   jobSetsEditorLoadStatusSelector,
   jobSetsEditorInitializedSelector,
+  updateJobSetRequestSelector,
+  useJobSetEditorDispatch,
   loadedJobSet,
+  // savingStep,
 } from './store'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -39,7 +49,8 @@ const useStyles = makeStyles(theme => createStyles({
     zIndex: theme.zIndex.appBar - 1,
     backgroundColor: theme.palette.background.default,
     boxShadow: "0px 6px 4px -6px rgba(0,0,0,0.75)",
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
+    paddingRight: theme.spacing(2),
   },
   allActions: {
     display: "flex",
@@ -53,7 +64,7 @@ const useStyles = makeStyles(theme => createStyles({
   separator: { flexGrow: 1 },
 }))
 
-const RefreshJobSetButton = (id) => {
+const RefreshJobSetButton = ({ id }) => {
   const dispatch = useAppDispatch()
   const editorDispatch = useJobSetEditorDispatch()
 
@@ -71,28 +82,30 @@ const RefreshJobSetButton = (id) => {
     <ProgressOverlay
       isLoading={isLoading}
     >
-      <IconButton
-        onClick={() => {
-          dispatch(getJobSetTakingThunkAction(id))
-            .then(result => {
-              if (result?.kind === 'success') {
-                editorDispatch(loadedJobSet())
-              }
-              else if (result?.kind === 'failure') {
+      <Tooltip title='Refresh' placement="bottom-end">
+        <IconButton
+          onClick={() => {
+            dispatch(getJobSetTakingThunkAction(id))
+              .then(result => {
+                if (result?.kind === 'success') {
+                  editorDispatch(loadedJobSet())
+                }
+                else if (result?.kind === 'failure') {
+                  dispatch(addNotification({
+                    summary: `Failed to get Job Set #${id}`
+                  }))
+                }
+              })
+              .catch(() => {
                 dispatch(addNotification({
                   summary: `Failed to get Job Set #${id}`
                 }))
-              }
-            })
-            .catch(() => {
-              dispatch(addNotification({
-                summary: `Failed to get Job Set #${id}`
-              }))
-            })
-        }}
-      >
-        <SyncIcon />
-      </IconButton>
+              })
+          }}
+        >
+          <SyncIcon />
+        </IconButton>
+      </Tooltip>
     </ProgressOverlay>
   )
 }
@@ -105,49 +118,96 @@ const useSaveJobSetButtonStyles = makeStyles(theme => ({
   saveIcon: { marginRight: theme.spacing(0.5) },
 }))
 
-const UpdateJobSetButton = (id) => {
+const CreateJobSetButton = () => {
+  return null
+}
+
+const UpdateJobSetButton = ({ id }) => {
   const classes = useSaveJobSetButtonStyles()
   const dispatch = useAppDispatch()
-  const editorDispatch = useActivityEditorDispatch()
+  const editorDispatch = useJobSetEditorDispatch()
 
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
   const loadStatus = useJobSetEditorSelector(jobSetsEditorLoadStatusSelector)
   const initialized = useJobSetEditorSelector(jobSetsEditorInitializedSelector)
 
-  const formData = useJobSetEditorSelector(es => es.formData)
-  const versionToken = useActivityEditorSelector(es => es.versions[es.versions.length - 1]?.versionToken)
-  const currentStepIndex = useActivityEditorSelector(es => es.currentStepIndex)
+  const currentStepIndex = useJobSetEditorSelector(currentStepIndexSelector)
+  const updateJobSetRequest = useJobSetEditorSelector(updateJobSetRequestSelector)
 
-  const isDeleting = useAppSelector(createActivityIsDeletingSelector(id))
-  const isSaving = useAppSelector(createUpdateActivityIsLoadingSelector(id))
+  const isDeleting = useAppSelector(createDeleteJobSetIsLoadingSelector(id))
+  const isSaving = useAppSelector(updateJobSetIsLoadingSelector(id))
+
+  const path = generatePath(routePaths.jobSetEditor, { id })
 
   const disabled = isDeleting || !isEdit || !initialized || loadStatus === 'failed'
 
-  const tooltip = isLoading ? "loading" : loadFailedMessage ? "load failed"
-    : isProgress ? "Saving..." : "Save"
+  const tooltip =
+    loadStatus === 'not loaded' ? "loading"
+      : loadStatus === 'failed' ? "load failed"
+        : isSaving ? "Saving..."
+          : "Save"
   return (
-    <Tooltip title={tooltip} placement="bottom-end">
-      <ProgressOverlay
-        isLoading={false/*todo*/}
-      >
+    <ProgressOverlay
+      isLoading={isSaving}
+    >
+      <Tooltip title={tooltip} placement="bottom-end">
         <Button
           variant="contained"
           color="primary"
-          onClick={()=>{
-
+          onClick={() => {
+            // editorDispatch(savingStep(currentStepIndex, true))
+            dispatch(updateJobSetTakingThunkAction(id, updateJobSetRequest))
+              .then(result => {
+                if (result?.kind === 'success') {
+                  dispatch(addNotification({
+                    summary: `Saved Activity #${id}`
+                  }))
+                  // editorDispatch(savedStep(currentStepIndex))
+                  return
+                }
+                if (result?.failure().failureType === 'version condition failed') {
+                  dispatch(addNotification({
+                    summary: `Activity #${id} was updated by another user, check the merged changes and save again`,
+                    matchPath: path
+                  }))
+                }
+                else if (result?.failure().failureType === 'forbidden because locked') {
+                  dispatch(addNotification({
+                    summary: `Activity #${id} was locked and cannot be saved`,
+                    matchPath: path
+                  }))
+                }
+                else if (result?.failure().failureType === 'not found') {
+                  dispatch(addNotification({
+                    summary: `Activity #${id} was deleted and cannot be saved`,
+                    matchPath: path
+                  }))
+                }
+                else {
+                  dispatch(addNotification({
+                    summary: `Failed to save Activity #${id}`,
+                    matchPath: path
+                  }))
+                }
+                // editorDispatch(savingStep(currentStepIndex, false))
+              })
+              .catch(() => {
+                dispatch(addNotification(`Failed to saved Activity #${id}`))
+                // editorDispatch(savingStep(currentStepIndex, false))
+              })
           }}
           disabled={disabled}
         >
           <SaveIcon className={classes.saveIcon} />
           Save
         </Button>
-      </ProgressOverlay>
-    </Tooltip>
+      </Tooltip >
+    </ProgressOverlay>
   )
 }
 
-const SaveJobSetButton = (id) => {
-  return id ? <UpdateJobSetButton id={id} /> : <CreateJobSetButton />;
+const SaveJobSetButton = ({ id }) => {
+  return id ? <UpdateJobSetButton id={id} /> : <CreateJobSetButton />
 }
 
 export const JobSetEditorTitleBar = () => {
@@ -155,7 +215,7 @@ export const JobSetEditorTitleBar = () => {
 
   const id = useJobSetEditorSelector(jobSetsEditorIdSelector)
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-  const isLocked = useJobSetEditorSelector(jobSetsEditorIsLockedSelector)
+  // const isLocked = useJobSetEditorSelector(jobSetsEditorIsLockedSelector)
 
   return (
     <Toolbar className={classes.toolbar} disableGutters>
@@ -166,10 +226,10 @@ export const JobSetEditorTitleBar = () => {
       <div className={classes.separator} />
       <div className={classes.allActions}>
         <div className={classes.grouped}>
-          {!readOnly ? <HistoryButtons id={id} /> : null}
-          {!readOnly ? <SaveJobSetButton id={id} /> : null}
+          {isEdit ? <HistoryButtons id={id} /> : null}
+          {isEdit ? <SaveJobSetButton id={id} /> : null}
         </div>
-        <div className={classes.grouped}>
+        {/* <div className={classes.grouped}>
           {id ? <EditButtons id={id} /> : null}
           <MoreOptions
             id={id}
@@ -177,7 +237,7 @@ export const JobSetEditorTitleBar = () => {
             openJsonEditorCallback={openJsonEditorCallback}
             closeJsonEditorCallback={closeJsonEditorCallback}
           />
-        </div>
+        </div> */}
       </div>
     </Toolbar>
   )

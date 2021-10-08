@@ -155,8 +155,10 @@ type UpdateJobSetJsonResponse = {
 } | {
   status: 'version condition failed',
   savedJobSet: GetJobSetResponse
+} | {
+  status: 'forbidden because locked',
+  savedJobSet: GetJobSetResponse
 } | { status: 'not found' }
-  | { status: 'forbidden because locked' }
 
 export const updateJobSetUrlTemplate = `${API_URL}/api/job-sets/{id}`
 export async function updateJobSetApiAsync(id: number, jobSet: UpdateJobSetRequest) {

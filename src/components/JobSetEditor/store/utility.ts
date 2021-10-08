@@ -101,7 +101,10 @@ export function mergeUninitializedJobSet(
   state: Draft<JobSetEditorState>
 ): JobSetEditorState | void {
   if (!jobSet) {
-    return jobSetEditorInitialState
+    state.isLocked = jobSetEditorInitialState.isLocked
+    state.hasDetail = jobSetEditorInitialState.hasDetail
+    state.formData = jobSetEditorInitialState.formData
+    return
   }
   state.isLocked = jobSet.isLocked
   state.hasDetail = jobSet.hasDetail

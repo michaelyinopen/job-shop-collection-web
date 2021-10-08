@@ -28,7 +28,7 @@ import { JobSetEditorState } from './JobSetEditorState'
 import { ExitPrompt } from './ExitPrompt'
 
 type JobSetEditorProps = {
-  id: number// undefined for new?
+  id: number | undefined
   edit: boolean
 }
 
