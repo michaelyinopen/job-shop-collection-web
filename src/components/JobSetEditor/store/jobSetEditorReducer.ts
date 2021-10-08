@@ -167,7 +167,6 @@ const jobSetEditorInitialState: JobSetEditorState = {
 export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) => {
   builder
     .addCase(resetJobSetEditor, (state) => {
-      state.id = undefined
       return jobSetEditorInitialState
     })
     .addCase(setJobSetEditorId, (state, { payload: id }) => {

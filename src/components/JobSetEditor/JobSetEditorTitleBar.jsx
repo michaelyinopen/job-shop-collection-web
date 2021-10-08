@@ -3,12 +3,28 @@ import {
   createStyles,
   Toolbar,
   Typography,
+  IconButton,
 } from '@material-ui/core'
+import SyncIcon from '@material-ui/icons/Sync'
+import { ProgressOverlay } from '../../styles'
+import {
+  useAppSelector,
+  useAppDispatch,
+} from '../../store'
+import { addNotification } from '../../notifications'
+import {
+  getJobSetIsLoadingSelector,
+  getJobSetTakingThunkAction,
+} from '../JobSets/store'
 import {
   useJobSetEditorSelector,
+  useJobSetEditorDispatch,
   jobSetsEditorIdSelector,
   jobSetsEditorIsEditSelector,
   jobSetsEditorIsLockedSelector,
+  jobSetsEditorLoadStatusSelector,
+  jobSetsEditorInitializedSelector,
+  loadedJobSet,
 } from './store'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -36,16 +52,54 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const JobSetEditorTitleBar = () => {
   const classes = useStyles()
+  const dispatch = useAppDispatch()
+  const editorDispatch = useJobSetEditorDispatch()
+
   const id = useJobSetEditorSelector(jobSetsEditorIdSelector)
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
   const isLocked = useJobSetEditorSelector(jobSetsEditorIsLockedSelector)
+
+  const loadStatus = useJobSetEditorSelector(jobSetsEditorLoadStatusSelector)
+  const initialized = useJobSetEditorSelector(jobSetsEditorInitializedSelector)
+
+  const thunkLoading = useAppSelector(getJobSetIsLoadingSelector(id))
+
+  const isLoading = thunkLoading || (!initialized && loadStatus !== 'failed')
+
   return (
     <Toolbar className={classes.toolbar} disableGutters>
       <Typography variant="h4">
-        {`Job Set #${id}`}
+        {id !== undefined ? `Job Set #${id}` : 'New Job Set'}
       </Typography>
-      {/* {id ? <LoadButton id={id} /> : null}
-        <div className={classes.separator} />
+      {id !== undefined && (
+        <ProgressOverlay
+          isLoading={isLoading}
+        >
+          <IconButton
+            onClick={() => {
+              dispatch(getJobSetTakingThunkAction(id))
+              .then(result => {
+                if (result?.kind === 'success') {
+                  editorDispatch(loadedJobSet())
+                }
+                else if (result?.kind === 'failure') {
+                  dispatch(addNotification({
+                    summary: `Failed to get Job Set #${id}`
+                  }))
+                }
+              })
+              .catch(() => {
+                dispatch(addNotification({
+                  summary: `Failed to get Job Set #${id}`
+                }))
+              })
+            }}
+          >
+            <SyncIcon />
+          </IconButton>
+        </ProgressOverlay>
+      )}
+      {/* <div className={classes.separator} />
         <div className={classes.allActions}>
           <div className={classes.grouped}>
             {!readOnly ? <HistoryButtons id={id} /> : null}

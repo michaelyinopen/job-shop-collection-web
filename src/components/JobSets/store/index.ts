@@ -33,7 +33,7 @@ export {
 
 export {
   getJobSetTakingThunkAction,
-  // jobSetsIsLoadingSelector,
+  getJobSetIsLoadingSelector,
 } from './getJobSetTakingThunkAction'
 
 export {
