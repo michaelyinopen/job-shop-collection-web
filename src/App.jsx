@@ -28,10 +28,17 @@ export function App() {
               <Route exact path={routePaths.home} component={Home} />
               <Route exact path={routePaths.about} component={About} />
               <Route exact path={routePaths.jobSets} component={JobSets} />
+              <Route exact path={routePaths.newJobSet}
+                render={() => (
+                  <JobSetEditor
+                    id={undefined}
+                    edit={true}
+                  />
+                )}
+              />
               <Route exact path={routePaths.jobSetEditor}
                 render={({ match }) => (
                   <JobSetEditor
-                    key={match.params.id}
                     id={+match.params.id}
                     edit={Boolean(match.params.edit)}
                   />

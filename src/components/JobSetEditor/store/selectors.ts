@@ -65,3 +65,20 @@ export const minViewDurationMsSelector = (state: JobSetEditorState) =>
     ? state.formData.autoTimeOptions?.minViewDurationMs
     : state.formData.manualTimeOptions.minViewDurationMs
 //#endregion formData
+
+export const promptExitWhenSavingSelector = (state: JobSetEditorState) => {
+  const currentStep = state.steps[state.currentStepIndex]
+  const isCurrentStepSaved = currentStep.saveStatus === 'saved'
+
+  const isNew = state.id === undefined
+
+  const isInitialStep = state.currentStepIndex === 0
+  const latestVersionToken = state.versions[state.versions.length - 1]?.versionToken
+  const isCurrentStepLatestVersion = currentStep.mergeBehaviour === 'discard local changes'
+    && currentStep.versionToken === latestVersionToken
+  const loadedFromRemote = isInitialStep || isCurrentStepLatestVersion
+  
+  return state.isEdit
+    && !isCurrentStepSaved
+    && (isNew || !loadedFromRemote)
+}

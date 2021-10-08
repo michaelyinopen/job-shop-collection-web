@@ -38,12 +38,13 @@ type WithJobSetEditorProviderType =
 const WithJobSetEditorProvider: WithJobSetEditorProviderType = (Component) => (props) => {
   return (
     <JobSetEditorProvider>
-      <Component {...props} />
+      <Component key={props.id} {...props} />
     </JobSetEditorProvider>
   )
 }
 const useStyles = makeStyles(theme => createStyles({
   pageContainer: {
+    minHeight: '100%',
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(4),
     paddingLeft: theme.spacing(4),
