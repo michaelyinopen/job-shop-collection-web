@@ -3,7 +3,7 @@ import type { AppStoreJobSet, AppStoreJobSetDetail } from "./actions"
 import type {
   JobSetEditorState,
   FormDataState,
-  TimeOptionsState,
+  TimeOptions,
   JobColorState,
 } from "./jobSetEditorReducer"
 
@@ -31,7 +31,7 @@ export type AppStoreJobSetContent = {
 export function appStoreJobSet_To_FormData(
   jobSet: AppStoreJobSetDetail
 ): FormDataState {
-  const timeOptions: TimeOptionsState = JSON.parse(jobSet.timeOptions)
+  const timeOptions: TimeOptions = JSON.parse(jobSet.timeOptions)
   const jobColors: { [id: string]: JobColorState } = JSON.parse(jobSet.jobColors)
   const content: AppStoreJobSetContent = JSON.parse(jobSet.content)
   return {

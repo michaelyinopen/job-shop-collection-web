@@ -22,22 +22,22 @@ export const createMachineDescriptionSelector = (id: string) => (state: JobSetEd
 }
 export const jobIdsSelector = (state: JobSetEditorState) => state.formData.jobs.ids
 export const createJobTitleSelector = (id: string) => (state: JobSetEditorState) =>
-  state.formData.jobs.entities[id].title
+  state.formData.jobs.entities[id]?.title
 export const createJobColorSelector = (id: string) => (state: JobSetEditorState) =>
-  state.formData.jobColors.entities[id].color
+  state.formData.jobColors.entities[id]?.color
 export const createJobTextColorSelector = (id: string) => (state: JobSetEditorState) =>
-  state.formData.jobColors.entities[id].textColor
+  state.formData.jobColors.entities[id]?.textColor
 export const createProcedureIdsOfJobSelector = (jobId: string) => (state: JobSetEditorState) =>
-  state.formData.jobs.entities[jobId].procedures.ids
+  state.formData.jobs.entities[jobId]?.procedures.ids
 export const createProcedureMachineIdSelector = (jobId: string, procedureId: string) =>
   (state: JobSetEditorState) =>
-    state.formData.jobs.entities[jobId].procedures.entities[procedureId].machineId
+    state.formData.jobs.entities[jobId]?.procedures.entities[procedureId]?.machineId
 export const createProcedureProcessingTimeMsSelector = (jobId: string, procedureId: string) =>
   (state: JobSetEditorState) =>
-    state.formData.jobs.entities[jobId].procedures.entities[procedureId].processingTimeMs
+    state.formData.jobs.entities[jobId]?.procedures.entities[procedureId]?.processingTimeMs
 export const createProcedureIndexSelector = (jobId: string, procedureId: string) =>
   (state: JobSetEditorState) =>
-    state.formData.jobs.entities[jobId].procedures.ids.indexOf(procedureId)
+    state.formData.jobs.entities[jobId]?.procedures.ids.indexOf(procedureId)
 export const createProceduresAffectedByMachineSelector = (machineId: string) =>
   (state: JobSetEditorState) => {
     const allProcedures = Object.values(state.formData.jobs.entities).flatMap(j => Object.values(j.procedures.entities))

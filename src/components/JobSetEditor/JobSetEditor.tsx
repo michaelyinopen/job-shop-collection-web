@@ -83,10 +83,10 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
       if (!isNew && id && !isLoaded) {
         dispatch(getJobSetTakingThunkAction(id))
           .then(result => {
-            if (result === true) {
+            if (result?.kind === 'success') {
               editorDispatch(loadedJobSet())
             }
-            else if (result === false) {
+            else if (result?.kind === 'failure') {
               dispatch(addNotification({
                 summary: `Failed to get Job Set #${id}`
               }))

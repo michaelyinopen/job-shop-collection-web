@@ -9,7 +9,6 @@ export const JobSetEditorForm = memo(() => {
   // const disabled = isLoading || isReadonly
   return (
     <div>
-      Form
       <Title />
       <Description />
       <Machines />

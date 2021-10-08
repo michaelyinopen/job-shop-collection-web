@@ -2,7 +2,6 @@ import {
   makeStyles,
   createStyles,
   Toolbar,
-  Divider,
   Typography,
 } from '@material-ui/core'
 import {
@@ -13,12 +12,6 @@ import {
 } from './store'
 
 const useStyles = makeStyles(theme => createStyles({
-  titleRow: {
-    position: "sticky",
-    top: 0,
-    zIndex: theme.zIndex.appBar - 1,
-    backgroundColor: theme.palette.background.default,
-  },
   toolbar: {
     position: "sticky",
     top: 0,
@@ -27,6 +20,7 @@ const useStyles = makeStyles(theme => createStyles({
     zIndex: theme.zIndex.appBar - 1,
     backgroundColor: theme.palette.background.default,
     boxShadow: "0px 6px 4px -6px rgba(0,0,0,0.75)",
+    marginBottom: theme.spacing(1)
   },
   allActions: {
     display: "flex",
