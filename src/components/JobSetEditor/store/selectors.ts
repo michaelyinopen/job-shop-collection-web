@@ -1,4 +1,9 @@
-import type { JobSetEditorState } from './jobSetEditorReducer'
+import { createSelector } from 'reselect'
+import {
+  formData_To_UpdateJobSetRequest,
+  formData_To_CreateJobSetRequest,
+} from './utility'
+import type { FormDataState, JobSetEditorState } from './jobSetEditorReducer'
 
 export const jobSetsEditorIdSelector = (state: JobSetEditorState) => state.id
 export const jobSetsEditorIsLockedSelector = (state: JobSetEditorState) => state.isLocked
@@ -77,8 +82,27 @@ export const promptExitWhenSavingSelector = (state: JobSetEditorState) => {
   const isCurrentStepLatestVersion = currentStep.mergeBehaviour === 'discard local changes'
     && currentStep.versionToken === latestVersionToken
   const loadedFromRemote = isInitialStep || isCurrentStepLatestVersion
-  
+
   return state.isEdit
     && !isCurrentStepSaved
     && (isNew || !loadedFromRemote)
 }
+
+export const updateJobSetRequestSelector = createSelector(
+  jobSetsEditorIdSelector,
+  (state: JobSetEditorState) => state.versions[state.versions.length - 1]?.versionToken,
+  (state: JobSetEditorState) => state.formData,
+  (id, versionToken, formData) => {
+    if (!id || !versionToken) {
+      return undefined
+    }
+    return formData_To_UpdateJobSetRequest(id, versionToken, formData)
+  }
+)
+
+export const createJobSetRequestSelector = createSelector(
+  (state: JobSetEditorState) => state.formData,
+  (formData) => {
+    return formData_To_CreateJobSetRequest(formData)
+  }
+)

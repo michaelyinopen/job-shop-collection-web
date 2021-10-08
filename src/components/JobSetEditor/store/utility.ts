@@ -1,4 +1,5 @@
 import type { Draft } from "immer"
+import { CreateJobSetRequest, UpdateJobSetRequest } from "../../../api"
 import type { AppStoreJobSet, AppStoreJobSetDetail } from "./actions"
 import type {
   JobSetEditorState,
@@ -20,10 +21,10 @@ export type AppStoreJobSetContent = {
     title: string
     procedures: {
       id: string
+      sequence: number
       jobId: string
       machineId: string | null
       processingTimeMs: number
-      sequence: number
     }[]
   }[]
 }
@@ -117,5 +118,65 @@ export function mergeUninitializedJobSet(
     state.formData.jobColors = jobSetEditorInitialState.formData.jobColors
     state.formData.isAutoTimeOptions = jobSetEditorInitialState.formData.isAutoTimeOptions
     state.formData.manualTimeOptions = jobSetEditorInitialState.formData.manualTimeOptions
+  }
+}
+
+
+export function formData_To_CreateJobSetRequest(
+  formData: FormDataState
+): CreateJobSetRequest {
+  const machines = formData.machines.ids.map((mId, index) => {
+    const machine = formData.machines.entities[mId]
+    return {
+      id: machine.id,
+      sequence: index + 1,
+      title: machine.title,
+      description: machine.description
+    }
+  })
+  const jobs = formData.jobs.ids.map((jId, jIndex) => {
+    const job = formData.jobs.entities[jId]
+    const procedures = job.procedures.ids.map((pId, pIndex) => {
+      const procedure = job.procedures.entities[pId]
+      return {
+        id: procedure.id,
+        sequence: pIndex + 1,
+        jobId: procedure.jobId,
+        machineId: procedure.machineId ?? null,
+        processingTimeMs: procedure.processingTimeMs,
+      }
+    })
+    return {
+      id: job.id,
+      sequence: jIndex + 1,
+      title: job.title,
+      procedures
+    }
+  })
+  const content = JSON.stringify({
+    machines,
+    jobs
+  })
+  return {
+    title: formData.title,
+    description: formData.description,
+    content,
+    jobColors: JSON.stringify(formData.jobColors.entities),
+    isAutoTimeOptions: formData.isAutoTimeOptions,
+    timeOptions: formData.isAutoTimeOptions
+      ? JSON.stringify(formData.autoTimeOptions)
+      : JSON.stringify(formData.manualTimeOptions),
+  }
+}
+
+export function formData_To_UpdateJobSetRequest(
+  id: number,
+  versionToken: string,
+  formData: FormDataState
+): UpdateJobSetRequest {
+  return {
+    id,
+    versionToken,
+    ...formData_To_CreateJobSetRequest(formData)
   }
 }
