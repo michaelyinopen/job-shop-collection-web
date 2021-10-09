@@ -1,5 +1,4 @@
 
-import { generatePath } from 'react-router-dom'
 import {
   makeStyles,
   createStyles,
@@ -7,11 +6,8 @@ import {
   Typography,
   IconButton,
   Tooltip,
-  Button,
 } from '@material-ui/core'
 import SyncIcon from '@material-ui/icons/Sync'
-import SaveIcon from '@material-ui/icons/Save'
-import { routePaths } from '../../../route'
 import { ProgressOverlay } from '../../../styles'
 import {
   useAppSelector,
@@ -21,20 +17,13 @@ import { addNotification } from '../../../notifications'
 import {
   getJobSetIsLoadingSelector,
   getJobSetTakingThunkAction,
-  createDeleteJobSetIsLoadingSelector,
-  deleteJobSetTakingThunkAction,
-  updateJobSetIsLoadingSelector,
-  updateJobSetTakingThunkAction,
 } from '../../JobSets/store'
 import {
   useJobSetEditorSelector,
   jobSetsEditorIdSelector,
   jobSetsEditorIsEditSelector,
-  currentStepIndexSelector,
-  jobSetsEditorIsLockedSelector,
   jobSetsEditorLoadStatusSelector,
   jobSetsEditorInitializedSelector,
-  updateJobSetRequestSelector,
   useJobSetEditorDispatch,
   loadedJobSet,
   // savingStep,
@@ -122,7 +111,6 @@ export const JobSetEditorTitleBar = () => {
 
   const id = useJobSetEditorSelector(jobSetsEditorIdSelector)
   const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-  // const isLocked = useJobSetEditorSelector(jobSetsEditorIsLockedSelector)
 
   return (
     <Toolbar className={classes.toolbar} disableGutters>

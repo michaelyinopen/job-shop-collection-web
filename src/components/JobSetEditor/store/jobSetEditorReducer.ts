@@ -203,7 +203,6 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
       //state.initialized === true
       if (!jobSet
-        || jobSet.versionToken === state.versions[state.versions.length - 1].versionToken
         || !jobSet.hasDetail) {
         return
       }
