@@ -39,6 +39,7 @@ import {
   loadedJobSet,
   // savingStep,
 } from './store'
+import { SaveJobSetButton } from './SaveJobSetButton'
 
 const useStyles = makeStyles(theme => createStyles({
   toolbar: {
@@ -114,101 +115,6 @@ const HistoryButtons = (id) => {
   return null
 }
 
-const useSaveJobSetButtonStyles = makeStyles(theme => ({
-  saveIcon: { marginRight: theme.spacing(0.5) },
-}))
-
-const CreateJobSetButton = () => {
-  return null
-}
-
-const UpdateJobSetButton = ({ id }) => {
-  const classes = useSaveJobSetButtonStyles()
-  const dispatch = useAppDispatch()
-  const editorDispatch = useJobSetEditorDispatch()
-
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
-  const loadStatus = useJobSetEditorSelector(jobSetsEditorLoadStatusSelector)
-  const initialized = useJobSetEditorSelector(jobSetsEditorInitializedSelector)
-
-  const currentStepIndex = useJobSetEditorSelector(currentStepIndexSelector)
-  const updateJobSetRequest = useJobSetEditorSelector(updateJobSetRequestSelector)
-
-  const isDeleting = useAppSelector(createDeleteJobSetIsLoadingSelector(id))
-  const isSaving = useAppSelector(updateJobSetIsLoadingSelector(id))
-
-  const path = generatePath(routePaths.jobSetEditor, { id })
-
-  const disabled = isDeleting || !isEdit || !initialized || loadStatus === 'failed'
-
-  const tooltip =
-    loadStatus === 'not loaded' ? "loading"
-      : loadStatus === 'failed' ? "load failed"
-        : isSaving ? "Saving..."
-          : "Save"
-  return (
-    <ProgressOverlay
-      isLoading={isSaving}
-    >
-      <Tooltip title={tooltip} placement="bottom-end">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            // editorDispatch(savingStep(currentStepIndex, true))
-            dispatch(updateJobSetTakingThunkAction(id, updateJobSetRequest))
-              .then(result => {
-                if (result?.kind === 'success') {
-                  dispatch(addNotification({
-                    summary: `Saved Activity #${id}`
-                  }))
-                  // editorDispatch(savedStep(currentStepIndex))
-                  return
-                }
-                if (result?.failure().failureType === 'version condition failed') {
-                  dispatch(addNotification({
-                    summary: `Activity #${id} was updated by another user, check the merged changes and save again`,
-                    matchPath: path
-                  }))
-                }
-                else if (result?.failure().failureType === 'forbidden because locked') {
-                  dispatch(addNotification({
-                    summary: `Activity #${id} was locked and cannot be saved`,
-                    matchPath: path
-                  }))
-                }
-                else if (result?.failure().failureType === 'not found') {
-                  dispatch(addNotification({
-                    summary: `Activity #${id} was deleted and cannot be saved`,
-                    matchPath: path
-                  }))
-                }
-                else {
-                  dispatch(addNotification({
-                    summary: `Failed to save Activity #${id}`,
-                    matchPath: path
-                  }))
-                }
-                // editorDispatch(savingStep(currentStepIndex, false))
-              })
-              .catch(() => {
-                dispatch(addNotification(`Failed to saved Activity #${id}`))
-                // editorDispatch(savingStep(currentStepIndex, false))
-              })
-          }}
-          disabled={disabled}
-        >
-          <SaveIcon className={classes.saveIcon} />
-          Save
-        </Button>
-      </Tooltip >
-    </ProgressOverlay>
-  )
-}
-
-const SaveJobSetButton = ({ id }) => {
-  return id ? <UpdateJobSetButton id={id} /> : <CreateJobSetButton />
-}
 
 export const JobSetEditorTitleBar = () => {
   const classes = useStyles()
@@ -225,10 +131,12 @@ export const JobSetEditorTitleBar = () => {
       <RefreshJobSetButton id={id} />
       <div className={classes.separator} />
       <div className={classes.allActions}>
-        <div className={classes.grouped}>
-          {isEdit ? <HistoryButtons id={id} /> : null}
-          {isEdit ? <SaveJobSetButton id={id} /> : null}
-        </div>
+        {isEdit && (
+          <div className={classes.grouped}>
+            <HistoryButtons id={id} />
+            <SaveJobSetButton id={id} />
+          </div>
+        )}
         {/* <div className={classes.grouped}>
           {id ? <EditButtons id={id} /> : null}
           <MoreOptions
