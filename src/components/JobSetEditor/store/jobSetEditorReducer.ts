@@ -31,7 +31,7 @@ import {
   setMaxViewDuration,
   middlewareCalculatedAutoTimeOptions,
 } from './actions'
-import { mergeUninitializedJobSet } from './utility'
+import { mergeUninitializedJobSet } from './formDataConversion'
 
 type Step = any // todo
 

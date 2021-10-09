@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import type { ComponentType, FunctionComponent } from 'react'
+import { Redirect, generatePath } from 'react-router-dom'
 import { makeStyles, createStyles } from '@material-ui/core'
 import {
   useAppDispatch,
@@ -8,6 +9,7 @@ import {
 } from '../../store'
 import { addNotification } from '../../notifications'
 import { PageContainer } from '../../styles'
+import { routePaths } from '../../route'
 import { getJobSetTakingThunkAction } from '../JobSets'
 import {
   JobSetEditorProvider,
@@ -20,6 +22,7 @@ import {
   setJobSetEditorIsEdit,
   setJobSetFromAppStore,
   jobSetsEditorLoadStatusSelector,
+  jobSetsEditorIsLockedSelector,
 } from './store'
 import type { AppStoreJobSet } from './store'
 import { JobSetEditorTitleBar } from './JobSetEditorTitleBar'
@@ -109,6 +112,10 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
       }
     }, [isNew, editorDispatch, appJobSet, isLoaded])
 
+    const islocked = useJobSetEditorSelector(jobSetsEditorIsLockedSelector)
+    if (edit && islocked) {
+      return <Redirect to={generatePath(routePaths.jobSetEditor, { id: id! })} />
+    }
     return (
       <PageContainer classes={{ pageContainer: classes.pageContainer }}>
         <ExitPrompt />

@@ -11,13 +11,13 @@ import {
 } from '@material-ui/core'
 import SyncIcon from '@material-ui/icons/Sync'
 import SaveIcon from '@material-ui/icons/Save'
-import { routePaths } from '../../route'
-import { ProgressOverlay } from '../../styles'
+import { routePaths } from '../../../route'
+import { ProgressOverlay } from '../../../styles'
 import {
   useAppSelector,
   useAppDispatch,
-} from '../../store'
-import { addNotification } from '../../notifications'
+} from '../../../store'
+import { addNotification } from '../../../notifications'
 import {
   getJobSetIsLoadingSelector,
   getJobSetTakingThunkAction,
@@ -25,7 +25,7 @@ import {
   deleteJobSetTakingThunkAction,
   updateJobSetIsLoadingSelector,
   updateJobSetTakingThunkAction,
-} from '../JobSets/store'
+} from '../../JobSets/store'
 import {
   useJobSetEditorSelector,
   jobSetsEditorIdSelector,
@@ -38,8 +38,9 @@ import {
   useJobSetEditorDispatch,
   loadedJobSet,
   // savingStep,
-} from './store'
+} from '../store'
 import { SaveJobSetButton } from './SaveJobSetButton'
+import { EditReadonly } from './EditReadonly'
 
 const useStyles = makeStyles(theme => createStyles({
   toolbar: {
@@ -137,15 +138,15 @@ export const JobSetEditorTitleBar = () => {
             <SaveJobSetButton id={id} />
           </div>
         )}
-        {/* <div className={classes.grouped}>
-          {id ? <EditButtons id={id} /> : null}
-          <MoreOptions
+        <div className={classes.grouped}>
+          {id !== undefined && <EditReadonly id={id} />}
+          {/* <MoreOptions
             id={id}
             isJsonEditorOpen={isJsonEditorOpen}
             openJsonEditorCallback={openJsonEditorCallback}
             closeJsonEditorCallback={closeJsonEditorCallback}
-          />
-        </div> */}
+          /> */}
+        </div>
       </div>
     </Toolbar>
   )

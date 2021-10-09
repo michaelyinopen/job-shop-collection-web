@@ -2,7 +2,7 @@ import { createSelector } from 'reselect'
 import {
   formData_To_UpdateJobSetRequest,
   formData_To_CreateJobSetRequest,
-} from './utility'
+} from './formDataConversion'
 import type { JobSetEditorState } from './jobSetEditorReducer'
 
 export const jobSetsEditorIdSelector = (state: JobSetEditorState) => state.id

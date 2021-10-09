@@ -7,20 +7,20 @@ import {
   Button,
 } from '@material-ui/core'
 import SaveIcon from '@material-ui/icons/Save'
-import { routePaths } from '../../route'
-import { ProgressOverlay } from '../../styles'
+import { routePaths } from '../../../route'
+import { ProgressOverlay } from '../../../styles'
 import {
   useAppSelector,
   useAppDispatch,
-} from '../../store'
-import { addNotification } from '../../notifications'
+} from '../../../store'
+import { addNotification } from '../../../notifications'
 import {
   createDeleteJobSetIsLoadingSelector,
   updateJobSetIsLoadingSelector,
   updateJobSetTakingThunkAction,
   createJobSetIsLoadingSelector,
   createJobSetTakingThunkAction,
-} from '../JobSets/store'
+} from '../../JobSets/store'
 import {
   useJobSetEditorSelector,
   currentStepIndexSelector,
@@ -31,9 +31,10 @@ import {
   useJobSetEditorDispatch,
   loadedJobSet,
   // savingStep,
-} from './store'
+} from '../store'
 
 const useStyles = makeStyles(theme => ({
+  button: { margin: theme.spacing(1) },
   saveIcon: { marginRight: theme.spacing(0.5) },
 }))
 
@@ -62,6 +63,7 @@ const CreateJobSetButton = () => {
         <Button
           variant="contained"
           color="primary"
+          className={classes.button}
           disabled={isCreating}
           onClick={() => {
             // editorDispatch(savingStep(currentStepIndex, true))
@@ -133,6 +135,7 @@ const UpdateJobSetButton = ({ id }) => {
         <Button
           variant="contained"
           color="primary"
+          className={classes.button}
           disabled={disabled}
           onClick={() => {
             // editorDispatch(savingStep(currentStepIndex, true))
