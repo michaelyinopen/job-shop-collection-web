@@ -39,7 +39,7 @@ export function App() {
               <Route exact path={routePaths.jobSetEditor}
                 render={({ match }) => (
                   <JobSetEditor
-                    id={+match.params.id}
+                    id={parseInt(match.params.id)}
                     edit={Boolean(match.params.edit)}
                   />
                 )}

@@ -37,7 +37,7 @@ export const JobSetsTablePagination = () => {
         'aria-label': 'next page',
       }}
       onChangePage={(e, newPageIndex) => dispatch(jobSetsPageChangePage(newPageIndex))}
-      onChangeRowsPerPage={e => dispatch(jobSetsPageChangeRowsPerPage(+e.target.value))}
+      onChangeRowsPerPage={e => dispatch(jobSetsPageChangeRowsPerPage(parseInt(e.target.value) ?? 10))}
     />
   )
 }

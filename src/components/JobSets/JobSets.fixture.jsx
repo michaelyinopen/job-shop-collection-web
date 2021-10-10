@@ -36,7 +36,7 @@ const persistentBackendMock = (() => {
     return data
   }
   const deleteById = (id) => {
-    data = data.filter(d => d.id !== +id)
+    data = data.filter(d => d.id !== parseInt(id))
   }
   return {
     getData,
