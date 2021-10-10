@@ -1,5 +1,5 @@
 import type { Draft } from "immer"
-import { CreateJobSetRequest, UpdateJobSetRequest } from "../../../api"
+import type { CreateJobSetRequest, UpdateJobSetRequest } from "../../../api"
 import type { AppStoreJobSet, AppStoreJobSetDetail } from "./actions"
 import type {
   JobSetEditorState,

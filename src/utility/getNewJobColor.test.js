@@ -97,7 +97,7 @@ test("Select a skipped color", () => {
     preDefiendColors[3],
     preDefiendColors[4],
     preDefiendColors[5]
-  ];
+  ]
   const { color, textColor } = getNewJobColor(excludeColors, currentColor)
   expect(color).toEqual(preDefiendColors[1])
   expect(textColor).toEqual(preDefiendTextColors[1])

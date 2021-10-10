@@ -99,6 +99,9 @@ export const MoreOptions = ({ id }) => {
     return () => throttledClosePopper.cancel?.()
   }, [throttledClosePopper])
 
+  if (id === undefined) {
+    return null
+  }
   return (
     <ClickAwayListener
       onClickAway={() => {
