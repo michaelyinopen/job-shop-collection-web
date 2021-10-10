@@ -194,8 +194,13 @@ export const getJobSetsSelectors = (jobSetsSelector: (rootState: any) => JobSets
     jobSetEntitiesSelector,
     (entities: Dictionary<JobSetState>) => id !== undefined ? entities[id] as JobSetDetail : undefined
   )
+  const createJobSetIsLockedSelector = (id?: number) => backwardCompose(
+    jobSetEntitiesSelector,
+    (entities: Dictionary<JobSetState>) => id !== undefined ? (entities[id] as JobSetDetail)?.isLocked : undefined
+  )
   return {
     jobSetHeadersSelector,
     createJobSetSelector,
+    createJobSetIsLockedSelector,
   }
 }

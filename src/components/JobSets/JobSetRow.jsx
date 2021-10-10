@@ -25,6 +25,7 @@ import {
   useAppSelector,
   createJobSetsPageItemSelector,
   createItemIsSelectedSelector,
+  createJobSetIsLockedSelector,
 } from '../../store'
 import { ProgressOverlay } from '../../styles'
 import { addNotification } from '../../notifications'
@@ -59,31 +60,32 @@ const DeleteJobSetRowMenuItem = ({ id }) => {
     createDeleteJobSetIsLoadingSelector(id)
   ).current
   const isDeleting = useAppSelector(isDeletingSelector)
+  const isLocked = useAppSelector(createJobSetIsLockedSelector(id))
   const deleteJobSetRowCallback = useRef(() => {
     dispatch(deleteJobSetTakingThunkAction(id))
       .then(result => {
         if (result?.kind === 'success') {
           dispatch(addNotification({
-            summary: `Deleted Job Set ${id}`,
+            summary: `Deleted Job Set #${id}`,
             matchPath: routePaths.jobSets
           }))
         } else if (result?.kind === 'failure') {
           dispatch(addNotification({
-            summary: `Failed to delete Job Set ${id}`,
+            summary: `Failed to delete Job Set #${id}`,
             matchPath: routePaths.jobSets
           }))
         }
       })
       .catch(() => {
         dispatch(addNotification({
-          summary: `Failed to delete Job Set ${id}`,
+          summary: `Failed to delete Job Set #${id}`,
           matchPath: routePaths.jobSets
         }))
       })
   }, [dispatch]).current
 
   return (
-    <MenuItem onClick={deleteJobSetRowCallback} disabled={isDeleting}>
+    <MenuItem onClick={deleteJobSetRowCallback} disabled={isDeleting | isLocked}>
       <ListItemIcon>
         <ProgressOverlay isLoading={isDeleting}>
           <DeleteIcon />

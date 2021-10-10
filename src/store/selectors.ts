@@ -14,6 +14,7 @@ import {
 export const {
   jobSetHeadersSelector,
   createJobSetSelector,
+  createJobSetIsLockedSelector,
 } = getJobSetsSelectors(jobSetsSelector)
 
 export const {

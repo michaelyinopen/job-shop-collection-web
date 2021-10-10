@@ -25,7 +25,7 @@ const persistentBackendMock = (() => {
     { "id": 16, "title": "N test", "description": null, "isLocked": false, "versionToken": "AAAAAAAAD6E=" },
     { "id": 17, "title": "N test", "description": null, "isLocked": false, "versionToken": "AAAAAAAAD6E=" },
     { "id": 18, "title": "N test", "description": null, "isLocked": false, "versionToken": "AAAAAAAAD6E=" },
-    { "id": 19, "title": "N test", "description": null, "isLocked": false, "versionToken": "AAAAAAAAD6E=" },
+    { "id": 19, "title": "locked", "description": null, "isLocked": true, "versionToken": "AAAAAAAAD6E=" },
     { "id": 20, "title": "N test", "description": null, "isLocked": false, "versionToken": "AAAAAAAAD6E=" },
     { "id": 21, "title": "N test", "description": null, "isLocked": false, "versionToken": "AAAAAAAAD6E=" },
     { "id": 3, "title": "N test", "description": null, "isLocked": false, "versionToken": "AAAAAAAAD6E=" },

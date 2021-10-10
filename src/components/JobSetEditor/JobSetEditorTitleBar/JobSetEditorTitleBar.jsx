@@ -30,6 +30,7 @@ import {
 } from '../store'
 import { SaveJobSetButton } from './SaveJobSetButton'
 import { EditReadonly } from './EditReadonly'
+import { MoreOptions } from './MoreOptions'
 
 const useStyles = makeStyles(theme => createStyles({
   toolbar: {
@@ -37,7 +38,7 @@ const useStyles = makeStyles(theme => createStyles({
     top: 0,
     display: "flex",
     flexWrap: "wrap",
-    zIndex: theme.zIndex.appBar - 1,
+    zIndex: theme.zIndex.appBar - 2,
     backgroundColor: theme.palette.background.default,
     boxShadow: "0px 6px 4px -6px rgba(0,0,0,0.75)",
     marginBottom: theme.spacing(1),
@@ -128,12 +129,9 @@ export const JobSetEditorTitleBar = () => {
         )}
         <div className={classes.grouped}>
           {id !== undefined && <EditReadonly id={id} />}
-          {/* <MoreOptions
+          <MoreOptions
             id={id}
-            isJsonEditorOpen={isJsonEditorOpen}
-            openJsonEditorCallback={openJsonEditorCallback}
-            closeJsonEditorCallback={closeJsonEditorCallback}
-          /> */}
+          />
         </div>
       </div>
     </Toolbar>

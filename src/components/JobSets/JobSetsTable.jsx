@@ -31,7 +31,7 @@ const useJobSetsTableStyles = makeStyles(theme => createStyles({
     tableLayout: 'fixed',
   },
   fillerRow: {
-    height: props => (props.dense ? 34.4 : 52.4) * props.emptyRows
+    height: props => (props.dense ? 31 : 49) * props.emptyRows
   },
   ...columnStyles(theme)
 }))
