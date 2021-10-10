@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import {
   makeStyles,
   createStyles,
@@ -27,8 +26,7 @@ const useMachineTitleStyles = makeStyles(theme => createStyles({
 const MachineTitle = ({ id }) => {
   const classes = useMachineTitleStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
-  const machineTitleSelector = useRef(createMachineTitleSelector(id)).current
-  const value = useJobSetEditorSelector(machineTitleSelector)
+  const value = useJobSetEditorSelector(createMachineTitleSelector(id))
   const editorDispatch = useJobSetEditorDispatch()
   return (
     <TextField
@@ -70,8 +68,7 @@ const useMachineDescriptionStyles = makeStyles(theme => createStyles({
 const MachineDescription = ({ id }) => {
   const classes = useMachineDescriptionStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
-  const machineDescriptionSelector = useRef(createMachineDescriptionSelector(id)).current
-  const value = useJobSetEditorSelector(machineDescriptionSelector)
+  const value = useJobSetEditorSelector(createMachineDescriptionSelector(id))
   const editorDispatch = useJobSetEditorDispatch()
   return (
     <TextField

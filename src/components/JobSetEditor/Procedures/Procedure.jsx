@@ -1,4 +1,4 @@
-import { memo, useRef } from 'react'
+import { memo } from 'react'
 import {
   makeStyles,
   createStyles,
@@ -69,8 +69,7 @@ const ProcedureMachine = ({ jobId, id }) => {
   const classes = useProcedureMachineStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
   const machines = useJobSetEditorSelector(machinesSelector)
-  const procedureMachineIdSelector = useRef(createProcedureMachineIdSelector(jobId, id)).current
-  const procedureMachineId = useJobSetEditorSelector(procedureMachineIdSelector)
+  const procedureMachineId = useJobSetEditorSelector(createProcedureMachineIdSelector(jobId, id))
   const editorDispatch = useJobSetEditorDispatch()
   return (
     <div className={classes.procedureMachineRoot}>
@@ -116,8 +115,7 @@ const useProcessingTimeStyles = makeStyles(theme => createStyles({
 const ProcedureProcessingTime = ({ jobId, id }) => {
   const classes = useProcessingTimeStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
-  const procedureProcessingTimeMsSelector = useRef(createProcedureProcessingTimeMsSelector(jobId, id)).current
-  const valueMs = useJobSetEditorSelector(procedureProcessingTimeMsSelector)
+  const valueMs = useJobSetEditorSelector(createProcedureProcessingTimeMsSelector(jobId, id))
   const editorDispatch = useJobSetEditorDispatch()
   return (
     <div className={classes.wrapper}>
@@ -203,11 +201,9 @@ export const Procedure = memo(({ jobId, id }) => {
 
   const editable = useJobSetEditorSelector(fieldEditableSelector)
 
-  const jobColorSelector = useRef(createJobColorSelector(jobId)).current
-  const jobColor = useJobSetEditorSelector(jobColorSelector)
+  const jobColor = useJobSetEditorSelector(createJobColorSelector(jobId))
 
-  const procedureIndexSelector = useRef(createProcedureIndexSelector(jobId, id)).current
-  const procedureIndex = useJobSetEditorSelector(procedureIndexSelector)
+  const procedureIndex = useJobSetEditorSelector(createProcedureIndexSelector(jobId, id))
   const sequence = procedureIndex + 1
 
   return (

@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import {
   makeStyles,
   createStyles,
@@ -50,8 +49,7 @@ export const Procedures = ({ jobId }) => {
   const classes = useStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
   const jobTitle = useJobSetEditorSelector(createJobTitleSelector(jobId))
-  const procedureIdsOfJobSelector = useRef(createProcedureIdsOfJobSelector(jobId)).current
-  const procedureIdsOfJob = useJobSetEditorSelector(procedureIdsOfJobSelector)
+  const procedureIdsOfJob = useJobSetEditorSelector(createProcedureIdsOfJobSelector(jobId))
   return (
     <section className={classes.root}>
       <div className={classes.proceduresTitle}>

@@ -56,10 +56,7 @@ const useJobSetRowStyles = makeStyles(theme => createStyles({
 
 const DeleteJobSetRowMenuItem = ({ id }) => {
   const dispatch = useAppDispatch()
-  const isDeletingSelector = useRef(
-    createDeleteJobSetIsLoadingSelector(id)
-  ).current
-  const isDeleting = useAppSelector(isDeletingSelector)
+  const isDeleting = useAppSelector(createDeleteJobSetIsLoadingSelector(id))
   const isLocked = useAppSelector(createJobSetIsLockedSelector(id))
   const deleteJobSetRowCallback = useRef(() => {
     dispatch(deleteJobSetTakingThunkAction(id))
@@ -109,10 +106,8 @@ export const JobSetRow = (props) => {
   } = props
 
   const dispatch = useAppDispatch()
-  const jobSetsPageItemSelector = useRef(createJobSetsPageItemSelector(id)).current
-  const jobSetHeader = useAppSelector(jobSetsPageItemSelector)
-  const itemIsSelectedSelector = useRef(createItemIsSelectedSelector(id)).current
-  const isItemSelected = useAppSelector(itemIsSelectedSelector)
+  const jobSetHeader = useAppSelector(createJobSetsPageItemSelector(id))
+  const isItemSelected = useAppSelector(createItemIsSelectedSelector(id))
 
   const { push } = useHistory()
   const viewJobSetCallback = useRef(e => {

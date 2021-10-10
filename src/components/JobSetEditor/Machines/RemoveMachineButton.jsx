@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import {
   makeStyles,
   createStyles,
@@ -65,10 +65,8 @@ const useRemoveMachineDialogContentStyles = makeStyles(theme => createStyles({
 const RemoveMachineDialogContent = ({ id, machineTitle, closeCallback }) => {
   const classes = useRemoveMachineDialogContentStyles()
 
-  const proceduresAffectedByMachineSelector =
-    useRef(createProceduresAffectedByMachineSelector(id)).current
   const proceduresAffectedByMachine =
-    useJobSetEditorSelector(proceduresAffectedByMachineSelector)
+    useJobSetEditorSelector(createProceduresAffectedByMachineSelector(id))
 
   const editorDispatch = useJobSetEditorDispatch()
   const confirmCallback = () => {
@@ -113,8 +111,7 @@ const RemoveMachineDialogContent = ({ id, machineTitle, closeCallback }) => {
 }
 
 export const RemoveMachineButton = ({ id }) => {
-  const machineTitleSelector = useRef(createMachineTitleSelector(id)).current
-  const machineTitle = useJobSetEditorSelector(machineTitleSelector)
+  const machineTitle = useJobSetEditorSelector(createMachineTitleSelector(id))
   const [open, setOpen] = useState(false)
   return (
     <div>
