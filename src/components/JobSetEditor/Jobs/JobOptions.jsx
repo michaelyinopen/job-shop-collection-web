@@ -80,7 +80,7 @@ export const JobOptions = ({ id }) => {
           foreground: {jobTextColor}
         </div>
         {editable && (
-          <Tooltip title="Change color">
+          <Tooltip title="Change color" placement='left-end'>
             <IconButton
               onClick={() => { editorDispatch(changeJobColor(id)) }}
               className={classes.changeJobColorButton}
