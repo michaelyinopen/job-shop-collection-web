@@ -30,10 +30,19 @@ import {
   setMinViewDuration,
   setMaxViewDuration,
   middlewareCalculatedAutoTimeOptions,
+  replaceLastStep,
+  undo,
+  redo,
+  jumpToStep,
+  savingStep,
+  savedStep,
+  setMergeBehaviourMerge,
+  setMergeBehaviourDiscardLocal,
+  applyConflict,
+  unApplyConflict,
 } from './actions'
 import { mergeUninitializedJobSet } from './formDataConversion'
-
-type Step = any // todo
+import type { Step } from './editHistory'
 
 export type JobSetEditorState = {
   id?: number
@@ -388,5 +397,182 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         ...timeOptions
       }
     })
-  //#endregion edit form actions
+    //#endregion edit form actions
+    //#region Step
+    .addCase(replaceLastStep, (state, { payload }) => {
+      state.steps.splice(state.currentStepIndex)
+      state.steps.push(...payload)
+      state.currentStepIndex = state.steps.length - 1
+    })
+    .addCase(undo, (state) => {
+      // if (state.currentStepIndex > 0) {
+      //   state.formData = undoStep(state.steps[state.currentStepIndex], state.formData)
+      //   state.currentStepIndex = state.currentStepIndex - 1
+      // }
+    })
+    .addCase(redo, (state) => {
+      // if (state.currentStepIndex < state.steps.length - 1) {
+      //   state.formData = redoStep(state.steps[state.currentStepIndex + 1], state.formData)
+      //   state.currentStepIndex = state.currentStepIndex + 1
+      // }
+    })
+    .addCase(jumpToStep, (state, { payload: targetStepIndex }) => {
+      // if (targetStepIndex >= 0 && targetStepIndex <= state.steps.length - 1) {
+      //   let formData = state.formData
+      //   if (targetStepIndex < state.currentStepIndex) {
+      //     const stepsToUndo = state.steps
+      //       .slice(targetStepIndex + 1, state.currentStepIndex + 1)
+      //       .reverse()
+      //     for (const stepToUndo of stepsToUndo) {
+      //       formData = undoStep(stepToUndo, formData)
+      //     }
+      //   }
+      //   else if (targetStepIndex > state.currentStepIndex) {
+      //     const stepsToRedo = state.steps
+      //       .slice(state.currentStepIndex + 1, targetStepIndex + 1)
+      //     for (const stepToRedo of stepsToRedo) {
+      //       formData = redoStep(stepToRedo, formData)
+      //     }
+      //   }
+      //   state.formData = formData
+      //   state.currentStepIndex = targetStepIndex
+      // }
+    })
+    .addCase(savingStep, (state, { payload: { stepIndex, saving } }) => {
+      if (stepIndex > state.steps.length - 1) {
+        return
+      }
+      for (const step of state.steps.filter(s => s.saveStatus)) {
+        step.saveStatus = undefined
+      }
+      state.steps[stepIndex].saveStatus = saving ? 'saving' : undefined
+    })
+    .addCase(savedStep, (state, { payload: { stepIndex } }) => {
+      if (stepIndex > state.steps.length - 1) {
+        return
+      }
+      for (const step of state.steps.filter(s => s.saveStatus)) {
+        step.saveStatus = undefined
+      }
+      state.steps[stepIndex].saveStatus = 'saved'
+    })
+    .addCase(setMergeBehaviourMerge, (state, { payload: { stepIndex } }) => {
+      // if (state.currentStepIndex !== stepIndex
+      //   || state.steps[stepIndex].mergeBehaviour === 'merge'
+      // ) {
+      //   return
+      // }
+      // state.steps.splice(state.currentStepIndex + 1)
+
+      // // undo step, then change step to merge, then redo the updated step
+      // const step = state.steps[stepIndex]
+
+      // let formData = state.formData
+      // formData = undoStep(step, formData)
+      // step.mergeBehaviour = 'merge'
+      // for (const operation of step.operations) {
+      //   operation.applied =
+      //     operation.type === 'merge' ? true
+      //       : operation.type === 'conflict' ? operation.conflictApplied!
+      //         : operation.type === 'reverse local' ? false
+      //           : false
+      // }
+      // formData = redoStep(step, formData)
+      // state.formData = formData
+
+      // for (const step of state.steps.slice(stepIndex).filter(s => s.saveStatus)) {
+      //   step.saveStatus = undefined
+      // }
+    })
+    .addCase(setMergeBehaviourDiscardLocal, (state, { payload: { stepIndex } }) => {
+      // if (state.currentStepIndex !== stepIndex
+      //   || state.steps[stepIndex].mergeBehaviour === 'discard local changes'
+      // ) {
+      //   return
+      // }
+      // state.steps.splice(state.currentStepIndex + 1)
+
+      // // undo step, then change step to merge, then redo the updated step
+      // const step = state.steps[stepIndex]
+
+      // let formData = state.formData
+      // formData = undoStep(step, formData)
+      // step.mergeBehaviour = 'discard local changes'
+      // for (const operation of step.operations) {
+      //   operation.applied = true
+      // }
+      // formData = redoStep(step, formData)
+      // state.formData = formData
+
+      // for (const step of state.steps.slice(stepIndex).filter(s => s.saveStatus)) {
+      //   step.saveStatus = undefined
+      // }
+    })
+    .addCase(applyConflict, (state, { payload: { stepIndex, conflictIndex } }) => {
+      // if (state.steps[stepIndex].mergeBehaviour !== 'merge') {
+      //   return
+      // }
+      // state.steps.splice(state.currentStepIndex + 1)
+
+      // // undo all subsequent steps and the refreshed step
+      // // then update step's conflict's conflictApplied and apply
+      // // then redo the refreshed step and subsequent steps
+      // const step = state.steps[stepIndex]
+      // const conflictToApply = step.operations.filter(op => op.type === 'conflict')[conflictIndex]
+
+      // let formData = state.formData
+      // const stepsToUndo = state.steps
+      //   .slice(stepIndex, state.currentStepIndex + 1)
+      //   .reverse()
+      // for (const stepToUndo of stepsToUndo) {
+      //   formData = undoStep(stepToUndo, formData)
+      // }
+
+      // conflictToApply.conflictApplied = true
+      // conflictToApply.applied = true
+
+      // const stepsToRedo = stepsToUndo.reverse()
+      // for (const stepToRedo of stepsToRedo) {
+      //   formData = redoStep(stepToRedo, formData)
+      // }
+      // state.formData = formData
+
+      // for (const step of state.steps.slice(stepIndex).filter(s => s.saveStatus)) {
+      //   step.saveStatus = undefined
+      // }
+    })
+    .addCase(unApplyConflict, (state, { payload: { stepIndex, conflictIndex } }) => {
+      // if (state.steps[stepIndex].mergeBehaviour !== 'merge') {
+      //   return
+      // }
+      // state.steps.splice(state.currentStepIndex + 1)
+
+      // // undo all subsequent steps and the refreshed step
+      // // then update step's conflict's conflictApplied and apply
+      // // then redo the refreshed step and subsequent steps
+      // const step = state.steps[stepIndex]
+      // const conflictToApply = step.operations.filter(op => op.type === 'conflict')[conflictIndex]
+
+      // let formData = state.formData
+      // const stepsToUndo = state.steps
+      //   .slice(stepIndex, state.currentStepIndex + 1)
+      //   .reverse()
+      // for (const stepToUndo of stepsToUndo) {
+      //   formData = undoStep(stepToUndo, formData)
+      // }
+
+      // conflictToApply.conflictApplied = false
+      // conflictToApply.applied = false
+
+      // const stepsToRedo = stepsToUndo.reverse()
+      // for (const stepToRedo of stepsToRedo) {
+      //   formData = redoStep(stepToRedo, formData)
+      // }
+      // state.formData = formData
+
+      // for (const step of state.steps.slice(stepIndex).filter(s => s.saveStatus)) {
+      //   step.saveStatus = undefined
+      // }
+    })
+  //#endregion Step
 })

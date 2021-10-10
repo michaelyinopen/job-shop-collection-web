@@ -26,7 +26,6 @@ import {
   jobSetsEditorInitializedSelector,
   useJobSetEditorDispatch,
   loadedJobSet,
-  // savingStep,
 } from '../store'
 import { SaveJobSetButton } from './SaveJobSetButton'
 import { EditReadonly } from './EditReadonly'

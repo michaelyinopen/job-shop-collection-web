@@ -30,7 +30,8 @@ import {
   createJobSetRequestSelector,
   useJobSetEditorDispatch,
   loadedJobSet,
-  // savingStep,
+  savingStep,
+  savedStep,
 } from '../store'
 
 const useStyles = makeStyles(theme => ({
@@ -66,7 +67,7 @@ const CreateJobSetButton = () => {
           className={classes.button}
           disabled={isCreating}
           onClick={() => {
-            // editorDispatch(savingStep(currentStepIndex, true))
+            editorDispatch(savingStep(currentStepIndex, true))
             dispatch(createJobSetTakingThunkAction(createJobSetRequest, creationToken))
               .then(result => {
                 if (result?.kind === 'success') {
@@ -76,7 +77,7 @@ const CreateJobSetButton = () => {
                     summary: `Created Activity #${createdId}`
                   }))
                   editorDispatch(loadedJobSet())
-                  // editorDispatch(savedStep(currentStepIndex))
+                  editorDispatch(savedStep(currentStepIndex))
                   history.push(generatePath(routePaths.jobSetEditor, { id: createdId }))
                 }
                 else {
@@ -84,7 +85,7 @@ const CreateJobSetButton = () => {
                     summary: 'Failed to create Job Set',
                     matchPath: routePaths.newJobSet
                   }))
-                  // editorDispatch(savingStep(currentStepIndex, false))
+                  editorDispatch(savingStep(currentStepIndex, false))
                 }
               })
               .catch(() => {
@@ -92,7 +93,7 @@ const CreateJobSetButton = () => {
                   summary: 'Failed to create Job Set',
                   matchPath: routePaths.newJobSet
                 }))
-                // editorDispatch(savingStep(currentStepIndex, false))
+                editorDispatch(savingStep(currentStepIndex, false))
               })
           }}
         >
@@ -138,14 +139,14 @@ const UpdateJobSetButton = ({ id }) => {
           className={classes.button}
           disabled={disabled}
           onClick={() => {
-            // editorDispatch(savingStep(currentStepIndex, true))
+            editorDispatch(savingStep(currentStepIndex, true))
             dispatch(updateJobSetTakingThunkAction(id, updateJobSetRequest))
               .then(result => {
                 if (result?.kind === 'success') {
                   dispatch(addNotification({
                     summary: `Saved Job Set #${id}`
                   }))
-                  // editorDispatch(savedStep(currentStepIndex))
+                  editorDispatch(savedStep(currentStepIndex))
                   return
                 }
                 if (result?.failure().failureType === 'version condition failed') {
@@ -172,11 +173,11 @@ const UpdateJobSetButton = ({ id }) => {
                     matchPath: path
                   }))
                 }
-                // editorDispatch(savingStep(currentStepIndex, false))
+                editorDispatch(savingStep(currentStepIndex, false))
               })
               .catch(() => {
                 dispatch(addNotification(`Failed to saved Job Set #${id}`))
-                // editorDispatch(savingStep(currentStepIndex, false))
+                editorDispatch(savingStep(currentStepIndex, false))
               })
           }}
         >

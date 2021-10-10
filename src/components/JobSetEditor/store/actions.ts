@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid'
 import { createAction } from '@reduxjs/toolkit'
 import type { TimeOptions } from './jobSetEditorReducer'
+import type { Step } from './editHistory'
 
 export const resetJobSetEditor = createAction('jobSetEditor/resetJobSetEditor')
 export const setJobSetEditorId = createAction<number | undefined>('jobSetEditor/setJobSetEditorId')
@@ -284,3 +285,62 @@ export const middlewareCalculatedAutoTimeOptions = createAction(
 // move machines
 // set job title
 // move jobs
+
+//#region Step
+export const replaceLastStep = createAction<Step[]>('replaceLastStep')
+export const undo = createAction('undo')
+export const redo = createAction('redo')
+export const jumpToStep = createAction<number>('jumpToStep')
+export const savingStep = createAction(
+  'savingStep',
+  (stepIndex: number, saving: boolean) => ({
+    payload: {
+      stepIndex,
+      saving
+    }
+  })
+)
+export const savedStep = createAction(
+  'savedStep',
+  (stepIndex: number) => ({
+    payload: {
+      stepIndex,
+    }
+  })
+)
+
+export const setMergeBehaviourMerge = createAction(
+  'setMergeBehaviourMerge',
+  (stepIndex: number) => ({
+    payload: {
+      stepIndex,
+    }
+  })
+)
+export const setMergeBehaviourDiscardLocal = createAction(
+  'setMergeBehaviourDiscardLocal',
+  (stepIndex: number) => ({
+    payload: {
+      stepIndex,
+    }
+  })
+)
+export const applyConflict = createAction(
+  'applyConflict',
+  (stepIndex: number, conflictIndex: number) => ({
+    payload: {
+      stepIndex,
+      conflictIndex,
+    }
+  })
+)
+export const unApplyConflict = createAction(
+  'unApplyConflict',
+  (stepIndex: number, conflictIndex: number) => ({
+    payload: {
+      stepIndex,
+      conflictIndex,
+    }
+  })
+)
+//#endregion Step
