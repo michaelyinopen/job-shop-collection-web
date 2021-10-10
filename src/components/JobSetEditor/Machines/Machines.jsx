@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core'
 import {
   useJobSetEditorSelector,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   machineIdsSelector
 } from '../store'
 import { Machine } from './Machine'
@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const Machines = () => {
   const classes = useStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const machineIds = useJobSetEditorSelector(machineIdsSelector)
   return (
     <section className={classes.section}>
@@ -52,7 +52,7 @@ export const Machines = () => {
       <ol className={classes.list}>
         {machineIds.map(id => <li key={id}><Machine key={id} id={id} /></li>)}
       </ol>
-      {isEdit && <AddMachine />}
+      {editable && <AddMachine />}
     </section >
   )
 }

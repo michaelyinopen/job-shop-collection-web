@@ -9,7 +9,7 @@ import {
 import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   createMachineTitleSelector,
   createMachineDescriptionSelector,
   setMachineTitle,
@@ -26,7 +26,7 @@ const useMachineTitleStyles = makeStyles(theme => createStyles({
 
 const MachineTitle = ({ id }) => {
   const classes = useMachineTitleStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const machineTitleSelector = useRef(createMachineTitleSelector(id)).current
   const value = useJobSetEditorSelector(machineTitleSelector)
   const editorDispatch = useJobSetEditorDispatch()
@@ -44,7 +44,7 @@ const MachineTitle = ({ id }) => {
       className={classes.title}
       inputProps={{
         maxLength: 50,
-        readOnly: !isEdit,
+        readOnly: !editable,
       }}
       InputProps={(value.length >= 40
         ? {
@@ -69,7 +69,7 @@ const useMachineDescriptionStyles = makeStyles(theme => createStyles({
 
 const MachineDescription = ({ id }) => {
   const classes = useMachineDescriptionStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const machineDescriptionSelector = useRef(createMachineDescriptionSelector(id)).current
   const value = useJobSetEditorSelector(machineDescriptionSelector)
   const editorDispatch = useJobSetEditorDispatch()
@@ -86,7 +86,7 @@ const MachineDescription = ({ id }) => {
       className={classes.description}
       inputProps={{
         maxLength: 1000,
-        readOnly: !isEdit,
+        readOnly: !editable,
       }}
       InputProps={(value.length >= 980
         ? {
@@ -121,13 +121,13 @@ const useMachineStyles = makeStyles(theme => createStyles({
 
 export const Machine = ({ id }) => {
   const classes = useMachineStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   return (
     <Card className={classes.machineCard}>
       <MachineTitle id={id} />
       <MachineDescription id={id} />
       <div className={classes.separator} />
-      {isEdit && <RemoveMachineButton id={id} />}
+      {editable && <RemoveMachineButton id={id} />}
     </Card>
   )
 }

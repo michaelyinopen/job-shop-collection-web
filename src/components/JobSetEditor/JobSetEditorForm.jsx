@@ -4,16 +4,24 @@ import { Description } from './Description'
 import { Machines } from './Machines'
 import { Jobs } from './Jobs'
 import { TimeOptions } from './TimeOptions'
+import {
+  useJobSetEditorSelector,
+  showDetailSelector
+} from './store'
 
 export const JobSetEditorForm = memo(() => {
-  // const disabled = isLoading || isReadonly
+  const showDetail = useJobSetEditorSelector(showDetailSelector)
   return (
     <div>
       <Title />
       <Description />
-      <Machines />
-      <Jobs />
-      <TimeOptions />
+      {showDetail && (
+        <>
+          <Machines />
+          <Jobs />
+          <TimeOptions />
+        </>
+      )}
     </div>
   )
 })

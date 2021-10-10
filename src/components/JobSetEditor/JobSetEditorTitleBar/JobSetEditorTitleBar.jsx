@@ -21,7 +21,7 @@ import {
 import {
   useJobSetEditorSelector,
   jobSetsEditorIdSelector,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   jobSetsEditorLoadStatusSelector,
   jobSetsEditorInitializedSelector,
   useJobSetEditorDispatch,
@@ -111,7 +111,7 @@ export const JobSetEditorTitleBar = () => {
   const classes = useStyles()
 
   const id = useJobSetEditorSelector(jobSetsEditorIdSelector)
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
 
   return (
     <Toolbar className={classes.toolbar} disableGutters>
@@ -121,7 +121,7 @@ export const JobSetEditorTitleBar = () => {
       <RefreshJobSetButton id={id} />
       <div className={classes.separator} />
       <div className={classes.allActions}>
-        {isEdit && (
+        {editable && (
           <div className={classes.grouped}>
             <HistoryButtons id={id} />
             <SaveJobSetButton id={id} />

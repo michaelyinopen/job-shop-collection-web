@@ -10,7 +10,7 @@ import {
 import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   isAutoTimeOptionsSelector,
   setIsAutoTimeOptions
 } from '../store'
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const AutomaticTimeOptions = () => {
   const classes = useStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const value = useJobSetEditorSelector(isAutoTimeOptionsSelector)
   const editorDispatch = useJobSetEditorDispatch()
   return (
@@ -38,13 +38,13 @@ export const AutomaticTimeOptions = () => {
           value='true'
           control={<Radio size='small' />}
           label="Automatic"
-          disabled={!isEdit}
+          disabled={!editable}
         />
         <FormControlLabel
           value='false'
           control={<Radio size='small' />}
           label="Manual"
-          disabled={!isEdit}
+          disabled={!editable}
         />
       </RadioGroup>
     </FormControl>

@@ -10,7 +10,7 @@ import { msToFormattedTime, formattedTimeToMs } from '../../../utility'
 import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   isAutoTimeOptionsSelector,
   maxViewDurationMsSelector,
   setMaxViewDuration,
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const MaximumViewDuration = () => {
   const classes = useStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const isAuto = useJobSetEditorSelector(isAutoTimeOptionsSelector)
   const valueMs = useJobSetEditorSelector(maxViewDurationMsSelector)
   const editorDispatch = useJobSetEditorDispatch()
@@ -53,7 +53,7 @@ export const MaximumViewDuration = () => {
               fullWidth
               InputProps={{
                 endAdornment: <InputAdornment position="end">hh:mm:ss</InputAdornment>,
-                readOnly: !isEdit
+                readOnly: !editable
               }}
             />
           }

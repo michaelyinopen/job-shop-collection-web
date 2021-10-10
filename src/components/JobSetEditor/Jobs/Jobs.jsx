@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core'
 import {
   useJobSetEditorSelector,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   jobIdsSelector,
 } from '../store'
 import { Job } from './Job'
@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const Jobs = () => {
   const classes = useStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const jobIds = useJobSetEditorSelector(jobIdsSelector)
 
   return (
@@ -53,7 +53,7 @@ export const Jobs = () => {
       <ol className={classes.list}>
         {jobIds.map(id => <li key={id}><Job key={id} id={id} /></li>)}
       </ol>
-      {isEdit && <CreateJob />}
+      {editable && <CreateJob />}
     </section>
   )
 }

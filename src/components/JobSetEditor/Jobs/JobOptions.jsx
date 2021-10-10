@@ -1,4 +1,3 @@
-import { useRef } from 'react'
 import {
   makeStyles,
   createStyles,
@@ -10,7 +9,7 @@ import AutorenewIcon from '@material-ui/icons/Autorenew'
 import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   createJobTitleSelector,
   createJobColorSelector,
   createJobTextColorSelector,
@@ -51,7 +50,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const JobOptions = ({ id }) => {
   const classes = useStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const jobTitle = useJobSetEditorSelector(createJobTitleSelector(id))
   const jobColor = useJobSetEditorSelector(createJobColorSelector(id))
   const jobTextColor = useJobSetEditorSelector(createJobTextColorSelector(id))
@@ -80,7 +79,7 @@ export const JobOptions = ({ id }) => {
           background: {jobColor}<br />
           foreground: {jobTextColor}
         </div>
-        {isEdit && (
+        {editable && (
           <Tooltip title="Change color">
             <IconButton
               onClick={() => { editorDispatch(changeJobColor(id)) }}

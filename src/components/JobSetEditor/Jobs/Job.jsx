@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core'
 import {
   useJobSetEditorSelector,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   createJobTitleSelector,
   createJobColorSelector,
   createJobTextColorSelector,
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const Job = ({ id }) => {
   const classes = useStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const jobTitle = useJobSetEditorSelector(createJobTitleSelector(id))
   const jobColor = useJobSetEditorSelector(createJobColorSelector(id))
   const jobTextColor = useJobSetEditorSelector(createJobTextColorSelector(id))
@@ -67,7 +67,7 @@ export const Job = ({ id }) => {
         <div className={classes.separator} />
         <aside className={classes.headerRowActions}>
           <JobOptionsButton id={id} />
-          {isEdit && <DeleteJobButton id={id} />}
+          {editable && <DeleteJobButton id={id} />}
         </aside>
       </div>
       <Procedures key={id} jobId={id} />

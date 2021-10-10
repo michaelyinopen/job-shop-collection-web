@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core'
 import {
   useJobSetEditorSelector,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   createJobTitleSelector,
   createProcedureIdsOfJobSelector,
 } from '../store'
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const Procedures = ({ jobId }) => {
   const classes = useStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const jobTitle = useJobSetEditorSelector(createJobTitleSelector(jobId))
   const procedureIdsOfJobSelector = useRef(createProcedureIdsOfJobSelector(jobId)).current
   const procedureIdsOfJob = useJobSetEditorSelector(procedureIdsOfJobSelector)
@@ -70,7 +70,7 @@ export const Procedures = ({ jobId }) => {
       <ol className={classes.list}>
         {procedureIdsOfJob.map(id => <li key={id}><Procedure key={id} jobId={jobId} id={id} /></li>)}
       </ol>
-      {isEdit && <CreateProcedure jobId={jobId} />}
+      {editable && <CreateProcedure jobId={jobId} />}
     </section>
   )
 }

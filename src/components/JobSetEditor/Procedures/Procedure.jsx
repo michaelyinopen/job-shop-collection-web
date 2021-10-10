@@ -14,7 +14,7 @@ import { PopperSelect } from '../../../styles'
 import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   createProcedureIndexSelector,
   createProcedureProcessingTimeMsSelector,
   createJobColorSelector,
@@ -67,7 +67,7 @@ const useProcedureMachineStyles = makeStyles(theme => createStyles({
 
 const ProcedureMachine = ({ jobId, id }) => {
   const classes = useProcedureMachineStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const machines = useJobSetEditorSelector(machinesSelector)
   const procedureMachineIdSelector = useRef(createProcedureMachineIdSelector(jobId, id)).current
   const procedureMachineId = useJobSetEditorSelector(procedureMachineIdSelector)
@@ -89,7 +89,7 @@ const ProcedureMachine = ({ jobId, id }) => {
             value={procedureMachineId ?? ''}
             onFocus={() => { }/*todo */}
             onChange={e => editorDispatch(setProcedureMachineId(jobId, id, e.target.value ?? null))}
-            inputProps={{ readOnly: !isEdit }}
+            inputProps={{ readOnly: !editable }}
           >
             {machines.map(m => (
               <MenuItem key={m.id} value={m.id}>{m.title}</MenuItem>
@@ -115,7 +115,7 @@ const useProcessingTimeStyles = makeStyles(theme => createStyles({
 
 const ProcedureProcessingTime = ({ jobId, id }) => {
   const classes = useProcessingTimeStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const procedureProcessingTimeMsSelector = useRef(createProcedureProcessingTimeMsSelector(jobId, id)).current
   const valueMs = useJobSetEditorSelector(procedureProcessingTimeMsSelector)
   const editorDispatch = useJobSetEditorDispatch()
@@ -137,7 +137,7 @@ const ProcedureProcessingTime = ({ jobId, id }) => {
             fullWidth
             InputProps={{
               endAdornment: <InputAdornment position="end">hh:mm:ss</InputAdornment>,
-              readOnly: !isEdit
+              readOnly: !editable
             }}
           />
         }
@@ -201,7 +201,7 @@ export const Procedure = memo(({ jobId, id }) => {
   const classes = useProcedureStyles()
   const opacity = 1// todo dragging: 0.4
 
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
 
   const jobColorSelector = useRef(createJobColorSelector(jobId)).current
   const jobColor = useJobSetEditorSelector(jobColorSelector)
@@ -224,7 +224,7 @@ export const Procedure = memo(({ jobId, id }) => {
           {sequence}
         </ div>
         <div className={classes.separator} />
-        {isEdit && <DeleteProcedureButton jobId={jobId} id={id} />}
+        {editable && <DeleteProcedureButton jobId={jobId} id={id} />}
       </div>
     </div>
   )

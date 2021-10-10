@@ -7,7 +7,7 @@ import {
 import {
   useJobSetEditorSelector,
   useJobSetEditorDispatch,
-  jobSetsEditorIsEditSelector,
+  fieldEditableSelector,
   titleSelector,
   setTitle,
 } from './store'
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => createStyles({
 
 export const Title = () => {
   const classes = useStyles()
-  const isEdit = useJobSetEditorSelector(jobSetsEditorIsEditSelector)
+  const editable = useJobSetEditorSelector(fieldEditableSelector)
   const value = useJobSetEditorSelector(titleSelector)
   const editorDispatch = useJobSetEditorDispatch()
   //todo errorSelector
@@ -41,7 +41,7 @@ export const Title = () => {
         fullWidth
         inputProps={{
           maxLength: 50,
-          readOnly: !isEdit,
+          readOnly: !editable,
         }}
         InputProps={(value.length >= 40
           ? {
