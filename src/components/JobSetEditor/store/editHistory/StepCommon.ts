@@ -23,6 +23,17 @@ export function arraysEqual(a, b) {
 function getMachinesFieldChanges(previousFormData: FormData, currentFormData: FormData): Array<FieldChange | GroupedFieldChanges> {
   const previousMachineIds = previousFormData.machines.ids
   const currentMachineIds = currentFormData.machines.ids
+  const previousProcedures = Object.values(previousFormData.jobs.entities)
+    .flatMap(j => Object.values(j.procedures.entities))
+  const currentProcedures = Object.values(currentFormData.jobs.entities)
+    .flatMap(j => Object.values(j.procedures.entities))
+  const commonProceduresWithUpdatedMachineIds = previousProcedures
+    .filter(p => currentProcedures.some(c => c.id === p.id && p.machineId !== c.machineId))
+    .map(p => ({
+      id: p.id,
+      previousProcedure: p,
+      currentProcedure: currentProcedures.find(cp => cp.id === p.id)!
+    }))
 
   let machineFieldChanges: Array<FieldChange | GroupedFieldChanges> = []
   let countedProcedureIds: Array<string> = [];
@@ -46,22 +57,34 @@ function getMachinesFieldChanges(previousFormData: FormData, currentFormData: Fo
         previousValue: previousFormData.machines.entities[removedMachineId],
         newValue: undefined
       }
-      // todo also group clear procedure's machineIds here
-      // countedProcedureIds
-      machineFieldChanges.push([idFieldChange, entityFieldChange])
+      // procedure's machineIds
+      const removedMachineIdProcedures = commonProcedures.filter(x =>
+        x.previousProcedure.machineId === removedMachineId && !countedProcedureIds.includes(x.id))
+      let procedurMachineIdFieldChanges: Array<FieldChange> = []
+      for (const { previousProcedure } of removedMachineIdProcedures) {
+        procedurMachineIdFieldChanges.push({
+          path: `/jobs/entities/${previousProcedure.jobId}/procedures/entities/${previousProcedure.id}/machineId`,
+          previousValue: removedMachineId,
+          newValue: null
+        })
+        countedProcedureIds.push(previousProcedure.id)
+      }
+      machineFieldChanges.push([idFieldChange, entityFieldChange, ...procedurMachineIdFieldChanges])
     }
   })();
 
   (function moveMachineFieldChanges() {
-    // rides that are not added or removed
+    // machines that are not added or removed
     const correspondingPreviousMachineIds = previousMachineIds.filter(cMId => currentMachineIds.includes(cMId))
     const correspondingCurrentMachineIds = currentMachineIds.filter(cMId => previousMachineIds.includes(cMId))
     if (!arraysEqual(correspondingPreviousMachineIds, correspondingCurrentMachineIds)) {
       machineFieldChanges.push({
         path: '/machines/ids',
-        previousValue: correspondingPreviousMachineIds,
-        newValue: correspondingCurrentMachineIds,
-        collectionChange: { type: 'move' as const }
+        collectionChange: {
+          type: 'move' as const,
+          previousValue: correspondingPreviousMachineIds,
+          newValue: correspondingCurrentMachineIds,
+        }
       })
     }
   })();
@@ -136,8 +159,18 @@ function getMachinesFieldChanges(previousFormData: FormData, currentFormData: Fo
         previousValue: undefined,
         newValue: currentFormData.machines.entities[addedId]
       }
-      // todo also group clear procedure's machineIds here
-      // countedProcedureIds
+      // procedure's machineIds
+      const addedMachineIdProcedures = commonProcedures.filter(x =>
+        x.previousProcedure.machineId === addedId && !countedProcedureIds.includes(x.id))
+      let procedurMachineIdFieldChanges: Array<FieldChange> = []
+      for (const { currentProcedure } of addedMachineIdProcedures) {
+        procedurMachineIdFieldChanges.push({
+          path: `/jobs/entities/${currentProcedure.jobId}/procedures/entities/${currentProcedure.id}/machineId`,
+          previousValue: null,
+          newValue: null
+        })
+        countedProcedureIds.push(previousProcedure.id)
+      }
       machineFieldChanges.push([idFieldChange, entityFieldChange])
     }
   })()

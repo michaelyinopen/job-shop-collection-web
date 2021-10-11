@@ -1,16 +1,19 @@
 export type { FormDataState as FormData } from '../jobSetEditorReducer'
 
-export type FieldChange = {
+export type FieldChange = ValueFieldChange | CollectionFieldChange
+export type ValueFieldChange = {
   path: string,
-  previousValue?: any,
-  newValue?: any,
-  collectionChange?: CollectionChange
+  previousValue: any,
+  newValue: any,
+}
+export type CollectionFieldChange = {
+  path: string,
+  collectionChange: CollectionChange
 }
 
 export type CollectionChange = CollectionRemoveChange | CollectionMoveChange | CollectionAddChange
-
 export type CollectionAddChange = { type: 'add', id: string, position: { index: number | 'beginning', subindex: number }, }
-export type CollectionMoveChange = { type: 'move' }
+export type CollectionMoveChange = { type: 'move', previousValue: any, newValue: any, }
 export type CollectionRemoveChange = { type: 'remove', id: string, index: number, }
 
 export type GroupedFieldChanges = FieldChange[]
