@@ -1,3 +1,4 @@
+import { ProcedureState } from '../jobSetEditorReducer'
 import type {
   FormData,
   FieldChange,
@@ -19,7 +20,44 @@ export function arraysEqual(a, b) {
   return true
 }
 
-// machines and procedure's machine option?
+function getUpdatedProcedureMachineIdsMap(
+  previousProcedures: ProcedureState[],
+  currentProcedures: ProcedureState[],
+) {
+  // notice undefined and null
+  // e.g. procedures which are deleted will have currentMachineId === undefined
+  // e.g. procedures which cleared machineId selection will have currentMachineId === null
+  let procedureMap: Map<string, { jobId: string, previousMachineId?: string | null, currentMachineId?: string | null }> =
+    new Map(previousProcedures.map(pp => [
+      pp.id,
+      {
+        jobId: pp.jobId,
+        previousMachineId: pp.machineId
+      }
+    ]))
+  for (const currentProcedure of currentProcedures) {
+    const mappedProcedure = procedureMap.get(currentProcedure.id)
+    if (mappedProcedure && mappedProcedure.previousMachineId === currentProcedure.machineId) {
+      procedureMap.delete(currentProcedure.id)
+    }
+    else if (mappedProcedure?.previousMachineId == null && currentProcedure.machineId == null) {
+      procedureMap.delete(currentProcedure.id)
+    }
+    else {
+      const newMappedProcedure = {
+        ...mappedProcedure,
+        jobId: currentProcedure.jobId,
+        currentMachineId: currentProcedure.machineId
+      }
+      procedureMap.set(currentProcedure.id, newMappedProcedure)
+    }
+  }
+  return procedureMap
+}
+
+// machines and procedure's machine option
+// field changes placed after procedure's changes
+// added procedure's machineId has to be null (e.g. added machine assigned to added procedure, then unapply add machine)
 function getMachinesFieldChanges(previousFormData: FormData, currentFormData: FormData): Array<FieldChange | GroupedFieldChanges> {
   const previousMachineIds = previousFormData.machines.ids
   const currentMachineIds = currentFormData.machines.ids
@@ -27,18 +65,14 @@ function getMachinesFieldChanges(previousFormData: FormData, currentFormData: Fo
     .flatMap(j => Object.values(j.procedures.entities))
   const currentProcedures = Object.values(currentFormData.jobs.entities)
     .flatMap(j => Object.values(j.procedures.entities))
-  const commonProceduresWithUpdatedMachineIds = previousProcedures
-    .filter(p => currentProcedures.some(c => c.id === p.id && p.machineId !== c.machineId))
-    .map(p => ({
-      id: p.id,
-      previousProcedure: p,
-      currentProcedure: currentProcedures.find(cp => cp.id === p.id)!
-    }))
 
-  let machineFieldChanges: Array<FieldChange | GroupedFieldChanges> = []
-  let countedProcedureIds: Array<string> = [];
-
-  (function removeMachineFieldChanges() {
+  function getRemoveMachineFieldChanges(
+    previousMachineIds: string[],
+    currentMachineIds: string[],
+    previousProcedures: ProcedureState[]
+  ) {
+    let removeMachineFieldChanges: Array<FieldChange | GroupedFieldChanges> = []
+    let removedMachineProcedureIds: Array<string> = []
     const previousMachineIdAndIndices: Array<{ id: string, index: number }> =
       previousMachineIds.map((id, index) => ({ id, index }))
     const removedMachineIds = previousMachineIds.filter(pMId => !currentMachineIds.includes(pMId))
@@ -58,60 +92,89 @@ function getMachinesFieldChanges(previousFormData: FormData, currentFormData: Fo
         newValue: undefined
       }
       // procedure's machineIds
-      const removedMachineIdProcedures = commonProcedures.filter(x =>
-        x.previousProcedure.machineId === removedMachineId && !countedProcedureIds.includes(x.id))
-      let procedurMachineIdFieldChanges: Array<FieldChange> = []
-      for (const { previousProcedure } of removedMachineIdProcedures) {
-        procedurMachineIdFieldChanges.push({
-          path: `/jobs/entities/${previousProcedure.jobId}/procedures/entities/${previousProcedure.id}/machineId`,
-          previousValue: removedMachineId,
-          newValue: null
-        })
-        countedProcedureIds.push(previousProcedure.id)
-      }
-      machineFieldChanges.push([idFieldChange, entityFieldChange, ...procedurMachineIdFieldChanges])
-    }
-  })();
+      const removedMachineIdProcedures = previousProcedures.filter(x =>
+        x.machineId === removedMachineId)
+      const procedurMachineIdFieldChanges: Array<FieldChange> = removedMachineIdProcedures.map(p => ({
+        path: `/jobs/entities/${p.jobId}/procedures/entities/${p.id}/machineId`,
+        previousValue: removedMachineId,
+        newValue: null
+      }))
+      removedMachineProcedureIds.push(...removedMachineIdProcedures.map(p => p.id))
 
-  (function moveMachineFieldChanges() {
+      removeMachineFieldChanges.push([idFieldChange, entityFieldChange, ...procedurMachineIdFieldChanges])
+    }
+    return [removeMachineFieldChanges, removedMachineProcedureIds] as const
+  }
+  const [removeMachineFieldChanges, removedMachineProcedureIds] = getRemoveMachineFieldChanges(
+    previousMachineIds,
+    currentMachineIds,
+    previousProcedures
+  )
+
+  function getMoveMachineFieldChanges(
+    previousMachineIds: string[],
+    currentMachineIds: string[]
+  ) {
     // machines that are not added or removed
     const correspondingPreviousMachineIds = previousMachineIds.filter(cMId => currentMachineIds.includes(cMId))
     const correspondingCurrentMachineIds = currentMachineIds.filter(cMId => previousMachineIds.includes(cMId))
-    if (!arraysEqual(correspondingPreviousMachineIds, correspondingCurrentMachineIds)) {
-      machineFieldChanges.push({
-        path: '/machines/ids',
-        collectionChange: {
-          type: 'move' as const,
-          previousValue: correspondingPreviousMachineIds,
-          newValue: correspondingCurrentMachineIds,
+    return arraysEqual(correspondingPreviousMachineIds, correspondingCurrentMachineIds)
+      ? []
+      : [
+        {
+          path: '/machines/ids',
+          collectionChange: {
+            type: 'move' as const,
+            previousValue: correspondingPreviousMachineIds,
+            newValue: correspondingCurrentMachineIds,
+          }
         }
-      })
-    }
-  })();
+      ]
+  }
+  const moveMachineFieldChanges = getMoveMachineFieldChanges(
+    previousMachineIds,
+    currentMachineIds
+  )
 
-  (function updateMachinePropertiesFieldChanges() {
+  function getUpdateMachineFieldChanges(
+    previousMachineIds: string[],
+    currentMachineIds: string[]
+  ) {
+    let updateMachineFieldChanges: Array<FieldChange> = []
     const commonMachineIds = currentMachineIds.filter(cMId => previousMachineIds.includes(cMId))
     for (const commonMachineId of commonMachineIds) {
       const previousMachine = previousFormData.machines.entities[commonMachineId]
       const currentMachine = currentFormData.machines.entities[commonMachineId]
       if (previousMachine.title !== currentMachine.title) {
-        machineFieldChanges.push({
+        updateMachineFieldChanges.push({
           path: `/machines/entities/${commonMachineId}/title`,
           previousValue: previousMachine.title,
           newValue: currentMachine.title
         })
       }
       if (previousMachine.description !== currentMachine.description) {
-        machineFieldChanges.push({
+        updateMachineFieldChanges.push({
           path: `/machines/entities/${commonMachineId}/description`,
           previousValue: previousMachine.description,
           newValue: currentMachine.description
         })
       }
     }
-  })();
+    return updateMachineFieldChanges
+  }
+  const updateMachineFieldChanges = getUpdateMachineFieldChanges(
+    previousMachineIds,
+    currentMachineIds
+  )
 
-  (function addMachinePropertiesFieldChanges() {
+  function getAddMachineFieldChanges(
+    previousMachineIds: string[],
+    currentMachineIds: string[],
+    previousProcedures: ProcedureState[],
+    currentProcedures: ProcedureState[]
+  ) {
+    let addMachineFieldChanges: Array<FieldChange | GroupedFieldChanges> = []
+    let addedMachineProcedureIds: Array<string> = []
     const correspondingCurrentMachineIds = currentMachineIds.filter(cMId => previousMachineIds.includes(cMId))
     // currentIds with index of the previous position before any removal
     const referenceMachineIdIndices: Array<{ id: string, index: number }> =
@@ -160,23 +223,95 @@ function getMachinesFieldChanges(previousFormData: FormData, currentFormData: Fo
         newValue: currentFormData.machines.entities[addedId]
       }
       // procedure's machineIds
-      const addedMachineIdProcedures = commonProcedures.filter(x =>
-        x.previousProcedure.machineId === addedId && !countedProcedureIds.includes(x.id))
-      let procedurMachineIdFieldChanges: Array<FieldChange> = []
-      for (const { currentProcedure } of addedMachineIdProcedures) {
-        procedurMachineIdFieldChanges.push({
-          path: `/jobs/entities/${currentProcedure.jobId}/procedures/entities/${currentProcedure.id}/machineId`,
-          previousValue: null,
-          newValue: null
-        })
-        countedProcedureIds.push(previousProcedure.id)
-      }
-      machineFieldChanges.push([idFieldChange, entityFieldChange])
-    }
-  })()
+      const addedMachineIdProcedures = currentProcedures.filter(x =>
+        x.machineId === addedId)
+      const procedurMachineIdFieldChanges: Array<FieldChange> = addedMachineIdProcedures.map(p => ({
+        path: `/jobs/entities/${p.jobId}/procedures/entities/${p.id}/machineId`,
+        previousValue: previousProcedures.find(pp => pp.id === p.id)?.machineId,
+        newValue: addedId
+      }))
+      addedMachineProcedureIds.push(...addedMachineIdProcedures.map(p => p.id))
 
-  // ProcedureMachineIdFieldChanges
-  // use countedProcedureIds
+      addMachineFieldChanges.push([idFieldChange, entityFieldChange, ...procedurMachineIdFieldChanges])
+    }
+    return [addMachineFieldChanges, addedMachineProcedureIds] as const
+  }
+  const [addMachineFieldChanges, addedMachineProcedureIds] = getAddMachineFieldChanges(
+    previousMachineIds,
+    currentMachineIds,
+    previousProcedures,
+    currentProcedures
+  )
+
+  function getProcedureMachineIdFieldChanges(
+    previousProcedures: ProcedureState[],
+    currentProcedures: ProcedureState[],
+    removedMachineProcedureIds: string[],
+    addedMachineProcedureIds: string[]
+  ) {
+    const procedureMachineIdFieldChanges: Array<FieldChange> = []
+    const procedureMachineIdsMap = getUpdatedProcedureMachineIdsMap(
+      previousProcedures,
+      currentProcedures
+    )
+    for (const [procedureId, { jobId, previousMachineId, currentMachineId }] of procedureMachineIdsMap) {
+      if (currentMachineId === null) {
+        if (!removedMachineProcedureIds.includes(procedureId)) {
+          procedureMachineIdFieldChanges.push(({
+            path: `/jobs/entities/${jobId}/procedures/entities/${procedureId}/machineId`,
+            previousValue: previousMachineId,
+            newValue: currentMachineId
+          }))
+        }
+      } else if (currentMachineId !== undefined) {
+        // currentMachineId != null
+        if (previousMachineId === null || previousMachineId === undefined) {
+          if (!addedMachineProcedureIds.includes(procedureId)) {
+            procedureMachineIdFieldChanges.push(({
+              path: `/jobs/entities/${jobId}/procedures/entities/${procedureId}/machineId`,
+              previousValue: previousMachineId,
+              newValue: currentMachineId
+            }))
+          }
+          else {
+            // previousMachineId != null
+            if (!addedMachineProcedureIds.includes(procedureId)) {
+              procedureMachineIdFieldChanges.push(({
+                path: `/jobs/entities/${jobId}/procedures/entities/${procedureId}/machineId`,
+                previousValue: previousMachineId,
+                newValue: currentMachineId
+              }))
+            }
+            else {
+              // addedMachineProcedureIds.includes(procedureId)
+              if (!removedMachineProcedureIds.includes(procedureId)) {
+                procedureMachineIdFieldChanges.push(({
+                  path: `/jobs/entities/${jobId}/procedures/entities/${procedureId}/machineId`,
+                  previousValue: previousMachineId,
+                  newValue: null // set to null first, then the fieldChanged grouped with create, will set to current value, if applied
+                }))
+              }
+            }
+          }
+        }
+      }
+    }
+    return procedureMachineIdFieldChanges
+  }
+  const procedureMachineIdFieldChanges = getProcedureMachineIdFieldChanges(
+    previousProcedures,
+    currentProcedures,
+    removedMachineProcedureIds,
+    addedMachineProcedureIds
+  )
+
+  const machineFieldChanges = [
+    ...removeMachineFieldChanges,
+    ...moveMachineFieldChanges,
+    ...updateMachineFieldChanges,
+    ...procedureMachineIdFieldChanges,
+    ...addMachineFieldChanges,
+  ]
 
   return machineFieldChanges
 }
@@ -209,15 +344,15 @@ export function calculateStepName(fieldChanges: FieldChange[]): string {
     return ''
   }
 
-  if (fieldChanges.length === 2 && fieldChanges.some(c => c.path === '/rides/ids')) {
-    const idsChange = fieldChanges.find(c => c.path === '/rides/ids')!
-    if (idsChange?.collectionChange?.type === 'add') {
-      return 'Add ride'
-    }
-    if (idsChange?.collectionChange?.type === 'remove') {
-      return 'Remove ride'
-    }
-  }
+  // if (fieldChanges.length === 2 && fieldChanges.some(c => c.path === '/rides/ids')) {
+  //   const idsChange = fieldChanges.find(c => c.path === '/rides/ids')!
+  //   if (idsChange?.collectionChange?.type === 'add') {
+  //     return 'Add ride'
+  //   }
+  //   if (idsChange?.collectionChange?.type === 'remove') {
+  //     return 'Remove ride'
+  //   }
+  // }
 
   if (fieldChanges.length > 1) {
     return 'Multiple edits'
