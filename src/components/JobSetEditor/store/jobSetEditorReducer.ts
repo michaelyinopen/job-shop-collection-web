@@ -8,6 +8,8 @@ import {
   setJobSetEditorIsEdit,
   loadedJobSet,
   failedToLoadJobSet,
+  openHistoryPanel,
+  closeHistoryPanel,
   setJobSetFromAppStore,
   setTitle,
   setDescription,
@@ -59,6 +61,7 @@ export type JobSetEditorState = {
     versionToken: string,
     formData: FormDataState
   }[],
+  isHistoryPanelOpen: boolean,
 }
 
 //#region FormDataState
@@ -171,6 +174,7 @@ const jobSetEditorInitialState: JobSetEditorState = {
   steps: [{ name: 'initial', operations: [] }],
   currentStepIndex: 0,
   versions: [],
+  isHistoryPanelOpen: false,
 }
 
 export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) => {
@@ -189,6 +193,12 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
     })
     .addCase(failedToLoadJobSet, (state) => {
       state.loadStatus = 'failed'
+    })
+    .addCase(openHistoryPanel, (state) => {
+      state.isHistoryPanelOpen = true
+    })
+    .addCase(closeHistoryPanel, (state) => {
+      state.isHistoryPanelOpen = false
     })
     .addCase(setJobSetFromAppStore, (state, action) => {
       const { payload: { jobSet, loaded } } = action

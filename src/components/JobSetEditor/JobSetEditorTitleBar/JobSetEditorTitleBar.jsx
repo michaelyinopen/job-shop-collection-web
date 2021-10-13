@@ -27,6 +27,7 @@ import {
   useJobSetEditorDispatch,
   loadedJobSet,
 } from '../store'
+import { HistoryButtons } from './HistoryButtons'
 import { SaveJobSetButton } from './SaveJobSetButton'
 import { EditReadonly } from './EditReadonly'
 import { MoreOptions } from './MoreOptions'
@@ -101,11 +102,6 @@ const RefreshJobSetButton = ({ id }) => {
   )
 }
 
-const HistoryButtons = (id) => {
-  return null
-}
-
-
 export const JobSetEditorTitleBar = () => {
   const classes = useStyles()
 
@@ -122,7 +118,7 @@ export const JobSetEditorTitleBar = () => {
       <div className={classes.allActions}>
         {editable && (
           <div className={classes.grouped}>
-            <HistoryButtons id={id} />
+            <HistoryButtons />
             <SaveJobSetButton id={id} />
           </div>
         )}

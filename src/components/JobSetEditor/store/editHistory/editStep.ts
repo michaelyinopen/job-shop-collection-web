@@ -20,6 +20,8 @@ import {
   focusViewEndTime,
   focusMinViewDuration,
   focusMaxViewDuration,
+  openHistoryPanel,
+  closeHistoryPanel,
 } from '../actions'
 import {
   calculateStepName,
@@ -55,6 +57,8 @@ const excludeActionTypes = [
   focusViewEndTime,
   focusMinViewDuration,
   focusMaxViewDuration,
+  openHistoryPanel,
+  closeHistoryPanel,
 ].map(a => a.type)
 
 function combineFieldChanges(a: FieldChange, b: FieldChange): FieldChange[] {

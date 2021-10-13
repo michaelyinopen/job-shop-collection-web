@@ -9,6 +9,9 @@ export const setJobSetEditorIsEdit = createAction<boolean>('jobSetEditor/setJobS
 export const loadedJobSet = createAction('jobSetEditor/loadedJobSet')
 export const failedToLoadJobSet = createAction('jobSetEditor/failedToLoadJobSet')
 
+export const openHistoryPanel = createAction('jobSetEditor/openHistoryPanel')
+export const closeHistoryPanel = createAction('jobSetEditor/closeHistoryPanel')
+
 export type AppStoreJobSetHeader = {
   id: number
   title: string
