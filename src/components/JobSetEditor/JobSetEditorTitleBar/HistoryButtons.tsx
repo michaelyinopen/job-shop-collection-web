@@ -50,7 +50,7 @@ export const HistoryButtons = () => {
         </IconButton>
       </Tooltip>
       <IconButton
-        disabled={canUndo}
+        disabled={!canUndo}
         onClick={() => {
           editorDispatch(undo())
         }}
@@ -58,7 +58,7 @@ export const HistoryButtons = () => {
         <UndoIcon />
       </IconButton>
       <IconButton
-        disabled={canRedo}
+        disabled={!canRedo}
         onClick={() => {
           editorDispatch(redo())
         }}

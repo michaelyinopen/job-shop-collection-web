@@ -449,9 +449,9 @@ export function redoStep(step: Step, previousFormData: FormData): FormData {
 
   const ordinaryFieldChanges = fieldChangeApplied.filter(ca =>
     !machineIdFieldChanges.includes(ca)
-    && jobIdFieldChanges.includes(ca)
-    && jobColorIdFieldChanges.includes(ca)
-    && procedureIdFieldChanges.includes(ca)
+    && !jobIdFieldChanges.includes(ca)
+    && !jobColorIdFieldChanges.includes(ca)
+    && !procedureIdFieldChanges.includes(ca)
   )
   for (const { fieldChange, applied } of ordinaryFieldChanges) {
     if (applied) {
@@ -831,18 +831,19 @@ export function undoStep(step: Step, previousFormData: FormData): FormData {
 
   const procedureIdFieldChanges = fieldChangeApplied
     .filter(ca => ca.fieldChange.path.endsWith('/procedures/ids'))
-  formData = undoProcedureIdFieldChanges(formData, jobIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
+  formData = undoProcedureIdFieldChanges(formData, procedureIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
 
   const ordinaryFieldChanges = fieldChangeApplied.filter(ca =>
     !machineIdFieldChanges.includes(ca)
-    && jobIdFieldChanges.includes(ca)
-    && jobColorIdFieldChanges.includes(ca)
-    && procedureIdFieldChanges.includes(ca)
+    && !jobIdFieldChanges.includes(ca)
+    && !jobColorIdFieldChanges.includes(ca)
+    && !procedureIdFieldChanges.includes(ca)
   )
   for (const { fieldChange, applied } of ordinaryFieldChanges) {
     if (applied) {
       formData = undoFieldChange(fieldChange as ValueFieldChange, formData)
     }
   }
+
   return formData
 }
