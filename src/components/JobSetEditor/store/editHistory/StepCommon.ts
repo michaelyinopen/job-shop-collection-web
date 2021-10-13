@@ -1,4 +1,4 @@
-import { JobState, ProcedureState } from '../jobSetEditorReducer'
+import type { JobState, ProcedureState } from '../jobSetEditorReducer'
 import type {
   FormData,
   FieldChange,
@@ -190,7 +190,7 @@ function getJobsFieldChanges(previousFormData: FormData, currentFormData: FormDa
         currentJob
       )
       updateJobFieldChanges.push(...procedureFieldChanges)
-      
+
       const previousJobColor = previousFormData.jobColors.entities[commonJobId]
       const currentJobColor = currentFormData.jobColors.entities[commonJobId]
       if (previousJobColor.color !== currentJobColor.color) {
@@ -804,39 +804,105 @@ export function calculateStepName(fieldChanges: FieldChange[]): string {
     return ''
   }
 
-  // if (fieldChanges.length === 2 && fieldChanges.some(c => c.path === '/rides/ids')) {
-  //   const idsChange = fieldChanges.find(c => c.path === '/rides/ids')!
-  //   if (idsChange?.collectionChange?.type === 'add') {
-  //     return 'Add ride'
-  //   }
-  //   if (idsChange?.collectionChange?.type === 'remove') {
-  //     return 'Remove ride'
-  //   }
-  // }
+  if (fieldChanges.length > 1 && fieldChanges.some(c => c.path === '/machines/ids')) {
+    const idsChange = fieldChanges.find(c => c.path === '/machines/ids')!
+    if (idsChange && 'collectionChange' in idsChange && idsChange.collectionChange.type === 'add') {
+      return 'Add machine'
+    }
+    if (idsChange && 'collectionChange' in idsChange && idsChange.collectionChange.type === 'remove') {
+      return 'Remove machine'
+    }
+  }
+
+  if (fieldChanges.length > 1 && fieldChanges.some(c => c.path === '/jobs/ids')) {
+    const idsChange = fieldChanges.find(c => c.path === '/jobs/ids')!
+    if (idsChange && 'collectionChange' in idsChange && idsChange.collectionChange.type === 'add') {
+      return 'Create job'
+    }
+    if (idsChange && 'collectionChange' in idsChange && idsChange.collectionChange.type === 'move') {
+      return 'Move jobs'
+    }
+    if (idsChange && 'collectionChange' in idsChange && idsChange.collectionChange.type === 'remove') {
+      return 'Delete job'
+    }
+  }
+
+  if (fieldChanges.length > 1 && fieldChanges.some(c => c.path.endsWith('/procedures/ids'))) {
+    const idsChange = fieldChanges.find(c => c.path.endsWith('/procedures/ids'))!
+    if (idsChange && 'collectionChange' in idsChange && idsChange.collectionChange.type === 'add') {
+      return 'Create procedure'
+    }
+    if (idsChange && 'collectionChange' in idsChange && idsChange.collectionChange.type === 'remove') {
+      return 'Delete procedure'
+    }
+  }
 
   if (fieldChanges.length > 1) {
     return 'Multiple edits'
   }
 
   const { path } = fieldChanges[0]
-  if (path === '/name') {
-    return 'Edit name'
+  const pathNumberOfSlashes = numberOfSlashes(path)
+  if (path === '/title') {
+    return 'Edit title'
   }
-  if (path === '/who') {
-    return 'Edit who'
+  if (path === '/description') {
+    return 'Edit description'
   }
-  if (path === '/where') {
-    return 'Edit where'
+
+  // time options
+  if (path === '/isAutoTimeOptions') {
+    return 'Edit auto time options'
   }
-  if (path === '/howMuch') {
-    return 'Edit how much'
+  if (path === '/manualTimeOptions/maxTimeMs') {
+    return 'Edit maximum time'
   }
-  if (path === '/rides/ids') {
-    return 'Move rides'
+  if (path === '/manualTimeOptions/viewStartTimeMs') {
+    return 'Edit view start time'
   }
-  if (path.startsWith('/rides/entities/') && path.endsWith('description')) {
-    return 'Edit ride description'
+  if (path === '/manualTimeOptions/viewEndTimeMs') {
+    return 'Edit view end time'
   }
+  if (path === '/manualTimeOptions/minViewDurationMs') {
+    return 'Edit minimum view duration'
+  }
+  if (path === '/manualTimeOptions/maxViewDurationMs') {
+    return 'Edit maximum view duration'
+  }
+
+  // machines
+  if (path === '/machines/ids') {
+    return 'Move machines'
+  }
+  if (path.startsWith('/machines/entities/') && path.endsWith('title')) {
+    return 'Edit machine title'
+  }
+  if (path.startsWith('/machines/entities/') && path.endsWith('description')) {
+    return 'Edit machine description'
+  }
+
+  // jobs
+  if (path.startsWith('/jobs/entities/') && path.endsWith('title') && pathNumberOfSlashes === 4) {
+    return 'Edit job title'
+  }
+  if (path.startsWith('/jobColors/entities/') && path.endsWith('color')) {
+    return 'Edit job color'
+  }
+  if (path.startsWith('/jobColors/entities/') && path.endsWith('textColor')) {
+    return 'Edit job textColor'
+  }
+
+  // procedures
+  if (path.endsWith('/procedures/ids')) {
+    return 'Move procedures'
+  }
+  if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities') && path.endsWith('machineId')) {
+    return "Edit procedure's machine"
+  }
+  if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities') && path.endsWith('processingTimeMs')) {
+    return "Edit procedure's time"
+  }
+
   throw new Error('Cannot determine step name')
 }
 //#endregion calculateStepName
