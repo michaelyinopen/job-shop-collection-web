@@ -21,17 +21,21 @@ function groupby<T, K extends string | number>(
 }
 
 function getJobIdFromPath(path: string) {
-  const indexOf3rdSlash = '/jobs/entities/'.length
+  const indexOf3rdSlash = '/jobs/entities/'.length - 1
   const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
-  return path.substring(indexOf3rdSlash + 1, indexOf4thSlash)
+  return indexOf4thSlash === -1
+    ? path.substring(indexOf3rdSlash + 1)
+    : path.substring(indexOf3rdSlash + 1, indexOf4thSlash)
 }
 
 function getProcedureIdFromPath(path: string) {
-  const indexOf3rdSlash = '/jobs/entities/'.length
+  const indexOf3rdSlash = '/jobs/entities/'.length - 1
   const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
-  const indexOf6thSlash = 'procedures/entities/'.length
+  const indexOf6thSlash = indexOf4thSlash + 'procedures/entities/'.length
   const indexOf7thSlash = path.indexOf('/', indexOf6thSlash + 1)
-  const preocedureId = path.substring(indexOf6thSlash + 1, indexOf7thSlash)
+  return indexOf7thSlash === -1
+    ? path.substring(indexOf6thSlash + 1)
+    : path.substring(indexOf6thSlash + 1, indexOf7thSlash)
 }
 
 function redoFieldChange(fieldChange: ValueFieldChange, formData: FormData): FormData {
@@ -137,11 +141,28 @@ export function redoStep(step: Step, previousFormData: FormData): FormData {
   const fieldChangeApplied = step.operations
     .flatMap(op => op.fieldChanges.map(fc => ({ fieldChange: fc, applied: op.applied })))
 
-  const rideIdFieldChanges = fieldChangeApplied
-    .filter(ca => ca.fieldChange.path === '/rides/ids') as { fieldChange: CollectionFieldChange, applied: boolean }[]
-  formData = redoRideIdFieldChanges(formData, rideIdFieldChanges)
+  const machineIdFieldChanges = fieldChangeApplied
+    .filter(ca => ca.fieldChange.path === '/machines/ids')
+  formData = redoRideIdFieldChanges(formData, machineIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
 
-  const ordinaryFieldChanges = fieldChangeApplied.filter(ca => ca.fieldChange.path !== '/rides/ids')
+  const jobIdFieldChanges = fieldChangeApplied
+    .filter(ca => ca.fieldChange.path === '/jobs/ids')
+  formData = redoRideIdFieldChanges(formData, jobIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
+
+  const jobColorIdFieldChanges = fieldChangeApplied
+    .filter(ca => ca.fieldChange.path === '/jobColors/ids')
+  formData = redoRideIdFieldChanges(formData, jobColorIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
+
+  const procedureIdFieldChanges = fieldChangeApplied
+    .filter(ca => ca.fieldChange.path.endsWith('/procedures/ids'))
+  formData = redoRideIdFieldChanges(formData, procedureIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
+
+  const ordinaryFieldChanges = fieldChangeApplied.filter(ca =>
+    !machineIdFieldChanges.includes(ca)
+    && jobIdFieldChanges.includes(ca)
+    && jobColorIdFieldChanges.includes(ca)
+    && procedureIdFieldChanges.includes(ca)
+  )
   for (const { fieldChange, applied } of ordinaryFieldChanges) {
     if (applied) {
       formData = redoFieldChange(fieldChange as ValueFieldChange, formData)
@@ -152,33 +173,83 @@ export function redoStep(step: Step, previousFormData: FormData): FormData {
 
 function undoFieldChange(fieldChange: ValueFieldChange, formData: FormData): FormData {
   const { path, previousValue } = fieldChange
+  const pathNumberOfSlashes = numberOfSlashes(path)
   return produce(formData, (draft) => {
-    if (path === '/name') {
-      draft.name = previousValue
+    if (path === '/title') {
+      draft.title = previousValue
     }
-    else if (path === '/who') {
-      draft.who = previousValue
+    else if (path === '/description') {
+      draft.description = previousValue
     }
-    else if (path === '/where') {
-      draft.where = previousValue
+    else if (path === '/manualTimeOptions/maxTimeMs') {
+      draft.manualTimeOptions.maxTimeMs = previousValue
     }
-    else if (path === '/howMuch') {
-      draft.howMuch = previousValue
+    else if (path === '/manualTimeOptions/viewStartTimeMs') {
+      draft.manualTimeOptions.viewStartTimeMs = previousValue
     }
-    else if (path === '/howMuch') {
-      draft.howMuch = previousValue
+    else if (path === '/manualTimeOptions/viewEndTimeMs') {
+      draft.manualTimeOptions.viewEndTimeMs = previousValue
     }
-    else if (path.startsWith('/rides/entities/') && numberOfSlashes(path) === 3) {
-      const rideId = path.substring('/rides/entities/'.length)
+    else if (path === '/manualTimeOptions/minViewDurationMs') {
+      draft.manualTimeOptions.minViewDurationMs = previousValue
+    }
+    else if (path === '/manualTimeOptions/maxViewDurationMs') {
+      draft.manualTimeOptions.maxViewDurationMs = previousValue
+    }
+    else if (path.startsWith('/machines/entities/') && path.endsWith('title')) {
+      const machineId = path.substring('/machines/entities/'.length, path.length - 'title'.length - 1)
+      draft.machines.entities[machineId].title = previousValue
+    }
+    else if (path.startsWith('/machines/entities/') && path.endsWith('description')) {
+      const machineId = path.substring('/machines/entities/'.length, path.length - 'description'.length - 1)
+      draft.machines.entities[machineId].description = previousValue
+    }
+    else if (path.startsWith('/jobs/entities/') && path.endsWith('title') && pathNumberOfSlashes === 3) {
+      const jobId = getJobIdFromPath(path)
+      draft.jobs.entities[jobId].title = previousValue
+    }
+    else if (path.startsWith('/jobColors/entities/') && path.endsWith('textColor')) {
+      const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'textColor'.length - 1)
+      draft.jobColors.entities[jobColorId].textColor = previousValue
+    }
+    else if (path.startsWith('/jobColors/entities/') && path.endsWith('color')) {
+      const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'color'.length - 1)
+      draft.jobColors.entities[jobColorId].color = previousValue
+    }
+    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('machineId')) {
+      const jobId = getJobIdFromPath(path)
+      const procedureId = getProcedureIdFromPath(path)
+      draft.jobs.entities[jobId].procedures.entities[procedureId].machineId = previousValue
+    }
+    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('processingTimeMs')) {
+      const jobId = getJobIdFromPath(path)
+      const procedureId = getProcedureIdFromPath(path)
+      draft.jobs.entities[jobId].procedures.entities[procedureId].processingTimeMs = previousValue
+    }
+    else if (path.startsWith('/machines/entities/') && pathNumberOfSlashes === 3) {
+      const machineId = path.substring('/machines/entities/'.length)
       if (previousValue === undefined) {
-        delete draft.rides.entities[rideId]
+        delete draft.machines.entities[machineId]
       } else {
-        draft.rides.entities[rideId] = previousValue
+        draft.machines.entities[machineId] = previousValue
       }
     }
-    else if (path.startsWith('/rides/entities/') && path.endsWith('description')) {
-      const rideId = path.substring('/rides/entities/'.length, path.length - 'description'.length - 1)
-      draft.rides.entities[rideId].description = previousValue
+    else if (path.startsWith('/jobs/entities/') && pathNumberOfSlashes === 3) {
+      const jobId = path.substring('/jobs/entities/'.length)
+      if (previousValue === undefined) {
+        delete draft.jobs.entities[jobId]
+      } else {
+        draft.jobs.entities[jobId] = previousValue
+      }
+    }
+    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && pathNumberOfSlashes === 6) {
+      const jobId = getJobIdFromPath(path)
+      const procedureId = getProcedureIdFromPath(path)
+      if (previousValue === undefined) {
+        delete draft.jobs.entities[jobId].procedures.entities[procedureId]
+      } else {
+        draft.jobs.entities[jobId].procedures.entities[procedureId] = previousValue
+      }
     }
   })
 }
@@ -435,11 +506,11 @@ function undoProcedureIdFieldChangesForJob(
       ...formData.jobs,
       entities: {
         ...formData.jobs.entities,
-        [jobId]:{
+        [jobId]: {
           ...formData.jobs.entities[jobId],
-          procedures:{
+          procedures: {
             ...formData.jobs.entities[jobId].procedures,
-            ids:procedureIds
+            ids: procedureIds
           }
         },
       }

@@ -896,10 +896,10 @@ export function calculateStepName(fieldChanges: FieldChange[]): string {
   if (path.endsWith('/procedures/ids')) {
     return 'Move procedures'
   }
-  if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities') && path.endsWith('machineId')) {
+  if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('machineId')) {
     return "Edit procedure's machine"
   }
-  if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities') && path.endsWith('processingTimeMs')) {
+  if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('processingTimeMs')) {
     return "Edit procedure's time"
   }
 
