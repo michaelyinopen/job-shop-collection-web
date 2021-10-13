@@ -387,6 +387,17 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
     })
     .addCase(setIsAutoTimeOptions, (state, { payload }) => {
       state.formData.isAutoTimeOptions = payload
+      if (state.formData.autoTimeOptions
+        && state.formData.manualTimeOptions.maxTimeMs === 0
+        && state.formData.manualTimeOptions.viewStartTimeMs === 0
+        && state.formData.manualTimeOptions.viewEndTimeMs === 0
+        && state.formData.manualTimeOptions.minViewDurationMs === 0
+        && state.formData.manualTimeOptions.maxViewDurationMs === 0
+      ) {
+        state.formData.manualTimeOptions = {
+          ...state.formData.autoTimeOptions
+        }
+      }
     })
     .addCase(setMaxTime, (state, { payload: { maxTimeMs } }) => {
       state.formData.manualTimeOptions.maxTimeMs = maxTimeMs

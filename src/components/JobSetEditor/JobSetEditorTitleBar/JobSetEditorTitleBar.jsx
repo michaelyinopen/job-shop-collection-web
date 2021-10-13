@@ -116,12 +116,10 @@ export const JobSetEditorTitleBar = () => {
       <RefreshJobSetButton id={id} />
       <div className={classes.separator} />
       <div className={classes.allActions}>
-        {editable && (
-          <div className={classes.grouped}>
-            <HistoryButtons />
-            <SaveJobSetButton id={id} />
-          </div>
-        )}
+        <div className={classes.grouped}>
+          {editable && <HistoryButtons />}
+          {editable && <SaveJobSetButton id={id} />}
+        </div>
         <div className={classes.grouped}>
           {id !== undefined && <EditReadonly id={id} />}
           <MoreOptions

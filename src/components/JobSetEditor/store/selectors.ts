@@ -119,6 +119,6 @@ export const showDetailSelector = (state: JobSetEditorState) => {
 
 export const canUndoSelector = (state: JobSetEditorState) => state.currentStepIndex !== 0
 
-export const canRedoSelector = (state: JobSetEditorState) => state.currentStepIndex === state.steps.length - 1
+export const canRedoSelector = (state: JobSetEditorState) => state.currentStepIndex !== state.steps.length - 1
 
 export const isHistoryPanelOpenSelector = (state: JobSetEditorState) => state.isHistoryPanelOpen

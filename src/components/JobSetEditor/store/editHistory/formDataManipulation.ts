@@ -1,4 +1,4 @@
-import { produce } from "immer"
+import { isDraft, current } from "immer"
 import type {
   FormData,
   Step,
@@ -41,88 +41,326 @@ function getProcedureIdFromPath(path: string) {
 function redoFieldChange(fieldChange: ValueFieldChange, formData: FormData): FormData {
   const { path, newValue } = fieldChange
   const pathNumberOfSlashes = numberOfSlashes(path)
-  return produce(formData, (draft) => {
-    if (path === '/title') {
-      draft.title = newValue
+  if (path === '/title') {
+    return {
+      ...formData,
+      title: newValue
     }
-    else if (path === '/description') {
-      draft.description = newValue
+  }
+  else if (path === '/description') {
+    return {
+      ...formData,
+      description: newValue
     }
-    else if (path === '/manualTimeOptions/maxTimeMs') {
-      draft.manualTimeOptions.maxTimeMs = newValue
+  }
+  else if (path === '/isAutoTimeOptions') {
+    return {
+      ...formData,
+      isAutoTimeOptions: newValue
     }
-    else if (path === '/manualTimeOptions/viewStartTimeMs') {
-      draft.manualTimeOptions.viewStartTimeMs = newValue
-    }
-    else if (path === '/manualTimeOptions/viewEndTimeMs') {
-      draft.manualTimeOptions.viewEndTimeMs = newValue
-    }
-    else if (path === '/manualTimeOptions/minViewDurationMs') {
-      draft.manualTimeOptions.minViewDurationMs = newValue
-    }
-    else if (path === '/manualTimeOptions/maxViewDurationMs') {
-      draft.manualTimeOptions.maxViewDurationMs = newValue
-    }
-    else if (path.startsWith('/machines/entities/') && path.endsWith('title')) {
-      const machineId = path.substring('/machines/entities/'.length, path.length - 'title'.length - 1)
-      draft.machines.entities[machineId].title = newValue
-    }
-    else if (path.startsWith('/machines/entities/') && path.endsWith('description')) {
-      const machineId = path.substring('/machines/entities/'.length, path.length - 'description'.length - 1)
-      draft.machines.entities[machineId].description = newValue
-    }
-    else if (path.startsWith('/jobs/entities/') && path.endsWith('title') && pathNumberOfSlashes === 3) {
-      const jobId = getJobIdFromPath(path)
-      draft.jobs.entities[jobId].title = newValue
-    }
-    else if (path.startsWith('/jobColors/entities/') && path.endsWith('textColor')) {
-      const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'textColor'.length - 1)
-      draft.jobColors.entities[jobColorId].textColor = newValue
-    }
-    else if (path.startsWith('/jobColors/entities/') && path.endsWith('color')) {
-      const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'color'.length - 1)
-      draft.jobColors.entities[jobColorId].color = newValue
-    }
-    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('machineId')) {
-      const jobId = getJobIdFromPath(path)
-      const procedureId = getProcedureIdFromPath(path)
-      if (draft.jobs.entities[jobId] && draft.jobs.entities[jobId].procedures.entities[procedureId]) {
-        // only set machineId if the procedure exist
-        draft.jobs.entities[jobId].procedures.entities[procedureId].machineId = newValue
+  }
+  else if (path === '/manualTimeOptions/maxTimeMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        maxTimeMs: newValue
       }
     }
-    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('processingTimeMs')) {
-      const jobId = getJobIdFromPath(path)
-      const procedureId = getProcedureIdFromPath(path)
-      draft.jobs.entities[jobId].procedures.entities[procedureId].processingTimeMs = newValue
-    }
-    ///
-    else if (path.startsWith('/machines/entities/') && pathNumberOfSlashes === 3) {
-      const machineId = path.substring('/machines/entities/'.length)
-      if (newValue === undefined) {
-        delete draft.machines.entities[machineId]
-      } else {
-        draft.machines.entities[machineId] = newValue
+  }
+  else if (path === '/manualTimeOptions/viewStartTimeMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        viewStartTimeMs: newValue
       }
     }
-    else if (path.startsWith('/jobs/entities/') && pathNumberOfSlashes === 3) {
-      const jobId = path.substring('/jobs/entities/'.length)
-      if (newValue === undefined) {
-        delete draft.jobs.entities[jobId]
-      } else {
-        draft.jobs.entities[jobId] = newValue
+  }
+  else if (path === '/manualTimeOptions/viewEndTimeMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        viewEndTimeMs: newValue
       }
     }
-    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && pathNumberOfSlashes === 6) {
-      const jobId = getJobIdFromPath(path)
-      const procedureId = getProcedureIdFromPath(path)
-      if (newValue === undefined) {
-        delete draft.jobs.entities[jobId].procedures.entities[procedureId]
-      } else {
-        draft.jobs.entities[jobId].procedures.entities[procedureId] = newValue
+  }
+  else if (path === '/manualTimeOptions/minViewDurationMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        minViewDurationMs: newValue
       }
     }
-  })
+  }
+  else if (path === '/manualTimeOptions/maxViewDurationMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        maxViewDurationMs: newValue
+      }
+    }
+  }
+  else if (path.startsWith('/machines/entities/') && path.endsWith('title')) {
+    const machineId = path.substring('/machines/entities/'.length, path.length - 'title'.length - 1)
+    return {
+      ...formData,
+      machines: {
+        ...formData.machines,
+        entities: {
+          ...formData.machines.entities,
+          [machineId]: {
+            ...formData.machines.entities[machineId],
+            title: newValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/machines/entities/') && path.endsWith('description')) {
+    const machineId = path.substring('/machines/entities/'.length, path.length - 'description'.length - 1)
+    return {
+      ...formData,
+      machines: {
+        ...formData.machines,
+        entities: {
+          ...formData.machines.entities,
+          [machineId]: {
+            ...formData.machines.entities[machineId],
+            description: newValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && path.endsWith('title') && pathNumberOfSlashes === 3) {
+    const jobId = getJobIdFromPath(path)
+    return {
+      ...formData,
+      jobs: {
+        ...formData.jobs,
+        entities: {
+          ...formData.jobs.entities,
+          [jobId]: {
+            ...formData.jobs.entities[jobId],
+            title: newValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobColors/entities/') && path.endsWith('textColor')) {
+    const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'textColor'.length - 1)
+    return {
+      ...formData,
+      jobColors: {
+        ...formData.jobColors,
+        entities: {
+          ...formData.jobColors.entities,
+          [jobColorId]: {
+            ...formData.jobColors.entities[jobColorId],
+            textColor: newValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobColors/entities/') && path.endsWith('color')) {
+    const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'color'.length - 1)
+    return {
+      ...formData,
+      jobColors: {
+        ...formData.jobColors,
+        entities: {
+          ...formData.jobColors.entities,
+          [jobColorId]: {
+            ...formData.jobColors.entities[jobColorId],
+            color: newValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('machineId')) {
+    const jobId = getJobIdFromPath(path)
+    const procedureId = getProcedureIdFromPath(path)
+    if (formData.jobs.entities[jobId] && formData.jobs.entities[jobId].procedures.entities[procedureId]) {
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: {
+              ...formData.jobs.entities[jobId],
+              procedures: {
+                ...formData.jobs.entities[jobId].procedures,
+                entities: {
+                  ...formData.jobs.entities[jobId].procedures.entities,
+                  [procedureId]: {
+                    ...formData.jobs.entities[jobId].procedures.entities[procedureId],
+                    machineId: newValue
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      return formData
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('processingTimeMs')) {
+    const jobId = getJobIdFromPath(path)
+    const procedureId = getProcedureIdFromPath(path)
+    return {
+      ...formData,
+      jobs: {
+        ...formData.jobs,
+        entities: {
+          ...formData.jobs.entities,
+          [jobId]: {
+            ...formData.jobs.entities[jobId],
+            procedures: {
+              ...formData.jobs.entities[jobId].procedures,
+              entities: {
+                ...formData.jobs.entities[jobId].procedures.entities,
+                [procedureId]: {
+                  ...formData.jobs.entities[jobId].procedures.entities[procedureId],
+                  processingTimeMs: newValue
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/machines/entities/') && pathNumberOfSlashes === 3) {
+    const machineId = path.substring('/machines/entities/'.length)
+    if (newValue === undefined) {
+      let newMachineEntities = { ...formData.machines.entities }
+      delete newMachineEntities[machineId]
+      return {
+        ...formData,
+        machines: {
+          ...formData.machines,
+          entities: newMachineEntities
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        machines: {
+          ...formData.machines,
+          entities: {
+            ...formData.machines.entities,
+            [machineId]: newValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && pathNumberOfSlashes === 3) {
+    const jobId = path.substring('/jobs/entities/'.length)
+    if (newValue === undefined) {
+      let newJobEntities = { ...formData.jobs.entities }
+      delete newJobEntities[jobId]
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: newJobEntities
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: newValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobColors/entities/') && pathNumberOfSlashes === 3) {
+    const jobColorId = path.substring('/jobColors/entities/'.length)
+    if (newValue === undefined) {
+      let newJobColorEntities = { ...formData.jobColors.entities }
+      delete newJobColorEntities[jobColorId]
+      return {
+        ...formData,
+        jobColors: {
+          ...formData.jobColors,
+          entities: newJobColorEntities
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        jobColors: {
+          ...formData.jobColors,
+          entities: {
+            ...formData.jobColors.entities,
+            [jobColorId]: newValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && pathNumberOfSlashes === 6) {
+    const jobId = getJobIdFromPath(path)
+    const procedureId = getProcedureIdFromPath(path)
+    if (newValue === undefined) {
+      let newProcedureEntities = { ...formData.jobs.entities[jobId].procedures.entities }
+      delete newProcedureEntities[procedureId]
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: {
+              ...formData.jobs.entities[jobId],
+              procedures: {
+                ...formData.jobs.entities[jobId].procedures,
+                entities: newProcedureEntities
+              }
+            }
+          }
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: {
+              ...formData.jobs.entities[jobId],
+              procedures: {
+                ...formData.jobs.entities[jobId].procedures,
+                entities: {
+                  ...formData.jobs.entities[jobId].procedures.entities,
+                  [procedureId]: newValue
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return formData
 }
 
 function redoMachineIdFieldChanges(
@@ -426,7 +664,9 @@ function redoProcedureIdFieldChangesForJob(
 }
 
 export function redoStep(step: Step, previousFormData: FormData): FormData {
-  let formData = previousFormData
+  let formData = isDraft(previousFormData)
+    ? current(previousFormData)
+    : previousFormData
 
   const fieldChangeApplied = step.operations
     .flatMap(op => op.fieldChanges.map(fc => ({ fieldChange: fc, applied: op.applied })))
@@ -464,87 +704,335 @@ export function redoStep(step: Step, previousFormData: FormData): FormData {
 function undoFieldChange(fieldChange: ValueFieldChange, formData: FormData): FormData {
   const { path, previousValue } = fieldChange
   const pathNumberOfSlashes = numberOfSlashes(path)
-  return produce(formData, (draft) => {
-    if (path === '/title') {
-      draft.title = previousValue
+  if (path === '/title') {
+    return {
+      ...formData,
+      title: previousValue
     }
-    else if (path === '/description') {
-      draft.description = previousValue
+  }
+  else if (path === '/description') {
+    return {
+      ...formData,
+      description: previousValue
     }
-    else if (path === '/manualTimeOptions/maxTimeMs') {
-      draft.manualTimeOptions.maxTimeMs = previousValue
+  }
+  else if (path === '/isAutoTimeOptions') {
+    return {
+      ...formData,
+      isAutoTimeOptions: previousValue
     }
-    else if (path === '/manualTimeOptions/viewStartTimeMs') {
-      draft.manualTimeOptions.viewStartTimeMs = previousValue
-    }
-    else if (path === '/manualTimeOptions/viewEndTimeMs') {
-      draft.manualTimeOptions.viewEndTimeMs = previousValue
-    }
-    else if (path === '/manualTimeOptions/minViewDurationMs') {
-      draft.manualTimeOptions.minViewDurationMs = previousValue
-    }
-    else if (path === '/manualTimeOptions/maxViewDurationMs') {
-      draft.manualTimeOptions.maxViewDurationMs = previousValue
-    }
-    else if (path.startsWith('/machines/entities/') && path.endsWith('title')) {
-      const machineId = path.substring('/machines/entities/'.length, path.length - 'title'.length - 1)
-      draft.machines.entities[machineId].title = previousValue
-    }
-    else if (path.startsWith('/machines/entities/') && path.endsWith('description')) {
-      const machineId = path.substring('/machines/entities/'.length, path.length - 'description'.length - 1)
-      draft.machines.entities[machineId].description = previousValue
-    }
-    else if (path.startsWith('/jobs/entities/') && path.endsWith('title') && pathNumberOfSlashes === 3) {
-      const jobId = getJobIdFromPath(path)
-      draft.jobs.entities[jobId].title = previousValue
-    }
-    else if (path.startsWith('/jobColors/entities/') && path.endsWith('textColor')) {
-      const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'textColor'.length - 1)
-      draft.jobColors.entities[jobColorId].textColor = previousValue
-    }
-    else if (path.startsWith('/jobColors/entities/') && path.endsWith('color')) {
-      const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'color'.length - 1)
-      draft.jobColors.entities[jobColorId].color = previousValue
-    }
-    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('machineId')) {
-      const jobId = getJobIdFromPath(path)
-      const procedureId = getProcedureIdFromPath(path)
-      if (draft.jobs.entities[jobId] && draft.jobs.entities[jobId].procedures.entities[procedureId]) {
-        // only set machineId if the procedure exist
-        draft.jobs.entities[jobId].procedures.entities[procedureId].machineId = previousValue
+  }
+  else if (path === '/manualTimeOptions/maxTimeMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        maxTimeMs: previousValue
       }
     }
-    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('processingTimeMs')) {
-      const jobId = getJobIdFromPath(path)
-      const procedureId = getProcedureIdFromPath(path)
-      draft.jobs.entities[jobId].procedures.entities[procedureId].processingTimeMs = previousValue
-    }
-    else if (path.startsWith('/machines/entities/') && pathNumberOfSlashes === 3) {
-      const machineId = path.substring('/machines/entities/'.length)
-      if (previousValue === undefined) {
-        delete draft.machines.entities[machineId]
-      } else {
-        draft.machines.entities[machineId] = previousValue
+  }
+  else if (path === '/manualTimeOptions/viewStartTimeMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        viewStartTimeMs: previousValue
       }
     }
-    else if (path.startsWith('/jobs/entities/') && pathNumberOfSlashes === 3) {
-      const jobId = path.substring('/jobs/entities/'.length)
-      if (previousValue === undefined) {
-        delete draft.jobs.entities[jobId]
-      } else {
-        draft.jobs.entities[jobId] = previousValue
+  }
+  else if (path === '/manualTimeOptions/viewEndTimeMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        viewEndTimeMs: previousValue
       }
     }
-    else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && pathNumberOfSlashes === 6) {
-      const jobId = getJobIdFromPath(path)
-      const procedureId = getProcedureIdFromPath(path)
-      if (previousValue === undefined) {
-        delete draft.jobs.entities[jobId].procedures.entities[procedureId]
-      } else {
-        draft.jobs.entities[jobId].procedures.entities[procedureId] = previousValue
+  }
+  else if (path === '/manualTimeOptions/minViewDurationMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        minViewDurationMs: previousValue
       }
     }
-  })
+  }
+  else if (path === '/manualTimeOptions/maxViewDurationMs') {
+    return {
+      ...formData,
+      manualTimeOptions: {
+        ...formData.manualTimeOptions,
+        maxViewDurationMs: previousValue
+      }
+    }
+  }
+  else if (path.startsWith('/machines/entities/') && path.endsWith('title')) {
+    const machineId = path.substring('/machines/entities/'.length, path.length - 'title'.length - 1)
+    return {
+      ...formData,
+      machines: {
+        ...formData.machines,
+        entities: {
+          ...formData.machines.entities,
+          [machineId]: {
+            ...formData.machines.entities[machineId],
+            title: previousValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/machines/entities/') && path.endsWith('description')) {
+    const machineId = path.substring('/machines/entities/'.length, path.length - 'description'.length - 1)
+    return {
+      ...formData,
+      machines: {
+        ...formData.machines,
+        entities: {
+          ...formData.machines.entities,
+          [machineId]: {
+            ...formData.machines.entities[machineId],
+            description: previousValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && path.endsWith('title') && pathNumberOfSlashes === 3) {
+    const jobId = getJobIdFromPath(path)
+    return {
+      ...formData,
+      jobs: {
+        ...formData.jobs,
+        entities: {
+          ...formData.jobs.entities,
+          [jobId]: {
+            ...formData.jobs.entities[jobId],
+            title: previousValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobColors/entities/') && pathNumberOfSlashes === 3) {
+    const jobColorId = path.substring('/jobColors/entities/'.length)
+    if (previousValue === undefined) {
+      let newJobColorEntities = { ...formData.jobColors.entities }
+      delete newJobColorEntities[jobColorId]
+      return {
+        ...formData,
+        jobColors: {
+          ...formData.jobColors,
+          entities: newJobColorEntities
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        jobColors: {
+          ...formData.jobColors,
+          entities: {
+            ...formData.jobColors.entities,
+            [jobColorId]: previousValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobColors/entities/') && path.endsWith('color')) {
+    const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'color'.length - 1)
+    return {
+      ...formData,
+      jobColors: {
+        ...formData.jobColors,
+        entities: {
+          ...formData.jobColors.entities,
+          [jobColorId]: {
+            ...formData.jobColors.entities[jobColorId],
+            color: previousValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('machineId')) {
+    const jobId = getJobIdFromPath(path)
+    const procedureId = getProcedureIdFromPath(path)
+    if (formData.jobs.entities[jobId] && formData.jobs.entities[jobId].procedures.entities[procedureId]) {
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: {
+              ...formData.jobs.entities[jobId],
+              procedures: {
+                ...formData.jobs.entities[jobId].procedures,
+                entities: {
+                  ...formData.jobs.entities[jobId].procedures.entities,
+                  [procedureId]: {
+                    ...formData.jobs.entities[jobId].procedures.entities[procedureId],
+                    machineId: previousValue
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    else {
+      return formData
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('processingTimeMs')) {
+    const jobId = getJobIdFromPath(path)
+    const procedureId = getProcedureIdFromPath(path)
+    return {
+      ...formData,
+      jobs: {
+        ...formData.jobs,
+        entities: {
+          ...formData.jobs.entities,
+          [jobId]: {
+            ...formData.jobs.entities[jobId],
+            procedures: {
+              ...formData.jobs.entities[jobId].procedures,
+              entities: {
+                ...formData.jobs.entities[jobId].procedures.entities,
+                [procedureId]: {
+                  ...formData.jobs.entities[jobId].procedures.entities[procedureId],
+                  processingTimeMs: previousValue
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/machines/entities/') && pathNumberOfSlashes === 3) {
+    const machineId = path.substring('/machines/entities/'.length)
+    if (previousValue === undefined) {
+      let newMachineEntities = { ...formData.machines.entities }
+      delete newMachineEntities[machineId]
+      return {
+        ...formData,
+        machines: {
+          ...formData.machines,
+          entities: newMachineEntities
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        machines: {
+          ...formData.machines,
+          entities: {
+            ...formData.machines.entities,
+            [machineId]: previousValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && pathNumberOfSlashes === 3) {
+    const jobId = path.substring('/jobs/entities/'.length)
+    if (previousValue === undefined) {
+      let newJobEntities = { ...formData.jobs.entities }
+      delete newJobEntities[jobId]
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: newJobEntities
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: previousValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobColors/entities/') && pathNumberOfSlashes === 3) {
+    const jobId = path.substring('/jobs/entities/'.length)
+    if (previousValue === undefined) {
+      let newJobEntities = { ...formData.jobs.entities }
+      delete newJobEntities[jobId]
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: newJobEntities
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: previousValue
+          }
+        }
+      }
+    }
+  }
+  else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && pathNumberOfSlashes === 6) {
+    const jobId = getJobIdFromPath(path)
+    const procedureId = getProcedureIdFromPath(path)
+    if (previousValue === undefined) {
+      let newProcedureEntities = { ...formData.jobs.entities[jobId].procedures.entities }
+      delete newProcedureEntities[procedureId]
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: {
+              ...formData.jobs.entities[jobId],
+              procedures: {
+                ...formData.jobs.entities[jobId].procedures,
+                entities: newProcedureEntities
+              }
+            }
+          }
+        }
+      }
+    } else {
+      return {
+        ...formData,
+        jobs: {
+          ...formData.jobs,
+          entities: {
+            ...formData.jobs.entities,
+            [jobId]: {
+              ...formData.jobs.entities[jobId],
+              procedures: {
+                ...formData.jobs.entities[jobId].procedures,
+                entities: {
+                  ...formData.jobs.entities[jobId].procedures.entities,
+                  [procedureId]: previousValue
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return formData
 }
 
 function undoMachineIdFieldChanges(
@@ -812,7 +1300,9 @@ function undoProcedureIdFieldChangesForJob(
 }
 
 export function undoStep(step: Step, previousFormData: FormData): FormData {
-  let formData = previousFormData
+  let formData = isDraft(previousFormData)
+    ? current(previousFormData)
+    : previousFormData
 
   const fieldChangeApplied = step.operations
     .flatMap(op => op.fieldChanges.map(fc => ({ fieldChange: fc, applied: op.applied })))
