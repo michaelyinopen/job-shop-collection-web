@@ -83,7 +83,184 @@ export function getFieldChanges(previousFormData: FormData, currentFormData: For
 
 // includes jobColor's filed changes
 function getJobsFieldChanges(previousFormData: FormData, currentFormData: FormData): Array<FieldChange | GroupedFieldChanges> {
+  const previousJobIds = previousFormData.jobs.ids
+  const currentJobIds = currentFormData.jobs.ids
 
+  function getRemoveJobFieldChanges(
+    previousJobIds: string[],
+    currentJobIds: string[],
+    previousFormData: FormData,
+  ) {
+    let removeJobFieldChanges: Array<FieldChange | GroupedFieldChanges> = []
+    const previousJobIdAndIndices: Array<{ id: string, index: number }> =
+      previousJobIds.map((id, index) => ({ id, index }))
+    const removedJobIds = previousJobIds.filter(pJId => !currentJobIds.includes(pJId))
+    for (const removedJobId of removedJobIds) {
+      const removedIdIndex = previousJobIdAndIndices.find(i => i.id === removedJobId)
+      const idFieldChange = {
+        path: '/jobs/ids',
+        collectionChange: {
+          type: 'remove' as const,
+          id: removedJobId,
+          index: removedIdIndex!.index
+        }
+      }
+      const entityFieldChange = {
+        path: `/jobs/entities/${removedJobId}`,
+        previousValue: previousFormData.jobs.entities[removedJobId],
+        newValue: undefined
+      }
+      removeJobFieldChanges.push([idFieldChange, entityFieldChange])
+    }
+    return removeJobFieldChanges
+  }
+  const removeProcedureFieldChanges = getRemoveJobFieldChanges(
+    previousJobIds,
+    currentJobIds,
+    previousFormData
+  )
+
+  function getMoveProcedureFieldChanges(
+    previousJobIds: string[],
+    currentJobIds: string[]
+  ) {
+    // machines that are not added or removed
+    const correspondingPreviousJobIds = previousJobIds.filter(cJId => currentJobIds.includes(cJId))
+    const correspondingCurrentJobIds = currentJobIds.filter(cJId => previousJobIds.includes(cJId))
+    return arraysEqual(correspondingPreviousJobIds, correspondingCurrentJobIds)
+      ? []
+      : [
+        {
+          path: '/jobs/ids',
+          collectionChange: {
+            type: 'move' as const,
+            previousValue: correspondingPreviousJobIds,
+            newValue: correspondingCurrentJobIds,
+          }
+        }
+      ]
+  }
+  const moveJobFieldChanges = getMoveProcedureFieldChanges(
+    previousJobIds,
+    currentJobIds
+  )
+
+  function getUpdateJobFieldChanges(
+    previousJobIds: string[],
+    currentJobIds: string[],
+    previousFormData: FormData,
+    currentFormData: FormData
+  ) {
+    let updateJobFieldChanges: Array<FieldChange | GroupedFieldChanges> = []
+    const commonJobIds = currentJobIds.filter(cPId => previousJobIds.includes(cPId))
+    for (const commonJobId of commonJobIds) {
+      const previousJob = previousFormData.jobs.entities[commonJobId]
+      const currentJob = currentFormData.jobs.entities[commonJobId]
+      if (previousJob.title !== currentJob.title) {
+        updateJobFieldChanges.push({
+          path: `/jobs/entities/${commonJobId}/title`,
+          previousValue: previousJob.title,
+          newValue: currentJob.title
+        })
+      }
+      const procedureFieldChanges = getProceduresFieldChanges(
+        commonJobId,
+        previousJob,
+        currentJob
+      )
+      updateJobFieldChanges.push(...procedureFieldChanges)
+    }
+    return updateJobFieldChanges
+  }
+  const updateJobFieldChanges = getUpdateJobFieldChanges(
+    previousJobIds,
+    currentJobIds,
+    previousFormData,
+    currentFormData
+  )
+
+  function getAddJobFieldChanges(
+    previousJobIds: string[],
+    currentJobIds: string[],
+    currentFormData: FormData
+  ) {
+    let addJobFieldChanges: Array<FieldChange | GroupedFieldChanges> = []
+    const correspondingCurrentJobIds = currentJobIds.filter(cPId => previousJobIds.includes(cPId))
+    // currentIds with index of the previous position before any removal
+    const referenceJobIdIndices: Array<{ id: string, index: number }> =
+      previousJobIds
+        .map((id, index) => ({ id, index }))
+        .filter(pIdIndex => currentJobIds.includes(pIdIndex.id))
+        .map((pIdIndex, j) => ({
+          id: correspondingCurrentJobIds[j],
+          index: pIdIndex.index
+        }))
+
+    let addedJobIdIndices: Array<{ id: string, index: number | 'beginning', subindex: number }> = []
+    let currentIndex: number | 'beginning' = 'beginning'
+    let subindex = 0
+    for (const currentProcedureId of currentJobIds) {
+      const matchingReference = referenceJobIdIndices.find(rIdIndex => rIdIndex.id === currentProcedureId)
+      if (matchingReference) {
+        currentIndex = matchingReference.index
+        subindex = 0
+      } else {
+        addedJobIdIndices.push({
+          id: currentProcedureId,
+          index: currentIndex,
+          subindex
+        })
+        subindex = subindex + 1
+      }
+    }
+
+    for (const { id: addedId, index, subindex } of addedJobIdIndices) {
+      const idFieldChange = {
+        path: `/jobs/ids`,
+        collectionChange: {
+          type: 'add' as const,
+          id: addedId,
+          position: {
+            index: index,
+            subindex: subindex
+          }
+        }
+      }
+      const entityFieldChange = {
+        path: `/jobs/entities/${addedId}`,
+        previousValue: undefined,
+        newValue: {
+          ...currentFormData.jobs.entities[addedId],
+          procedures: {
+            ...currentFormData.jobs.entities[addedId].procedures,
+            entities: Object.fromEntries(
+              Object.values(currentFormData.jobs.entities[addedId].procedures.entities).map(p => [
+                p.id,
+                {
+                  ...p,
+                  machineId: null
+                }
+              ])
+            )
+          }
+        }
+      }
+      addJobFieldChanges.push([idFieldChange, entityFieldChange])
+    }
+    return addJobFieldChanges
+  }
+  const addJobFieldChanges = getAddJobFieldChanges(
+    previousJobIds,
+    currentJobIds,
+    currentFormData
+  )
+
+  return [
+    ...removeProcedureFieldChanges,
+    ...moveJobFieldChanges,
+    ...updateJobFieldChanges,
+    ...addJobFieldChanges,
+  ]
 }
 
 // same job
@@ -156,7 +333,7 @@ function getProceduresFieldChanges(jobId: string, previousFormDataJob: JobState,
 
   // does not handle machineId
   function getUpdateProcedureFieldChanges(
-    jobId:string,
+    jobId: string,
     previousProcedureIds: string[],
     currentProcedureIds: string[],
     previousFormDataJob: JobState,
@@ -223,7 +400,7 @@ function getProceduresFieldChanges(jobId: string, previousFormDataJob: JobState,
 
     for (const { id: addedId, index, subindex } of addedProcedureIdIndices) {
       const idFieldChange = {
-        path: `/jobs/entities/${jobId}/procedures/id`,
+        path: `/jobs/entities/${jobId}/procedures/ids`,
         collectionChange: {
           type: 'add' as const,
           id: addedId,
