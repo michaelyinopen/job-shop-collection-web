@@ -110,7 +110,20 @@ function getJobsFieldChanges(previousFormData: FormData, currentFormData: FormDa
         previousValue: previousFormData.jobs.entities[removedJobId],
         newValue: undefined
       }
-      removeJobFieldChanges.push([idFieldChange, entityFieldChange])
+      const jobColorIdFieldChange = {
+        path: '/jobColors/ids',
+        collectionChange: {
+          type: 'remove' as const,
+          id: removedJobId,
+          index: removedIdIndex!.index
+        }
+      }
+      const jobColorEntityFieldChange = {
+        path: `/jobColors/entities/${removedJobId}`,
+        previousValue: previousFormData.jobColors.entities[removedJobId],
+        newValue: undefined
+      }
+      removeJobFieldChanges.push([idFieldChange, entityFieldChange, jobColorIdFieldChange, jobColorEntityFieldChange])
     }
     return removeJobFieldChanges
   }
@@ -120,7 +133,7 @@ function getJobsFieldChanges(previousFormData: FormData, currentFormData: FormDa
     previousFormData
   )
 
-  function getMoveProcedureFieldChanges(
+  function getMoveJobFieldChanges(
     previousJobIds: string[],
     currentJobIds: string[]
   ) {
@@ -137,10 +150,18 @@ function getJobsFieldChanges(previousFormData: FormData, currentFormData: FormDa
             previousValue: correspondingPreviousJobIds,
             newValue: correspondingCurrentJobIds,
           }
+        },
+        {
+          path: '/jobColors/ids',
+          collectionChange: {
+            type: 'move' as const,
+            previousValue: correspondingPreviousJobIds,
+            newValue: correspondingCurrentJobIds,
+          }
         }
       ]
   }
-  const moveJobFieldChanges = getMoveProcedureFieldChanges(
+  const moveJobFieldChanges = getMoveJobFieldChanges(
     previousJobIds,
     currentJobIds
   )
@@ -169,6 +190,23 @@ function getJobsFieldChanges(previousFormData: FormData, currentFormData: FormDa
         currentJob
       )
       updateJobFieldChanges.push(...procedureFieldChanges)
+      
+      const previousJobColor = previousFormData.jobColors.entities[commonJobId]
+      const currentJobColor = currentFormData.jobColors.entities[commonJobId]
+      if (previousJobColor.color !== currentJobColor.color) {
+        updateJobFieldChanges.push({
+          path: `/jobColors/entities/${commonJobId}/color`,
+          previousValue: previousJobColor.color,
+          newValue: currentJobColor.color
+        })
+      }
+      if (previousJobColor.textColor !== currentJobColor.textColor) {
+        updateJobFieldChanges.push({
+          path: `/jobColors/entities/${commonJobId}/textColor`,
+          previousValue: previousJobColor.textColor,
+          newValue: currentJobColor.textColor
+        })
+      }
     }
     return updateJobFieldChanges
   }
@@ -245,7 +283,23 @@ function getJobsFieldChanges(previousFormData: FormData, currentFormData: FormDa
           }
         }
       }
-      addJobFieldChanges.push([idFieldChange, entityFieldChange])
+      const jobColorIdFieldChange = {
+        path: `/jobColors/ids`,
+        collectionChange: {
+          type: 'add' as const,
+          id: addedId,
+          position: {
+            index: index,
+            subindex: subindex
+          }
+        }
+      }
+      const jobColorEntityFieldChange = {
+        path: `/jobColors/entities/${addedId}`,
+        previousValue: undefined,
+        newValue: currentFormData.jobColors.entities[addedId]
+      }
+      addJobFieldChanges.push([idFieldChange, entityFieldChange, jobColorIdFieldChange, jobColorEntityFieldChange])
     }
     return addJobFieldChanges
   }
