@@ -68,69 +68,302 @@ function redoFieldChange(fieldChange: ValueFieldChange, formData: FormData): For
   })
 }
 
-function redoRideIdFieldChanges(
+function redoMachineIdFieldChanges(
   formData: FormData,
-  rideIdFieldChangeApplies: { fieldChange: CollectionFieldChange, applied: boolean }[]
+  machineIdFieldChangeApplies: { fieldChange: CollectionFieldChange, applied: boolean }[]
 ): FormData {
-  if (rideIdFieldChangeApplies.length === 0) {
+  if (machineIdFieldChangeApplies.length === 0) {
     return formData
   }
-  let rideIds: string[]
+  let machineIds: string[]
 
   // move
-  const appliedMoveFieldChangeIndex = rideIdFieldChangeApplies
+  const appliedMoveFieldChangeIndex = machineIdFieldChangeApplies
     .findIndex(ca => ca.fieldChange.collectionChange?.type === 'move' && ca.applied)
   if (appliedMoveFieldChangeIndex === -1) {
-    rideIds = formData.rides.ids
+    machineIds = formData.machines.ids
   } else {
-    const previousMoveRideIds: string[] =
-      (rideIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
-    const newMoveRideIds: string[] =
-      (rideIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).newValue
-    rideIds = previousMoveRideIds.reduce(
-      (accRideIds, pRid, index) => {
-        // swap the moved items according to unaltered formData.ride.ids
-        accRideIds[formData.rides.ids.indexOf(pRid)] = newMoveRideIds[index]
-        return accRideIds
+    const previousMoveMachineIds: string[] =
+      (machineIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
+    const newMoveMachineIds: string[] =
+      (machineIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).newValue
+    machineIds = previousMoveMachineIds.reduce(
+      (accMachineIds, pMid, index) => {
+        // swap the moved items according to unaltered formData.machine.ids
+        accMachineIds[formData.machines.ids.indexOf(pMid)] = newMoveMachineIds[index]
+        return accMachineIds
       },
-      [...formData.rides.ids]
+      [...formData.machines.ids]
     )
   }
 
   // add
-  const appliedCollectionAddChanges = rideIdFieldChangeApplies
+  const appliedCollectionAddChanges = machineIdFieldChangeApplies
     .filter(ca => ca.applied && ca.fieldChange.collectionChange?.type === 'add')
     .map(ca => ca.fieldChange.collectionChange as CollectionAddChange)
   if (appliedCollectionAddChanges.length > 0) {
-    let rideIdsWithAdd: string[] = []
-    const rideIdAndIndices: Array<{ id: string, index: number }> =
-      rideIds.map((id, index) => ({ id, index }))
+    let machineIdsWithAdd: string[] = []
+    const machineIdAndIndices: Array<{ id: string, index: number }> =
+      machineIds.map((id, index) => ({ id, index }))
     const groupedAddChanges = groupby(appliedCollectionAddChanges, c => c.position.index)
     for (const change of groupedAddChanges['beginning'] ?? []) {
-      rideIdsWithAdd.push(change.id)
+      machineIdsWithAdd.push(change.id)
     }
-    for (const { id, index } of rideIdAndIndices) {
-      rideIdsWithAdd.push(id)
+    for (const { id, index } of machineIdAndIndices) {
+      machineIdsWithAdd.push(id)
       for (const change of groupedAddChanges[index] ?? []) {
-        rideIdsWithAdd.push(change.id)
+        machineIdsWithAdd.push(change.id)
       }
     }
-    rideIds = rideIdsWithAdd
+    machineIds = machineIdsWithAdd
   }
 
   // remove
-  const appliedCollectionRemoveChanges = rideIdFieldChangeApplies
+  const appliedCollectionRemoveChanges = machineIdFieldChangeApplies
     .filter(ca => ca.applied && ca.fieldChange.collectionChange?.type === 'remove')
     .map(ca => ca.fieldChange.collectionChange as CollectionRemoveChange)
   for (const removeChange of appliedCollectionRemoveChanges) {
-    rideIds = rideIds.filter(id => id !== removeChange.id)
+    machineIds = machineIds.filter(id => id !== removeChange.id)
   }
 
   return {
     ...formData,
-    rides: {
-      ...formData.rides,
-      ids: rideIds
+    machines: {
+      ...formData.machines,
+      ids: machineIds
+    }
+  }
+}
+
+function redoJobIdFieldChanges(
+  formData: FormData,
+  jobIdFieldChangeApplies: { fieldChange: CollectionFieldChange, applied: boolean }[]
+): FormData {
+  if (jobIdFieldChangeApplies.length === 0) {
+    return formData
+  }
+  let jobIds: string[]
+
+  // move
+  const appliedMoveFieldChangeIndex = jobIdFieldChangeApplies
+    .findIndex(ca => ca.fieldChange.collectionChange?.type === 'move' && ca.applied)
+  if (appliedMoveFieldChangeIndex === -1) {
+    jobIds = formData.jobs.ids
+  } else {
+    const previousMoveJobIds: string[] =
+      (jobIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
+    const newMoveJobIds: string[] =
+      (jobIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).newValue
+    jobIds = previousMoveJobIds.reduce(
+      (accJobIds, pJid, index) => {
+        // swap the moved items according to unaltered formData.jobs.ids
+        accJobIds[formData.jobs.ids.indexOf(pJid)] = newMoveJobIds[index]
+        return accJobIds
+      },
+      [...formData.jobs.ids]
+    )
+  }
+
+  // add
+  const appliedCollectionAddChanges = jobIdFieldChangeApplies
+    .filter(ca => ca.applied && ca.fieldChange.collectionChange?.type === 'add')
+    .map(ca => ca.fieldChange.collectionChange as CollectionAddChange)
+  if (appliedCollectionAddChanges.length > 0) {
+    let jobIdsWithAdd: string[] = []
+    const jobIdAndIndices: Array<{ id: string, index: number }> =
+      jobIds.map((id, index) => ({ id, index }))
+    const groupedAddChanges = groupby(appliedCollectionAddChanges, c => c.position.index)
+    for (const change of groupedAddChanges['beginning'] ?? []) {
+      jobIdsWithAdd.push(change.id)
+    }
+    for (const { id, index } of jobIdAndIndices) {
+      jobIdsWithAdd.push(id)
+      for (const change of groupedAddChanges[index] ?? []) {
+        jobIdsWithAdd.push(change.id)
+      }
+    }
+    jobIds = jobIdsWithAdd
+  }
+
+  // remove
+  const appliedCollectionRemoveChanges = jobIdFieldChangeApplies
+    .filter(ca => ca.applied && ca.fieldChange.collectionChange?.type === 'remove')
+    .map(ca => ca.fieldChange.collectionChange as CollectionRemoveChange)
+  for (const removeChange of appliedCollectionRemoveChanges) {
+    jobIds = jobIds.filter(id => id !== removeChange.id)
+  }
+
+  return {
+    ...formData,
+    jobs: {
+      ...formData.jobs,
+      ids: jobIds
+    }
+  }
+}
+
+function redoJobColorIdFieldChanges(
+  formData: FormData,
+  jobColorIdFieldChangeApplies: { fieldChange: CollectionFieldChange, applied: boolean }[]
+): FormData {
+  if (jobColorIdFieldChangeApplies.length === 0) {
+    return formData
+  }
+  let jobColorIds: string[]
+
+  // move
+  const appliedMoveFieldChangeIndex = jobColorIdFieldChangeApplies
+    .findIndex(ca => ca.fieldChange.collectionChange?.type === 'move' && ca.applied)
+  if (appliedMoveFieldChangeIndex === -1) {
+    jobColorIds = formData.jobColors.ids
+  } else {
+    const previousMoveJobIds: string[] =
+      (jobColorIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
+    const newMoveJobColorIds: string[] =
+      (jobColorIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).newValue
+    jobColorIds = previousMoveJobIds.reduce(
+      (accJobColorIds, pJcid, index) => {
+        // swap the moved items according to unaltered formData.jobs.ids
+        accJobColorIds[formData.jobColors.ids.indexOf(pJcid)] = newMoveJobColorIds[index]
+        return accJobColorIds
+      },
+      [...formData.jobColors.ids]
+    )
+  }
+
+  // add
+  const appliedCollectionAddChanges = jobColorIdFieldChangeApplies
+    .filter(ca => ca.applied && ca.fieldChange.collectionChange?.type === 'add')
+    .map(ca => ca.fieldChange.collectionChange as CollectionAddChange)
+  if (appliedCollectionAddChanges.length > 0) {
+    let jobColorIdsWithAdd: string[] = []
+    const jobIdAndIndices: Array<{ id: string, index: number }> =
+      jobColorIds.map((id, index) => ({ id, index }))
+    const groupedAddChanges = groupby(appliedCollectionAddChanges, c => c.position.index)
+    for (const change of groupedAddChanges['beginning'] ?? []) {
+      jobColorIdsWithAdd.push(change.id)
+    }
+    for (const { id, index } of jobIdAndIndices) {
+      jobColorIdsWithAdd.push(id)
+      for (const change of groupedAddChanges[index] ?? []) {
+        jobColorIdsWithAdd.push(change.id)
+      }
+    }
+    jobColorIds = jobColorIdsWithAdd
+  }
+
+  // remove
+  const appliedCollectionRemoveChanges = jobColorIdFieldChangeApplies
+    .filter(ca => ca.applied && ca.fieldChange.collectionChange?.type === 'remove')
+    .map(ca => ca.fieldChange.collectionChange as CollectionRemoveChange)
+  for (const removeChange of appliedCollectionRemoveChanges) {
+    jobColorIds = jobColorIds.filter(id => id !== removeChange.id)
+  }
+
+  return {
+    ...formData,
+    jobColors: {
+      ...formData.jobColors,
+      ids: jobColorIds
+    }
+  }
+}
+
+function redoProcedureIdFieldChanges(
+  formData: FormData,
+  procedureIdFieldChangeApplies: { fieldChange: CollectionFieldChange, applied: boolean }[]
+): FormData {
+  if (procedureIdFieldChangeApplies.length === 0) {
+    return formData
+  }
+  let resultFormData = formData
+  const groupedProcedureIdFieldChanges = groupby(
+    procedureIdFieldChangeApplies,
+    c => getJobIdFromPath(c.fieldChange.path)
+  )
+  for (const [jobId, fieldChangeApplies] of Object.entries(groupedProcedureIdFieldChanges)) {
+    resultFormData = redoProcedureIdFieldChangesForJob(
+      jobId,
+      resultFormData,
+      fieldChangeApplies
+    )
+  }
+  return resultFormData
+}
+
+function redoProcedureIdFieldChangesForJob(
+  jobId: string,
+  formData: FormData,
+  procedureIdFieldChangeApplies: { fieldChange: CollectionFieldChange, applied: boolean }[]
+): FormData {
+  if (procedureIdFieldChangeApplies.length === 0) {
+    return formData
+  }
+  let procedureIds: string[]
+
+  // move
+  const appliedMoveFieldChangeIndex = procedureIdFieldChangeApplies
+    .findIndex(ca => ca.fieldChange.collectionChange?.type === 'move' && ca.applied)
+  if (appliedMoveFieldChangeIndex === -1) {
+    procedureIds = formData.jobs.entities[jobId].procedures.ids
+  } else {
+    const previousMoveProcedureIds: string[] =
+      (procedureIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
+    const newMoveProcedureIds: string[] =
+      (procedureIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).newValue
+    procedureIds = previousMoveProcedureIds.reduce(
+      (accProcedureIds, pPid, index) => {
+        // swap the moved items according to unaltered formData.jobs.ids
+        accProcedureIds[formData.jobs.entities[jobId].procedures.ids.indexOf(pPid)] = newMoveProcedureIds[index]
+        return accProcedureIds
+      },
+      [...formData.jobs.entities[jobId].procedures.ids]
+    )
+  }
+
+  // add
+  const appliedCollectionAddChanges = procedureIdFieldChangeApplies
+    .filter(ca => ca.applied && ca.fieldChange.collectionChange?.type === 'add')
+    .map(ca => ca.fieldChange.collectionChange as CollectionAddChange)
+  if (appliedCollectionAddChanges.length > 0) {
+    let procedureIdsWithAdd: string[] = []
+    const procedureIdAndIndices: Array<{ id: string, index: number }> =
+      procedureIds.map((id, index) => ({ id, index }))
+    const groupedAddChanges = groupby(appliedCollectionAddChanges, c => c.position.index)
+    for (const change of groupedAddChanges['beginning'] ?? []) {
+      procedureIdsWithAdd.push(change.id)
+    }
+    for (const { id, index } of procedureIdAndIndices) {
+      procedureIdsWithAdd.push(id)
+      for (const change of groupedAddChanges[index] ?? []) {
+        procedureIdsWithAdd.push(change.id)
+      }
+    }
+    procedureIds = procedureIdsWithAdd
+  }
+
+  // remove
+  const appliedCollectionRemoveChanges = procedureIdFieldChangeApplies
+    .filter(ca => ca.applied && ca.fieldChange.collectionChange?.type === 'remove')
+    .map(ca => ca.fieldChange.collectionChange as CollectionRemoveChange)
+  for (const removeChange of appliedCollectionRemoveChanges) {
+    procedureIds = procedureIds.filter(id => id !== removeChange.id)
+  }
+
+  return {
+    ...formData,
+    jobs: {
+      ...formData.jobs,
+      entities: {
+        ...formData.jobs.entities,
+        [jobId]: {
+          ...formData.jobs.entities[jobId],
+          procedures: {
+            ...formData.jobs.entities[jobId].procedures,
+            ids: procedureIds
+          }
+        }
+      }
     }
   }
 }
@@ -143,19 +376,19 @@ export function redoStep(step: Step, previousFormData: FormData): FormData {
 
   const machineIdFieldChanges = fieldChangeApplied
     .filter(ca => ca.fieldChange.path === '/machines/ids')
-  formData = redoRideIdFieldChanges(formData, machineIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
+  formData = redoMachineIdFieldChanges(formData, machineIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
 
   const jobIdFieldChanges = fieldChangeApplied
     .filter(ca => ca.fieldChange.path === '/jobs/ids')
-  formData = redoRideIdFieldChanges(formData, jobIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
+  formData = redoJobIdFieldChanges(formData, jobIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
 
   const jobColorIdFieldChanges = fieldChangeApplied
     .filter(ca => ca.fieldChange.path === '/jobColors/ids')
-  formData = redoRideIdFieldChanges(formData, jobColorIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
+  formData = redoJobColorIdFieldChanges(formData, jobColorIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
 
   const procedureIdFieldChanges = fieldChangeApplied
     .filter(ca => ca.fieldChange.path.endsWith('/procedures/ids'))
-  formData = redoRideIdFieldChanges(formData, procedureIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
+  formData = redoProcedureIdFieldChanges(formData, procedureIdFieldChanges as { fieldChange: CollectionFieldChange, applied: boolean }[])
 
   const ordinaryFieldChanges = fieldChangeApplied.filter(ca =>
     !machineIdFieldChanges.includes(ca)
@@ -219,7 +452,10 @@ function undoFieldChange(fieldChange: ValueFieldChange, formData: FormData): For
     else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('machineId')) {
       const jobId = getJobIdFromPath(path)
       const procedureId = getProcedureIdFromPath(path)
-      draft.jobs.entities[jobId].procedures.entities[procedureId].machineId = previousValue
+      if (draft.jobs.entities[jobId] && draft.jobs.entities[jobId].procedures.entities[procedureId]) {
+        // only set machineId if the procedure exist
+        draft.jobs.entities[jobId].procedures.entities[procedureId].machineId = previousValue
+      }
     }
     else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('processingTimeMs')) {
       const jobId = getJobIdFromPath(path)
@@ -435,19 +671,19 @@ function undoProcedureIdFieldChanges(
   if (procedureIdFieldChangeApplies.length === 0) {
     return formData
   }
-  let newFormData = formData
+  let resultFormData = formData
   const groupedProcedureIdFieldChanges = groupby(
     procedureIdFieldChangeApplies,
     c => getJobIdFromPath(c.fieldChange.path)
   )
   for (const [jobId, fieldChangeApplies] of Object.entries(groupedProcedureIdFieldChanges)) {
-    newFormData = undoProcedureIdFieldChangesForJob(
+    resultFormData = undoProcedureIdFieldChangesForJob(
       jobId,
-      newFormData,
+      resultFormData,
       fieldChangeApplies
     )
   }
-  return newFormData
+  return resultFormData
 }
 
 function undoProcedureIdFieldChangesForJob(
