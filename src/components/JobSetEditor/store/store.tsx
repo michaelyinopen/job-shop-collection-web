@@ -1,5 +1,5 @@
 import React from 'react'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
 import {
   Provider,
   createDispatchHook,
@@ -7,13 +7,14 @@ import {
 } from 'react-redux'
 import { jobSetEditorReducer } from './jobSetEditorReducer'
 import type { JobSetEditorState } from './jobSetEditorReducer'
+import { editHistoryMiddleware } from './editHistory'
 
 const jobSetEditorContext = React.createContext<any>(null)
 
 export const useJobSetEditorDispatch = createDispatchHook(jobSetEditorContext)
 export const useJobSetEditorSelector = createSelectorHook<JobSetEditorState>(jobSetEditorContext)
 
-const jobSetEditorStore = createStore(jobSetEditorReducer)
+const jobSetEditorStore = createStore(jobSetEditorReducer, applyMiddleware(editHistoryMiddleware))
 
 export function JobSetEditorProvider({ children }) {
   return (
