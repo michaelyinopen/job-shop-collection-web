@@ -44,7 +44,7 @@ import {
   unApplyConflict,
 } from './actions'
 import { mergeUninitializedJobSet } from './formDataConversion'
-import { redoStep, undoStep } from './editHistory'
+import { calculateRefreshedStep, redoStep, undoStep } from './editHistory'
 import type { Step } from './editHistory'
 
 export type JobSetEditorState = {
@@ -226,21 +226,21 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         || !jobSet.hasDetail) {
         return
       }
-      // todo
-      // const refreshedStep = calculateRefreshedStep(
-      //   state.versions[state.versions.length - 1].formData,
-      //   state.formData,
-      //   activity
-      // )
-      // if (refreshedStep) {
-      //   state.formData = redoStep(refreshedStep, state.formData)
-      //   state.steps.splice(state.currentStepIndex + 1)
-      //   state.steps.push(refreshedStep)
-      //   state.currentStepIndex = state.steps.length - 1
-      //   for (const step of state.steps.filter(s => s.saveStatus)) {
-      //     step.saveStatus = undefined
-      //   }
-      // }
+      const refreshedStep = calculateRefreshedStep(
+        state.versions[state.versions.length - 1].formData,
+        state.formData,
+        jobSet
+      )
+      console.log({ refreshedStep })
+      if (refreshedStep) {
+        state.formData = redoStep(refreshedStep, state.formData)
+        state.steps.splice(state.currentStepIndex + 1)
+        state.steps.push(refreshedStep)
+        state.currentStepIndex = state.steps.length - 1
+        for (const step of state.steps.filter(s => s.saveStatus)) {
+          step.saveStatus = undefined
+        }
+      }
       state.versions.push({
         versionToken: jobSet.versionToken,
         formData: state.formData

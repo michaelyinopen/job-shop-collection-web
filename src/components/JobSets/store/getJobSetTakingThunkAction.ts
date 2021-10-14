@@ -10,13 +10,13 @@ import { fetchedJobSet } from './actions'
  * Promise of FailureResult(Failure) if error; or
  * Promise of undefined if did not complete because another takeLatest action was dispatched
  */
-export const getJobSetTakingThunkAction = (id: number): AppTakingThunkAction => ({
+export const getJobSetTakingThunkAction = (id: number, isRefresh: boolean = false): AppTakingThunkAction => ({
   name: `getJobSet/${id}`,
   takeType: 'latest',
   thunk: function* (dispatch: AppDispatch) {
     const getJobSetResult: any = yield getJobSetApiAsync(id)
     if (getJobSetResult.kind === 'success') {
-      dispatch(fetchedJobSet(getJobSetResult.success()))
+      dispatch(fetchedJobSet(getJobSetResult.success(), isRefresh))
     } else {
       return getJobSetResult
     }

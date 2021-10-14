@@ -77,7 +77,7 @@ const RefreshJobSetButton = ({ id }) => {
       <Tooltip title='Refresh' placement="bottom-end">
         <IconButton
           onClick={() => {
-            dispatch(getJobSetTakingThunkAction(id))
+            dispatch(getJobSetTakingThunkAction(id, true))
               .then(result => {
                 if (result?.kind === 'success') {
                   editorDispatch(loadedJobSet())

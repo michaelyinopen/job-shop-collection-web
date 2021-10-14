@@ -67,17 +67,34 @@ const jobSetReducer = createCustomReducer(jobSetInitialState, {
     state.versionToken = jobSetHeaderFromAction.versionToken
   },
   [fetchedJobSet.type]: (state, action) => {
-    const jobSet: GetJobSetResponse = action.payload
-    state.id = jobSet.id
-    state.title = jobSet.title
-    state.description = jobSet.description ?? undefined
-    state.content = jobSet.content ?? undefined
-    state.jobColors = jobSet.jobColors ?? undefined
-    state.isAutoTimeOptions = jobSet.isAutoTimeOptions
-    state.timeOptions = jobSet.timeOptions ?? undefined
-    state.isLocked = jobSet.isLocked
-    state.versionToken = jobSet.versionToken
-    state.hasDetail = true
+    const jobSet: GetJobSetResponse = action.payload.getJobSetResponse
+    if (action.payload.isRefresh) {
+      // if isRefresh, replace state to trigger re-render and effect
+      return {
+        id: jobSet.id,
+        title: jobSet.title,
+        description: jobSet.description ?? undefined,
+        content: jobSet.content ?? undefined,
+        jobColors: jobSet.jobColors ?? undefined,
+        isAutoTimeOptions: jobSet.isAutoTimeOptions,
+        timeOptions: jobSet.timeOptions ?? undefined,
+        isLocked: jobSet.isLocked,
+        versionToken: jobSet.versionToken,
+        hasDetail: true,
+      }
+    }
+    else {
+      state.id = jobSet.id
+      state.title = jobSet.title
+      state.description = jobSet.description ?? undefined
+      state.content = jobSet.content ?? undefined
+      state.jobColors = jobSet.jobColors ?? undefined
+      state.isAutoTimeOptions = jobSet.isAutoTimeOptions
+      state.timeOptions = jobSet.timeOptions ?? undefined
+      state.isLocked = jobSet.isLocked
+      state.versionToken = jobSet.versionToken
+      state.hasDetail = true
+    }
   }
 })
 
@@ -144,13 +161,13 @@ export const jobSetsReducer = createReducer(jobSetsInitialState, (builder) => {
       }
     })
     .addCase(fetchedJobSet, (state, action) => {
-      const { payload: jobSet } = action
-      const index = state.ids.findIndex(sId => sId === jobSet.id)
+      const { payload: { getJobSetResponse } } = action
+      const index = state.ids.findIndex(sId => sId === getJobSetResponse.id)
       if (index === -1) {
-        state.ids.push(jobSet.id)
+        state.ids.push(getJobSetResponse.id)
       }
-      state.entities[jobSet.id] = jobSetReducer(
-        state.entities[jobSet.id],
+      state.entities[getJobSetResponse.id] = jobSetReducer(
+        state.entities[getJobSetResponse.id],
         action)
     })
 })
