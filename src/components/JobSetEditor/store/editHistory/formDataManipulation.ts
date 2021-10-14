@@ -8,7 +8,7 @@ import type {
   CollectionAddChange,
   CollectionRemoveChange,
 } from './types'
-import { numberOfSlashes } from "./StepCommon"
+import { getJobIdFromPath, getProcedureIdFromPath, numberOfSlashes } from "./StepCommon"
 
 function groupby<T, K extends string | number>(
   array: T[],
@@ -18,24 +18,6 @@ function groupby<T, K extends string | number>(
     (rv[f(x)] = rv[f(x)] || []).push(x)
     return rv
   }, {} as { [key in K]: T[] })
-}
-
-function getJobIdFromPath(path: string) {
-  const indexOf3rdSlash = '/jobs/entities/'.length - 1
-  const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
-  return indexOf4thSlash === -1
-    ? path.substring(indexOf3rdSlash + 1)
-    : path.substring(indexOf3rdSlash + 1, indexOf4thSlash)
-}
-
-function getProcedureIdFromPath(path: string) {
-  const indexOf3rdSlash = '/jobs/entities/'.length - 1
-  const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
-  const indexOf6thSlash = indexOf4thSlash + 'procedures/entities/'.length
-  const indexOf7thSlash = path.indexOf('/', indexOf6thSlash + 1)
-  return indexOf7thSlash === -1
-    ? path.substring(indexOf6thSlash + 1)
-    : path.substring(indexOf6thSlash + 1, indexOf7thSlash)
 }
 
 function redoFieldChange(fieldChange: ValueFieldChange, formData: FormData): FormData {

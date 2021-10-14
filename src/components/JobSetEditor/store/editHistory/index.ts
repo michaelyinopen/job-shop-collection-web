@@ -4,3 +4,4 @@ export {
   undoStep,
   redoStep,
 } from './formDataManipulation'
+export { calculateRefreshedStep } from './refreshedStep'

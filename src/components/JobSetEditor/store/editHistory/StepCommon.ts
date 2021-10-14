@@ -20,6 +20,24 @@ export function arraysEqual(a, b) {
   return true
 }
 
+export function getJobIdFromPath(path: string) {
+  const indexOf3rdSlash = '/jobs/entities/'.length - 1
+  const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
+  return indexOf4thSlash === -1
+    ? path.substring(indexOf3rdSlash + 1)
+    : path.substring(indexOf3rdSlash + 1, indexOf4thSlash)
+}
+
+export function getProcedureIdFromPath(path: string) {
+  const indexOf3rdSlash = '/jobs/entities/'.length - 1
+  const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
+  const indexOf6thSlash = indexOf4thSlash + 'procedures/entities/'.length
+  const indexOf7thSlash = path.indexOf('/', indexOf6thSlash + 1)
+  return indexOf7thSlash === -1
+    ? path.substring(indexOf6thSlash + 1)
+    : path.substring(indexOf6thSlash + 1, indexOf7thSlash)
+}
+
 //#region getFieldChanges
 export function getFieldChanges(previousFormData: FormData, currentFormData: FormData): Array<FieldChange | GroupedFieldChanges> {
   if (previousFormData === currentFormData) {
