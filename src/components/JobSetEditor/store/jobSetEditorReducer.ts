@@ -231,7 +231,6 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         state.formData,
         jobSet
       )
-      console.log({ refreshedStep })
       if (refreshedStep) {
         state.formData = redoStep(refreshedStep, state.formData)
         state.steps.splice(state.currentStepIndex + 1)
