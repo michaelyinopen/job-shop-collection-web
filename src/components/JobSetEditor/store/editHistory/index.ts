@@ -5,3 +5,4 @@ export {
   redoStep,
 } from './formDataManipulation'
 export { calculateRefreshedStep } from './refreshedStep'
+export { conflictHasRelatedChanges } from './conflictHasRelatedChanges'

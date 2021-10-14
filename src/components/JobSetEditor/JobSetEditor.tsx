@@ -108,8 +108,6 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
 
     useEffect(() => {
       if (!isNew) {
-        console.log({ appJobSet })
-        console.log('setJobSetFromAppStore effect')
         editorDispatch(setJobSetFromAppStore(appJobSet as AppStoreJobSet, isLoaded))
       }
     }, [isNew, editorDispatch, appJobSet, isLoaded])
