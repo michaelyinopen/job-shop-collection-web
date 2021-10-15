@@ -41,7 +41,6 @@ const useStyles = makeStyles(theme => createStyles({
     zIndex: theme.zIndex.appBar - 2,
     backgroundColor: theme.palette.background.default,
     boxShadow: "0px 6px 4px -6px rgba(0,0,0,0.75)",
-    marginBottom: theme.spacing(1),
     paddingRight: theme.spacing(2),
   },
   allActions: {

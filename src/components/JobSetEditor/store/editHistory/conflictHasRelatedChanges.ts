@@ -1,12 +1,12 @@
-// import { numberOfSlashes } from './StepCommon'
-// import {
-//   CollectionAddChange,
-//   CollectionFieldChange,
-//   CollectionRemoveChange,
-//   FieldChange,
-//   Operation,
-//   Step,
-// } from './types'
+import { numberOfSlashes } from './StepCommon'
+import {
+  CollectionAddChange,
+  CollectionFieldChange,
+  CollectionRemoveChange,
+  FieldChange,
+  Operation,
+  Step,
+} from './types'
 
 // function hasRelatedChanges(
 //   aChanges: FieldChange[],
