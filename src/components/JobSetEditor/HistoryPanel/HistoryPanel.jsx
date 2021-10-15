@@ -1,10 +1,15 @@
-import clsx from 'clsx'
 import {
   makeStyles,
   createStyles,
   Paper,
   Divider,
+  Button,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
 } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
 import {
   useJobSetEditorDispatch,
   undo,
@@ -19,106 +24,67 @@ import {
 
 const useStyles = makeStyles(theme => createStyles({
   root: {
+    overflow: 'hidden',
+    backgroundColor: theme.palette.grey[100],
+    height: '100%',
   },
   content: {
+    width: 200,
     overflow: 'auto',
     height: 'calc(100vh - 64px)',
+    [theme.breakpoints.down('xs')]: {
+      height: '100%',
+    }
+  },
+  historyTitle: {
+    margin: theme.spacing(1),
+    color: theme.palette.text.secondary
+  },
+  flex: {
+    display: 'flex'
+  },
+  separator: {
+    flexGrow: 1
   }
 }))
+
+export const historyPanelWidth = 200
 
 export const HistoryPanel = () => {
   const classes = useStyles()
   const editorDispatch = useJobSetEditorDispatch()
-  const isHistoryPanelOpen = useJobSetEditorSelector(isHistoryPanelOpenSelector)
-  if (!isHistoryPanelOpen) {
-    return null
-  }
   return (
     <Paper square classes={{ root: classes.root }}>
       <div className={classes.content}>
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-      History X <br />
-    </div>
+        <div className={classes.flex}>
+          <Typography variant='h6' className={classes.historyTitle}>
+            History
+          </Typography>
+          <div className={classes.separator} />
+          <Button
+            className={classes.button}
+            color="inherit"
+            onClick={() => { editorDispatch(closeHistoryPanel()) }}
+          >
+            <CloseIcon />
+          </Button>
+        </div>
+        <Divider />
+        <List disablePadding dense>
+          <ListItem button ick={() => { }}>
+            <ListItemText primary={'Edit maximum view duration'} />
+          </ListItem>
+          <Divider light />
+          <ListItem button Click={() => { }}>
+            <ListItemText primary={'Edit minimum view duration'} />
+          </ListItem>
+          <Divider light />
+          <ListItem button Click={() => { }}>
+            <ListItemText primary={'Edit minimum view duration'} />
+          </ListItem>
+          <Divider light />
+        </List>
+      </div>
     </Paper >
   )
 }
-
-// export const HistoryPanel = () => {
-//   return <Drawer
-//     className={classes.drawer}
-//     variant="persistent"
-//     anchor="left"
-//     open={open}
-//     classes={{
-//       paper: classes.drawerPaper,
-//     }}
-//   >
-//     <div className={classes.drawerHeader}>
-//       <IconButton onClick={handleDrawerClose}>
-//         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-//       </IconButton>
-//     </div>
-//     <Divider />
-//     <List>
-//       {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-//         <ListItem button key={text}>
-//           <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-//           <ListItemText primary={text} />
-//         </ListItem>
-//       ))}
-//     </List>
-//     <Divider />
-//     <List>
-//       {['All mail', 'Trash', 'Spam'].map((text, index) => (
-//         <ListItem button key={text}>
-//           <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-//           <ListItemText primary={text} />
-//         </ListItem>
-//       ))}
-//     </List>
-//   </Drawer>
-// }

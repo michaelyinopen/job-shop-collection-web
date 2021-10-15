@@ -23,7 +23,6 @@ import {
   setJobSetFromAppStore,
   jobSetsEditorLoadStatusSelector,
   jobSetsEditorIsLockedSelector,
-  isHistoryPanelOpenSelector,
 } from './store'
 import type { AppStoreJobSet } from './store'
 import { JobSetEditorTitleBar } from './JobSetEditorTitleBar'
@@ -31,7 +30,7 @@ import { JobSetEditorForm } from './JobSetEditorForm'
 import { JobSetEditorState } from './JobSetEditorState'
 import { ExitPrompt } from './ExitPrompt'
 import { HistoryPanel } from './HistoryPanel'
-import clsx from 'clsx'
+import { JobSetEditorLayout } from './JobSetEditorLayout'
 
 type JobSetEditorProps = {
   id: number | undefined
@@ -49,8 +48,6 @@ const WithJobSetEditorProvider: WithJobSetEditorProviderType = (Component) => (p
   )
 }
 
-const historyPanelWidth = 200
-
 const useStyles = makeStyles(theme => createStyles({
   pageContainer: {
     minHeight: '100%',
@@ -59,40 +56,6 @@ const useStyles = makeStyles(theme => createStyles({
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1),
     }
-  },
-  drawer: {
-    position: 'sticky',
-    top: 64,
-    width: 0,
-    flexShrink: 0,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  drawerShift: {
-    width: historyPanelWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  formContainer: {
-    flexGrow: 1,
-    marginTop: 'calc(64px - 100vh)',
-    marginLeft: 0,
-    padding: theme.spacing(1, 0, 1, 0),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  formShift: {
-    marginLeft: historyPanelWidth + theme.spacing(2),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
   },
 }))
 
@@ -149,8 +112,6 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
       }
     }, [isNew, editorDispatch, appJobSet, isLoaded])
 
-    const isHistoryPanelOpen = useJobSetEditorSelector(isHistoryPanelOpenSelector)
-
     const islocked = useJobSetEditorSelector(jobSetsEditorIsLockedSelector)
     if (edit && islocked) {
       return <Redirect to={generatePath(routePaths.jobSetEditor, { id: id! })} />
@@ -158,18 +119,16 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
     return (
       <PageContainer classes={{ pageContainer: classes.pageContainer }}>
         <ExitPrompt />
-        <JobSetEditorTitleBar />
-        <div className={clsx(classes.drawer, {
-          [classes.drawerShift]: isHistoryPanelOpen,
-        })}>
-          {isHistoryPanelOpen && <HistoryPanel />}
-        </div>
-        <div className={clsx(classes.formContainer, {
-          [classes.formShift]: isHistoryPanelOpen,
-        })}>
-          <JobSetEditorForm />
-          <JobSetEditorState />
-        </div>
+        <JobSetEditorLayout
+          jobSetEditorTitleBar={<JobSetEditorTitleBar />}
+          historyPanel={<HistoryPanel />}
+          jobSetEditorForm={(
+            <>
+              <JobSetEditorForm />
+              <JobSetEditorState />
+            </>
+          )}
+        />
       </PageContainer>
     )
   })

@@ -34,7 +34,7 @@ export const HistoryButtons = () => {
   return (
     <div className={classes.root}>
       <Tooltip
-        title={isHistoryPanelOpen ? 'Close history panel' : 'History'}
+        title={isHistoryPanelOpen ? 'Hide history panel' : 'History'}
         placement="bottom-end"
       >
         <IconButton

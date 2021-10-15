@@ -32,6 +32,8 @@ import { SaveJobSetButton } from './SaveJobSetButton'
 import { EditReadonly } from './EditReadonly'
 import { MoreOptions } from './MoreOptions'
 
+export const jobSetEditorTitleBarHeight = 64
+
 const useStyles = makeStyles(theme => createStyles({
   toolbar: {
     position: "sticky",

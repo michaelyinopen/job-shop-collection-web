@@ -1,1 +1,4 @@
-export { JobSetEditorTitleBar } from './JobSetEditorTitleBar'
+export {
+  JobSetEditorTitleBar,
+  jobSetEditorTitleBarHeight
+} from './JobSetEditorTitleBar'
