@@ -1,5 +1,3 @@
-import type { AppStoreJobSetDetail } from '../actions'
-import { appStoreJobSet_To_FormData } from '../formDataConversion'
 import type {
   FormData,
   Step,
@@ -20,9 +18,8 @@ import {
 export function calculateRefreshedStep(
   previousVersionFormData: FormData,
   localFormData: FormData,
-  remoteJobSet: AppStoreJobSetDetail
+  remoteFormData: FormData
 ): Step | undefined {
-  const remoteFormData = appStoreJobSet_To_FormData(remoteJobSet)
 
   const remoteVsLocal = getFieldChanges(localFormData, remoteFormData)
   const localVsPreviousVersion = getFieldChanges(previousVersionFormData, localFormData)

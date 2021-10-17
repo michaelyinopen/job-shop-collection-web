@@ -43,7 +43,7 @@ import {
   applyConflict,
   unApplyConflict,
 } from './actions'
-import { mergeUninitializedJobSet } from './formDataConversion'
+import { appStoreJobSet_To_FormData, mergeUninitializedJobSet } from './formDataConversion'
 import { calculateRefreshedStep, redoStep, undoStep } from './editHistory'
 import type { Step } from './editHistory'
 
@@ -58,10 +58,10 @@ export type JobSetEditorState = {
   touched: TouchedState
   steps: Step[],
   currentStepIndex: number,
-  versions: {
+  lastVersion?: {
     versionToken: string,
     formData: FormDataState
-  }[],
+  },
   isHistoryPanelOpen: boolean,
 }
 
@@ -174,7 +174,7 @@ const jobSetEditorInitialState: JobSetEditorState = {
   touched: {},
   steps: [{ name: 'initial', operations: [] }],
   currentStepIndex: 0,
-  versions: [],
+  lastVersion: undefined,
   isHistoryPanelOpen: false,
 }
 
@@ -187,7 +187,15 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       state.id = id
     })
     .addCase(setJobSetEditorIsEdit, (state, { payload: isEdit }) => {
-      state.isEdit = isEdit
+      if (isEdit && !state.isEdit) {
+        state.isEdit = true
+      }
+      else if (!isEdit && state.isEdit) {
+        state.isEdit = false
+        state.steps = jobSetEditorInitialState.steps
+        state.currentStepIndex = jobSetEditorInitialState.currentStepIndex
+        state.formData = state.lastVersion?.formData ?? jobSetEditorInitialState.formData
+      }
     })
     .addCase(loadedJobSet, (state) => {
       state.loadStatus = 'loaded'
@@ -212,12 +220,10 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         if (loaded) {
           // if loaded, it is garunteed that (activity && activity.hasDetail) === true
           newState.initialized = true
-          newState.versions = [
-            {
-              versionToken: jobSet!.versionToken,
-              formData: newState.formData
-            }
-          ]
+          newState.lastVersion = {
+            versionToken: jobSet!.versionToken,
+            formData: newState.formData
+          }
         }
         return newState
       }
@@ -226,10 +232,11 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         || !jobSet.hasDetail) {
         return
       }
+      const remoteFormData = appStoreJobSet_To_FormData(jobSet)
       const refreshedStep = calculateRefreshedStep(
-        state.versions[state.versions.length - 1].formData,
+        state.lastVersion!.formData,
         state.formData,
-        jobSet
+        remoteFormData
       )
       if (refreshedStep) {
         state.formData = redoStep(refreshedStep, state.formData)
@@ -240,10 +247,10 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
           step.saveStatus = undefined
         }
       }
-      state.versions.push({
+      state.lastVersion = {
         versionToken: jobSet.versionToken,
-        formData: state.formData
-      })
+        formData: remoteFormData
+      }
     })
     //#region edit form actions
     .addCase(setTitle, (state, { payload }) => {

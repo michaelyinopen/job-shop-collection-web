@@ -78,7 +78,7 @@ export const promptExitWhenSavingSelector = (state: JobSetEditorState) => {
   const isNew = state.id === undefined
 
   const isInitialStep = state.currentStepIndex === 0
-  const latestVersionToken = state.versions[state.versions.length - 1]?.versionToken
+  const latestVersionToken = state.lastVersion?.versionToken
   const isCurrentStepLatestVersion = currentStep.mergeBehaviour === 'discard local changes'
     && currentStep.versionToken === latestVersionToken
   const loadedFromRemote = isInitialStep || isCurrentStepLatestVersion
@@ -90,7 +90,7 @@ export const promptExitWhenSavingSelector = (state: JobSetEditorState) => {
 
 export const updateJobSetRequestSelector = createSelector(
   jobSetsEditorIdSelector,
-  (state: JobSetEditorState) => state.versions[state.versions.length - 1]?.versionToken,
+  (state: JobSetEditorState) => state.lastVersion?.versionToken,
   (state: JobSetEditorState) => state.formData,
   (id, versionToken, formData) => {
     if (!id || !versionToken) {

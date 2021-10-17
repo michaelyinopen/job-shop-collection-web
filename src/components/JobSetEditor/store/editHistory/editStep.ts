@@ -6,6 +6,7 @@ import {
   redo,
   replaceLastStep,
   resetJobSetEditor,
+  setJobSetEditorIsEdit,
   setJobSetFromAppStore,
   setMergeBehaviourDiscardLocal,
   setMergeBehaviourMerge,
@@ -38,6 +39,7 @@ const excludeActionTypes = [
   replaceLastStep,
   setJobSetFromAppStore,
   resetJobSetEditor,
+  setJobSetEditorIsEdit,
 
   undo,
   redo,
