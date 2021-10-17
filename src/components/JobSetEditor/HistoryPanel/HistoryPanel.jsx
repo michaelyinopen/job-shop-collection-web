@@ -38,7 +38,6 @@ const useStyles = makeStyles(theme => createStyles({
   },
   historyTitle: {
     margin: theme.spacing(1),
-    color: theme.palette.text.secondary
   },
   flex: {
     display: 'flex'
@@ -77,8 +76,6 @@ export const HistoryPanel = () => {
           </Typography>
           <div className={classes.separator} />
           <Button
-            className={classes.button}
-            color="inherit"
             onClick={() => { editorDispatch(closeHistoryPanel()) }}
           >
             <CloseIcon />
