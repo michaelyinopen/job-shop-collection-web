@@ -45,6 +45,21 @@ const useStyles = makeStyles(theme => createStyles({
   },
   separator: {
     flexGrow: 1
+  },
+  step: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+  },
+  undoneStep: {
+    borderLeft: `${theme.spacing(1)}px dotted ${theme.palette.grey[300]}`,
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(2),
+    opacity: 0.5,
+  },
+  currentStep: {
+    borderLeft: `${theme.spacing(1)}px solid ${theme.palette.grey[300]}`,
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(2),
   }
 }))
 
@@ -71,18 +86,33 @@ export const HistoryPanel = () => {
         </div>
         <Divider />
         <List disablePadding dense>
-          <ListItem button ick={() => { }}>
+          <ListItem
+            button
+            divider
+            disableGutters
+            className={classes.undoneStep}
+            onClick={() => { }}
+          >
             <ListItemText primary={'Edit maximum view duration'} />
           </ListItem>
-          <Divider light />
-          <ListItem button Click={() => { }}>
+          <ListItem
+            button
+            divider
+            disableGutters
+            className={classes.currentStep}
+            onClick={() => { }}
+          >
             <ListItemText primary={'Edit minimum view duration'} />
           </ListItem>
-          <Divider light />
-          <ListItem button Click={() => { }}>
+          <ListItem
+            button
+            divider
+            disableGutters
+            className={classes.step}
+            onClick={() => { }}
+          >
             <ListItemText primary={'Edit minimum view duration'} />
           </ListItem>
-          <Divider light />
         </List>
       </div>
     </Paper >
