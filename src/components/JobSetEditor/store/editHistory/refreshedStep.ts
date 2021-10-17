@@ -18,7 +18,8 @@ import {
 export function calculateRefreshedStep(
   previousVersionFormData: FormData,
   localFormData: FormData,
-  remoteFormData: FormData
+  remoteFormData: FormData,
+  remoteVersionToken: string
 ): Step | undefined {
 
   const remoteVsLocal = getFieldChanges(localFormData, remoteFormData)
@@ -44,7 +45,7 @@ export function calculateRefreshedStep(
   return {
     name: 'Refreshed',
     operations,
-    versionToken: remoteJobSet.versionToken,
+    versionToken: remoteVersionToken,
     mergeBehaviour,
   }
 }

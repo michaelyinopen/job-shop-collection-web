@@ -236,7 +236,8 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       const refreshedStep = calculateRefreshedStep(
         state.lastVersion!.formData,
         state.formData,
-        remoteFormData
+        remoteFormData,
+        jobSet.versionToken
       )
       if (refreshedStep) {
         state.formData = redoStep(refreshedStep, state.formData)
