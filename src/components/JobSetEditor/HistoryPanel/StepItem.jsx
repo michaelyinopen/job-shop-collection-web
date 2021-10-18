@@ -14,12 +14,11 @@ import {
 } from '@material-ui/core'
 import {
   useJobSetEditorSelector,
-  createStepSelector,
+  createNormalStepSelector,
   createStepDoneStatusSelector,
   useJobSetEditorDispatch,
   jumpToStep,
 } from '../store'
-import { useSelector } from 'react-redux'
 
 const useStyles = makeStyles(theme => createStyles({
   step: {
@@ -61,49 +60,20 @@ const NormalStepItem = ({ step, isCurrent, undone }) => {
   )
 }
 
-const VersionedStepItem = (props) => {
-  return <NormalStepItem {...props} />
+const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
+  // todo
+  return null
 }
 
-{/* <ListItem
-button
-divider
-disableGutters
-className={classes.undoneStep}
-onClick={() => { }}
->
-<ListItemText primary={'Edit maximum view duration'} />
-</ListItem>
-<ListItem
-button
-divider
-disableGutters
-className={classes.currentStep}
-onClick={() => { }}
->
-<ListItemText primary={'Edit minimum view duration'} />
-</ListItem>
-<ListItem
-button
-divider
-disableGutters
-className={classes.step}
-onClick={() => { }}
->
-<ListItemText primary={'Edit minimum view duration'} />
-</ListItem> */}
-
-
-
 export const StepItem = memo(({ id }) => {
-  const stepSelector = useRef(createStepSelector(id)).current
-  const step = useJobSetEditorSelector(stepSelector)
+  const normalStepSelector = useRef(createNormalStepSelector(id)).current
+  const normalStep = useJobSetEditorSelector(normalStepSelector)
   const stepDoneStatusSelector = useRef(createStepDoneStatusSelector(id)).current
   const stepDoneStatus = useJobSetEditorSelector(stepDoneStatusSelector)
-  if (!step?.versionToken) {
+  if (!normalStep?.versionToken) {
     return (
       <NormalStepItem
-        step={step}
+        step={normalStep}
         isCurrent={stepDoneStatus === 'current'}
         undone={stepDoneStatus === 'undone'}
       />
@@ -112,7 +82,7 @@ export const StepItem = memo(({ id }) => {
   else {
     return (
       <VersionedStepItem
-        step={step}
+        normalStep={normalStep}
         isCurrent={stepDoneStatus === 'current'}
         undone={stepDoneStatus === 'undone'}
       />

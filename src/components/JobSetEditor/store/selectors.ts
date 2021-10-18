@@ -3,7 +3,10 @@ import {
   createSelectorCreator,
   defaultMemoize,
 } from 'reselect'
-import { arraysEqual } from '../../../utility'
+import {
+  arraysEqual,
+  shallowEqualObjects,
+} from '../../../utility'
 import {
   formData_To_UpdateJobSetRequest,
   formData_To_CreateJobSetRequest,
@@ -166,13 +169,25 @@ export const createStepSelector = (id: string) => createSelector(
   }
 )
 
-export const createNormalStepSelector = (id: string) => createSelector(
-  (state: JobSetEditorState) => state.steps,
-  (steps) => {
-    return steps.find(s => s.id === id)
-  }
+const createShallowEqualSelectorCreator = createSelectorCreator(
+  defaultMemoize,
+  shallowEqualObjects
 )
 
+export const createNormalStepSelector = (id: string) => createShallowEqualSelectorCreator(
+  (state: JobSetEditorState) => {
+    const step = state.steps.find(s => s.id === id)
+    if (!step) {
+      return undefined
+    }
+    return {
+      id: step.id,
+      versionToken: step.versionToken,
+      name: step.name
+    }
+  },
+  (step) => step
+)
 
 export const createStepDoneStatusSelector = (id: string) => createSelector(
   (state: JobSetEditorState) => state.steps,
