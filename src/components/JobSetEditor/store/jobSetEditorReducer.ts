@@ -445,7 +445,8 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         state.currentStepIndex = state.currentStepIndex + 1
       }
     })
-    .addCase(jumpToStep, (state, { payload: targetStepIndex }) => {
+    .addCase(jumpToStep, (state, { payload: { stepId } }) => {
+      const targetStepIndex = state.steps.findIndex(s => s.id === stepId)
       if (targetStepIndex >= 0 && targetStepIndex <= state.steps.length - 1) {
         let formData = state.formData
         if (targetStepIndex < state.currentStepIndex) {

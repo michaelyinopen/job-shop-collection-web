@@ -290,12 +290,19 @@ export const middlewareCalculatedAutoTimeOptions = createAction(
 // move jobs
 
 //#region Step
-export const replaceLastStep = createAction<Step[]>('replaceLastStep')
-export const undo = createAction('undo')
-export const redo = createAction('redo')
-export const jumpToStep = createAction<number>('jumpToStep')
+export const replaceLastStep = createAction<Step[]>('jobSetEditor/replaceLastStep')
+export const undo = createAction('jobSetEditor/undo')
+export const redo = createAction('jobSetEditor/redo')
+export const jumpToStep = createAction(
+  'jobSetEditor/jumpToStep',
+  (stepId: string) => ({
+    payload: {
+      stepId
+    }
+  })
+)
 export const savingStep = createAction(
-  'savingStep',
+  'jobSetEditor/savingStep',
   (stepIndex: number, saving: boolean) => ({
     payload: {
       stepIndex,
@@ -304,7 +311,7 @@ export const savingStep = createAction(
   })
 )
 export const savedStep = createAction(
-  'savedStep',
+  'jobSetEditor/savedStep',
   (stepIndex: number) => ({
     payload: {
       stepIndex,
@@ -313,7 +320,7 @@ export const savedStep = createAction(
 )
 
 export const setMergeBehaviourMerge = createAction(
-  'setMergeBehaviourMerge',
+  'jobSetEditor/setMergeBehaviourMerge',
   (stepIndex: number) => ({
     payload: {
       stepIndex,
@@ -321,7 +328,7 @@ export const setMergeBehaviourMerge = createAction(
   })
 )
 export const setMergeBehaviourDiscardLocal = createAction(
-  'setMergeBehaviourDiscardLocal',
+  'jobSetEditor/setMergeBehaviourDiscardLocal',
   (stepIndex: number) => ({
     payload: {
       stepIndex,
@@ -329,7 +336,7 @@ export const setMergeBehaviourDiscardLocal = createAction(
   })
 )
 export const applyConflict = createAction(
-  'applyConflict',
+  'jobSetEditor/applyConflict',
   (stepIndex: number, conflictIndex: number) => ({
     payload: {
       stepIndex,
@@ -338,7 +345,7 @@ export const applyConflict = createAction(
   })
 )
 export const unApplyConflict = createAction(
-  'unApplyConflict',
+  'jobSetEditor/unApplyConflict',
   (stepIndex: number, conflictIndex: number) => ({
     payload: {
       stepIndex,

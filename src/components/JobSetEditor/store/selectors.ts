@@ -143,3 +143,30 @@ export const canUndoSelector = (state: JobSetEditorState) => state.currentStepIn
 export const canRedoSelector = (state: JobSetEditorState) => state.currentStepIndex !== state.steps.length - 1
 
 export const isHistoryPanelOpenSelector = (state: JobSetEditorState) => state.isHistoryPanelOpen
+
+export const stepIdsSelector = createSelector(
+  (state: JobSetEditorState) => state.steps,
+  (steps) => {
+    return steps.map(s => s.id).reverse()
+  }
+)
+
+export const createStepSelector = (id: string) => createSelector(
+  (state: JobSetEditorState) => state.steps,
+  (steps) => {
+    return steps.find(s => s.id === id)
+  }
+)
+
+export const createStepDoneStatusSelector = (id: string) => createSelector(
+  (state: JobSetEditorState) => state.steps,
+  currentStepIndexSelector,
+  (steps, currentStepIndex) => {
+    const index = steps.findIndex(s => s.id === id)
+    return index > currentStepIndex
+      ? 'undone'
+      : index === currentStepIndex
+        ? 'current'
+        : 'past'
+  }
+)

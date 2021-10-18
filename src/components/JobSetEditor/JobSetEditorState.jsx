@@ -1,7 +1,6 @@
 import { useJobSetEditorSelector } from './store'
 
 export const OnlyInDevelopment = (Component) => () => {
-  console.log({ showEditorState: process.env.REACT_APP_SHOW_EDITOR_STATE })
   if (process.env.NODE_ENV === 'development' && process.env.REACT_APP_SHOW_EDITOR_STATE) {
     return <Component />
   }

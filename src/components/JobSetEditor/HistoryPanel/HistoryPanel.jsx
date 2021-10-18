@@ -1,3 +1,4 @@
+import { TransitionGroup } from 'react-transition-group'
 import {
   makeStyles,
   createStyles,
@@ -6,21 +7,16 @@ import {
   Button,
   Typography,
   List,
-  ListItem,
-  ListItemText,
+  Collapse,
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import {
   useJobSetEditorDispatch,
-  undo,
-  redo,
-  openHistoryPanel,
   closeHistoryPanel,
   useJobSetEditorSelector,
-  canUndoSelector,
-  canRedoSelector,
-  isHistoryPanelOpenSelector,
+  stepIdsSelector,
 } from '../store'
+import { StepItem } from './StepItem'
 
 const useStyles = makeStyles(theme => createStyles({
   root: {
@@ -44,21 +40,6 @@ const useStyles = makeStyles(theme => createStyles({
   },
   separator: {
     flexGrow: 1
-  },
-  step: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-  },
-  undoneStep: {
-    borderLeft: `${theme.spacing(1)}px dotted ${theme.palette.grey[300]}`,
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(2),
-    opacity: 0.5,
-  },
-  currentStep: {
-    borderLeft: `${theme.spacing(1)}px solid ${theme.palette.grey[300]}`,
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(2),
   }
 }))
 
@@ -67,6 +48,7 @@ export const historyPanelWidth = 200
 export const HistoryPanel = () => {
   const classes = useStyles()
   const editorDispatch = useJobSetEditorDispatch()
+  const stepIds = useJobSetEditorSelector(stepIdsSelector)
   return (
     <Paper square classes={{ root: classes.root }}>
       <div className={classes.content}>
@@ -83,33 +65,13 @@ export const HistoryPanel = () => {
         </div>
         <Divider />
         <List disablePadding dense>
-          <ListItem
-            button
-            divider
-            disableGutters
-            className={classes.undoneStep}
-            onClick={() => { }}
-          >
-            <ListItemText primary={'Edit maximum view duration'} />
-          </ListItem>
-          <ListItem
-            button
-            divider
-            disableGutters
-            className={classes.currentStep}
-            onClick={() => { }}
-          >
-            <ListItemText primary={'Edit minimum view duration'} />
-          </ListItem>
-          <ListItem
-            button
-            divider
-            disableGutters
-            className={classes.step}
-            onClick={() => { }}
-          >
-            <ListItemText primary={'Edit minimum view duration'} />
-          </ListItem>
+          <TransitionGroup>
+            {stepIds.map(sId => (
+              <Collapse key={sId}>
+                <StepItem key={sId} id={sId} />
+              </Collapse>
+            ))}
+          </TransitionGroup>
         </List>
       </div>
     </Paper >
