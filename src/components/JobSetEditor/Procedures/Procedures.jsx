@@ -55,20 +55,20 @@ export const Procedures = ({ jobId }) => {
     <section className={classes.root}>
       <div className={classes.proceduresTitle}>
         Job {jobTitle} Procedures
-        <Tooltip title={`${procedureIdsOfJob.length} procedures in Job ${jobTitle}`}>
+        <Tooltip title={`${procedureIdsOfJob?.length} procedures in Job ${jobTitle}`}>
           <span className={classes.countMessage}>
-            {procedureIdsOfJob.length === 0 ? "" : ` (${procedureIdsOfJob.length})`}
+            {procedureIdsOfJob?.length === 0 ? "" : ` (${procedureIdsOfJob?.length})`}
           </span>
         </Tooltip>
       </div>
-      {procedureIdsOfJob.length === 0 && (
+      {procedureIdsOfJob?.length === 0 && (
         <div className={classes.noProceduresMessage}>
           {`No procedures in Job ${jobTitle}`}
         </div>
       )}
       <ol className={classes.list}>
         <TransitionGroup component={null}>
-          {procedureIdsOfJob.map(id => (
+          {procedureIdsOfJob?.map(id => (
             <Collapse key={id} component='li'>
               <Procedure key={id} jobId={jobId} id={id} />
             </Collapse>

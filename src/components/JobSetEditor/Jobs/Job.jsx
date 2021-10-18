@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => createStyles({
     paddingBottom: theme.spacing(1),
     paddingRight: theme.spacing(2),
     paddingLeft: theme.spacing(2),
-    margin: theme.spacing(1),
+    margin: theme.spacing(0, 1, 1, 1),
     maxWidth: 800,
   },
   headerRow: { display: 'flex' },
