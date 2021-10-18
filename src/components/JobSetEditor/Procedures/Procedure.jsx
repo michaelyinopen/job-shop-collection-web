@@ -23,6 +23,7 @@ import {
   setProcedureMachineId,
   setProcedureProcessingTime,
 } from '../store'
+import { MoveProcedureButtons } from './MoveProcedureButtons'
 import { DeleteProcedureButton } from './DeleteProcedureButton'
 
 const useProcedureMachineStyles = makeStyles(theme => createStyles({
@@ -104,11 +105,14 @@ const ProcedureMachine = ({ jobId, id }) => {
 
 const useProcessingTimeStyles = makeStyles(theme => createStyles({
   wrapper: {
+    overflow: 'hidden'
+  },
+  timeField: {
     backgroundColor: "rgba(255, 255, 255, 0.4)",
     boxShadow: "0 0 8px 8px rgba(255, 255, 255, 0.4)",
     marginRight: theme.spacing(2),
     width: '12rem',
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(2),
   }
 }))
 
@@ -120,6 +124,7 @@ const ProcedureProcessingTime = ({ jobId, id }) => {
   return (
     <div className={classes.wrapper}>
       <TimeField
+        className={classes.timeField}
         showSeconds
         value={msToFormattedTime(valueMs)}
         onChange={(_e, valueFormattedTime) => editorDispatch(setProcedureProcessingTime(jobId, id, formattedTimeToMs(valueFormattedTime)))}
@@ -161,11 +166,6 @@ const useProcedureStyles = makeStyles(theme => createStyles({
     alignItems: "center",
     flexWrap: "wrap",
     flexShrink: 1,
-    '& > *': {
-      '&:not(:last-child)': {
-        marginRight: theme.spacing(1)
-      },
-    },
     [theme.breakpoints.down('xs')]: {
       flexDirection: 'column',
       alignItems: "flex-start",
@@ -226,6 +226,7 @@ export const Procedure = memo(({ jobId, id }) => {
             {sequence}
           </ div>
         </div>
+        {editable && <MoveProcedureButtons jobId={jobId} id={id} />}
         <div className={classes.separator} />
         {editable && <DeleteProcedureButton jobId={jobId} id={id} />}
       </div>
