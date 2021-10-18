@@ -20,10 +20,10 @@ export const machinesSelector = (state: JobSetEditorState) => {
   return state.formData.machines.ids.map(id => state.formData.machines.entities[id])
 }
 export const createMachineTitleSelector = (id: string) => (state: JobSetEditorState) => {
-  return state.formData.machines.entities[id].title
+  return state.formData.machines.entities[id]?.title
 }
 export const createMachineDescriptionSelector = (id: string) => (state: JobSetEditorState) => {
-  return state.formData.machines.entities[id].description
+  return state.formData.machines.entities[id]?.description
 }
 export const jobIdsSelector = (state: JobSetEditorState) => state.formData.jobs.ids
 export const createJobTitleSelector = (id: string) => (state: JobSetEditorState) =>

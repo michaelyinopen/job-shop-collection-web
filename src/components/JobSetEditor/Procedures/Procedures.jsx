@@ -2,8 +2,10 @@ import {
   makeStyles,
   createStyles,
   lighten,
-  Tooltip
+  Tooltip,
+  Collapse,
 } from '@material-ui/core'
+import { TransitionGroup } from 'react-transition-group'
 import {
   useJobSetEditorSelector,
   fieldEditableSelector,
@@ -34,7 +36,6 @@ const useStyles = makeStyles(theme => createStyles({
     marginInlineStart: 0,
     marginInlineEnd: 0,
     paddingInlineStart: 0,
-    //todo add separation
   },
   countMessage: {
     color: theme.palette.text.hint
@@ -66,7 +67,13 @@ export const Procedures = ({ jobId }) => {
         </div>
       )}
       <ol className={classes.list}>
-        {procedureIdsOfJob.map(id => <li key={id}><Procedure key={id} jobId={jobId} id={id} /></li>)}
+        <TransitionGroup component={null}>
+          {procedureIdsOfJob.map(id => (
+            <Collapse key={id} component='li'>
+              <Procedure key={id} jobId={jobId} id={id} />
+            </Collapse>
+          ))}
+        </TransitionGroup>
       </ol>
       {editable && <CreateProcedure jobId={jobId} />}
     </section>

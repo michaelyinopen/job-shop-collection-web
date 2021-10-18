@@ -3,7 +3,9 @@ import {
   createStyles,
   Typography,
   Tooltip,
+  Collapse,
 } from '@material-ui/core'
+import { TransitionGroup } from 'react-transition-group'
 import {
   useJobSetEditorSelector,
   fieldEditableSelector,
@@ -50,7 +52,13 @@ export const Machines = () => {
       </Typography>
       {machineIds.length === 0 && <div className={classes.noMachinesMessage}>No machines</div>}
       <ol className={classes.list}>
-        {machineIds.map(id => <li key={id}><Machine key={id} id={id} /></li>)}
+        <TransitionGroup component={null}>
+          {machineIds.map(id => (
+            <Collapse key={id} component='li'>
+              <Machine key={id} id={id} />
+            </Collapse>
+          ))}
+        </TransitionGroup>
       </ol>
       {editable && <AddMachine />}
     </section >

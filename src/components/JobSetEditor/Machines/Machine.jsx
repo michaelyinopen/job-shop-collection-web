@@ -44,11 +44,11 @@ const MachineTitle = ({ id }) => {
         maxLength: 50,
         readOnly: !editable,
       }}
-      InputProps={(value.length >= 40
+      InputProps={(value?.length >= 40
         ? {
           endAdornment: (
             <InputAdornment position="end">
-              {`${value.length}/50`}
+              {`${value?.length}/50`}
             </InputAdornment>
           )
         }
@@ -85,11 +85,11 @@ const MachineDescription = ({ id }) => {
         maxLength: 1000,
         readOnly: !editable,
       }}
-      InputProps={(value.length >= 980
+      InputProps={(value?.length >= 980
         ? {
           endAdornment: (
             <InputAdornment position="end">
-              {`${value.length}/1000`}
+              {`${value?.length}/1000`}
             </InputAdornment>
           )
         }
@@ -105,7 +105,6 @@ const useMachineStyles = makeStyles(theme => createStyles({
     paddingBottom: 0,
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
     marginRight: theme.spacing(2),
     marginLeft: theme.spacing(1),
