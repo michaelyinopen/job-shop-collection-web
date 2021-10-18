@@ -27,6 +27,7 @@ export type Operation = {
 }
 
 export type Step = {
+  id: string,
   name: string,
   operations: Operation[],
   versionToken?: string,

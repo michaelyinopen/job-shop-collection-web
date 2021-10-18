@@ -172,7 +172,7 @@ const jobSetEditorInitialState: JobSetEditorState = {
   initialized: false,
   formData: formDataInitialState,
   touched: {},
-  steps: [{ name: 'initial', operations: [] }],
+  steps: [{ id: 'initial', name: 'initial', operations: [] }],
   currentStepIndex: 0,
   lastVersion: undefined,
   isHistoryPanelOpen: false,

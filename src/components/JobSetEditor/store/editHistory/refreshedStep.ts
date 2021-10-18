@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'
 import type {
   FormData,
   Step,
@@ -43,6 +44,7 @@ export function calculateRefreshedStep(
     ? 'merge'
     : 'discard local changes'
   return {
+    id: nanoid(),
     name: 'Refreshed',
     operations,
     versionToken: remoteVersionToken,

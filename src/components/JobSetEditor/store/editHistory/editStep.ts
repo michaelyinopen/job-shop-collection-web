@@ -1,4 +1,5 @@
 import type { Middleware } from 'redux'
+import { nanoid } from 'nanoid'
 import {
   applyConflict,
   jumpToStep,
@@ -111,6 +112,7 @@ export function calculateEditSteps(
   ) {
     const name = calculateStepName(fieldChanges)
     const newStep = {
+      id: nanoid(),
       name,
       operations: [{
         type: 'edit' as const,
@@ -132,6 +134,7 @@ export function calculateEditSteps(
     // combined
     const name = calculateStepName(combinedFieldChanges)
     const mergedStep = {
+      id: previousStep.id,
       name,
       operations: [{
         type: 'edit' as const,
@@ -145,6 +148,7 @@ export function calculateEditSteps(
     // did not combine
     const name = calculateStepName(fieldChanges)
     const newStep = {
+      id: nanoid(),
       name,
       operations: [{
         type: 'edit' as const,
