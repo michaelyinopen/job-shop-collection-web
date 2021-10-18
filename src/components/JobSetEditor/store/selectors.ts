@@ -16,9 +16,12 @@ export const currentStepIndexSelector = (state: JobSetEditorState) => state.curr
 export const titleSelector = (state: JobSetEditorState) => state.formData.title
 export const descriptionSelector = (state: JobSetEditorState) => state.formData.description
 export const machineIdsSelector = (state: JobSetEditorState) => state.formData.machines.ids
-export const machinesSelector = (state: JobSetEditorState) => {
-  return state.formData.machines.ids.map(id => state.formData.machines.entities[id])
-}
+export const machinesSelector = createSelector(
+  (state: JobSetEditorState) => state.formData.machines,
+  (machines) => {
+    return machines.ids.map(id => machines.entities[id])
+  }
+)
 export const createMachineTitleSelector = (id: string) => (state: JobSetEditorState) => {
   return state.formData.machines.entities[id]?.title
 }

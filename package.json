@@ -37,7 +37,7 @@
     "test": "react-scripts test --watchAll=false",
     "eject": "react-scripts eject",
     "eslint": "eslint --ext ts,tsx,js,jsx src",
-    "cosmos": "cross-env FAST_REFRESH=false cosmos",
+    "cosmos": "cross-env FAST_REFRESH=false REACT_APP_SHOW_EDITOR_STATE=true cosmos",
     "cosmos:export": "cosmos-export",
     "build-stats": "react-scripts build --stats && webpack-bundle-analyzer build/bundle-stats.json",
     "start-production": "http-server build"
