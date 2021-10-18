@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import {
   makeStyles,
   createStyles,
@@ -115,7 +116,7 @@ const useMachineStyles = makeStyles(theme => createStyles({
   separator: { flexGrow: 1 },
 }))
 
-export const Machine = ({ id }) => {
+export const Machine = memo(({ id }) => {
   const classes = useMachineStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
   return (
@@ -126,4 +127,4 @@ export const Machine = ({ id }) => {
       {editable && <RemoveMachineButton id={id} />}
     </Card>
   )
-}
+})

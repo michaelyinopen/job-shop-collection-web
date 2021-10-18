@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import {
   makeStyles,
   createStyles,
@@ -46,7 +47,7 @@ const useStyles = makeStyles(theme => createStyles({
   },
 }))
 
-export const Job = ({ id }) => {
+export const Job = memo(({ id }) => {
   const classes = useStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
   const jobTitle = useJobSetEditorSelector(createJobTitleSelector(id))
@@ -73,4 +74,4 @@ export const Job = ({ id }) => {
       <Procedures key={id} jobId={id} />
     </Card>
   )
-}
+})

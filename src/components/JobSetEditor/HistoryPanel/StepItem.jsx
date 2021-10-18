@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { memo, useRef } from 'react'
 import clsx from 'clsx'
 import {
   makeStyles,
@@ -95,7 +95,7 @@ onClick={() => { }}
 
 
 
-export const StepItem = ({ id }) => {
+export const StepItem = memo(({ id }) => {
   const stepSelector = useRef(createStepSelector(id)).current
   const step = useJobSetEditorSelector(stepSelector)
   const stepDoneStatusSelector = useRef(createStepDoneStatusSelector(id)).current
@@ -118,4 +118,4 @@ export const StepItem = ({ id }) => {
       />
     )
   }
-}
+})

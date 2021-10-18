@@ -1,4 +1,9 @@
-import { createSelector } from 'reselect'
+import {
+  createSelector,
+  createSelectorCreator,
+  defaultMemoize,
+} from 'reselect'
+import { arraysEqual } from '../../../utility'
 import {
   formData_To_UpdateJobSetRequest,
   formData_To_CreateJobSetRequest,
@@ -144,11 +149,14 @@ export const canRedoSelector = (state: JobSetEditorState) => state.currentStepIn
 
 export const isHistoryPanelOpenSelector = (state: JobSetEditorState) => state.isHistoryPanelOpen
 
-export const stepIdsSelector = createSelector(
-  (state: JobSetEditorState) => state.steps,
-  (steps) => {
-    return steps.map(s => s.id).reverse()
-  }
+const createArraysEqualSelectorCreator = createSelectorCreator(
+  defaultMemoize,
+  arraysEqual
+)
+
+export const stepIdsSelector = createArraysEqualSelectorCreator(
+  (state: JobSetEditorState) => state.steps.map(s => s.id).reverse(),
+  (stepIds) => stepIds
 )
 
 export const createStepSelector = (id: string) => createSelector(
@@ -157,6 +165,14 @@ export const createStepSelector = (id: string) => createSelector(
     return steps.find(s => s.id === id)
   }
 )
+
+export const createNormalStepSelector = (id: string) => createSelector(
+  (state: JobSetEditorState) => state.steps,
+  (steps) => {
+    return steps.find(s => s.id === id)
+  }
+)
+
 
 export const createStepDoneStatusSelector = (id: string) => createSelector(
   (state: JobSetEditorState) => state.steps,

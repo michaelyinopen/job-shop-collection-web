@@ -1,5 +1,6 @@
 import type { Middleware } from 'redux'
 import { nanoid } from 'nanoid'
+import { arraysEqual } from '../../../../utility'
 import {
   applyConflict,
   jumpToStep,
@@ -28,7 +29,6 @@ import {
 import {
   calculateStepName,
   getFieldChanges,
-  arraysEqual,
 } from './StepCommon'
 import type {
   FormData,
