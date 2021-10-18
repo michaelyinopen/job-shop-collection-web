@@ -50,7 +50,6 @@ const useProcedureMachineStyles = makeStyles(theme => createStyles({
     width: theme.spacing(4),
     alignSelf: "stretch",
     overflow: "hidden",
-    marginRight: theme.spacing(1),
     '&:after': {
       content: '""',
       position: "absolute",
@@ -109,6 +108,7 @@ const useProcessingTimeStyles = makeStyles(theme => createStyles({
     boxShadow: "0 0 8px 8px rgba(255, 255, 255, 0.4)",
     marginRight: theme.spacing(2),
     width: '12rem',
+    marginLeft: theme.spacing(1),
   }
 }))
 
@@ -153,19 +153,23 @@ const useProcedureStyles = makeStyles(theme => createStyles({
     alignItems: "center",
     overflow: "hidden",
     [theme.breakpoints.down('xs')]: {
-      flexWrap: 'wrap-reverse',
+      flexWrap: 'wrap',
     }
   },
   machineAndTime: {
     display: "flex",
     alignItems: "center",
     flexWrap: "wrap",
+    flexShrink: 1,
     '& > *': {
       '&:not(:last-child)': {
         marginRight: theme.spacing(1)
-      }
+      },
     },
-    minWidth: 248
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+      alignItems: "flex-start",
+    },
   },
   sequeneAndActions: {
     height: "48px",
@@ -174,16 +178,17 @@ const useProcedureStyles = makeStyles(theme => createStyles({
     flexGrow: 1,
     flexShrink: 0,
     '& > *': {
-      '&:not(:last-child)': {
-        marginRight: theme.spacing(1)
-      }
+      '&:first-child': {
+        marginLeft: theme.spacing(1)
+      },
+      marginRight: theme.spacing(1)
     }
   },
   sequenceLabel: {
     marginTop: "auto",
-    marginRight: theme.spacing(1.5),
+    marginRight: theme.spacing(1),
     marginBottom: "auto",
-    marginLeft: theme.spacing(1.5),
+    marginLeft: theme.spacing(1),
     width: theme.spacing(3),
     height: theme.spacing(3),
     color: "black",
@@ -216,9 +221,11 @@ export const Procedure = memo(({ jobId, id }) => {
         <ProcedureProcessingTime jobId={jobId} id={id} />
       </div>
       <div className={classes.sequeneAndActions}>
-        <div className={classes.sequenceLabel}>
-          {sequence}
-        </ div>
+        <div>
+          <div className={classes.sequenceLabel}>
+            {sequence}
+          </ div>
+        </div>
         <div className={classes.separator} />
         {editable && <DeleteProcedureButton jobId={jobId} id={id} />}
       </div>
