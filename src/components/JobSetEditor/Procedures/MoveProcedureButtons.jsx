@@ -9,8 +9,14 @@ import DownIcon from '@material-ui/icons/ArrowDropDown'
 
 const useStyles = makeStyles(theme => createStyles({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: 'grid',
+    gridTemplate: '"up" 1fr "down" 1fr / auto',
+  },
+  up: {
+    gridArea: 'up',
+  },
+  down: {
+    gridArea: 'down',
   },
   button: {
     padding: 0,
@@ -30,22 +36,26 @@ export const MoveProcedureButtons = ({
   const classes = useStyles()
   return (
     <div className={classes.root}>
-      <Tooltip title={`Move up`}>
-        <div className={classes.buttonWrapper}>
+      <div className={classes.up}>
+        <Tooltip title={`Move up`}>
+          <div className={classes.buttonWrapper}>
+            <Button
+              className={classes.button}
+            >
+              <UpIcon className={classes.icon} />
+            </Button>
+          </div>
+        </Tooltip>
+      </div>
+      <div className={classes.down}>
+        <Tooltip title={`Move down`}>
           <Button
             className={classes.button}
           >
-            <UpIcon className={classes.icon} />
+            <DownIcon className={classes.icon} />
           </Button>
-        </div>
-      </Tooltip>
-      <Tooltip title={`Move down`}>
-        <Button
-          className={classes.button}
-        >
-          <DownIcon className={classes.icon} />
-        </Button>
-      </Tooltip>
+        </Tooltip>
+      </div>
     </div>
   )
 }
