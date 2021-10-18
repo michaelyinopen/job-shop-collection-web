@@ -6,6 +6,14 @@ import {
 } from '@material-ui/core'
 import UpIcon from '@material-ui/icons/ArrowDropUp'
 import DownIcon from '@material-ui/icons/ArrowDropDown'
+import {
+  useJobSetEditorSelector,
+  canProcedureMoveUpSelector,
+  canProcedureMoveDownSelector,
+  procedureIndexSelector,
+  useJobSetEditorDispatch,
+  moveProcedure,
+} from '../store'
 
 const useStyles = makeStyles(theme => createStyles({
   root: {
@@ -34,28 +42,42 @@ export const MoveProcedureButtons = ({
   id
 }) => {
   const classes = useStyles()
+  const editorDispatch = useJobSetEditorDispatch()
+  const canMoveUp = useJobSetEditorSelector(canProcedureMoveUpSelector(jobId, id))
+  const canMoveDown = useJobSetEditorSelector(canProcedureMoveDownSelector(jobId, id))
+  const currentIndex = useJobSetEditorSelector(procedureIndexSelector(jobId, id))
   return (
     <div className={classes.root}>
-      <div className={classes.up}>
-        <Tooltip title={`Move up`}>
-          <div className={classes.buttonWrapper}>
+      {canMoveUp && (
+        <div className={classes.up}>
+          <Tooltip title={`Move up`}>
+            <div className={classes.buttonWrapper}>
+              <Button
+                className={classes.button}
+                onClick={() => {
+                  editorDispatch(moveProcedure(jobId, id, currentIndex - 1))
+                }}
+              >
+                <UpIcon className={classes.icon} />
+              </Button>
+            </div>
+          </Tooltip>
+        </div>
+      )}
+      {canMoveDown && (
+        <div className={classes.down}>
+          <Tooltip title={`Move down`}>
             <Button
               className={classes.button}
+              onClick={() => {
+                editorDispatch(moveProcedure(jobId, id, currentIndex + 1))
+              }}
             >
-              <UpIcon className={classes.icon} />
+              <DownIcon className={classes.icon} />
             </Button>
-          </div>
-        </Tooltip>
-      </div>
-      <div className={classes.down}>
-        <Tooltip title={`Move down`}>
-          <Button
-            className={classes.button}
-          >
-            <DownIcon className={classes.icon} />
-          </Button>
-        </Tooltip>
-      </div>
+          </Tooltip>
+        </div>
+      )}
     </div>
   )
 }

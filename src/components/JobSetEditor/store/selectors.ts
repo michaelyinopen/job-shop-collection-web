@@ -48,6 +48,24 @@ export const createProceduresAffectedByMachineSelector = (machineId: string) =>
     const allProcedures = Object.values(state.formData.jobs.entities).flatMap(j => Object.values(j.procedures.entities))
     return allProcedures.filter(p => p.machineId === machineId)
   }
+export const canProcedureMoveUpSelector = (jobId: string, procedureId: string) =>
+  (state: JobSetEditorState) => {
+    const procedureIndex = state.formData.jobs.entities[jobId]?.procedures.ids.indexOf(procedureId)
+    return procedureIndex !== undefined
+      && procedureIndex !== -1
+      && procedureIndex !== 0
+  }
+export const canProcedureMoveDownSelector = (jobId: string, procedureId: string) =>
+  (state: JobSetEditorState) => {
+    const procedureIndex = state.formData.jobs.entities[jobId]?.procedures.ids.indexOf(procedureId)
+    return procedureIndex !== undefined
+      && procedureIndex !== -1
+      && procedureIndex !== state.formData.jobs.entities[jobId]?.procedures.ids.length - 1
+  }
+export const procedureIndexSelector = (jobId: string, procedureId: string) =>
+  (state: JobSetEditorState) => {
+    return state.formData.jobs.entities[jobId]?.procedures.ids.indexOf(procedureId)
+  }
 export const isAutoTimeOptionsSelector = (state: JobSetEditorState) => state.formData.isAutoTimeOptions
 export const maxTimeMsSelector = (state: JobSetEditorState) =>
   state.formData.isAutoTimeOptions
