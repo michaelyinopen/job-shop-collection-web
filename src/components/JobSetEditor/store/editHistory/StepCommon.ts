@@ -10,8 +10,24 @@ export function numberOfSlashes(value: string): number {
   return [...value].filter(c => c === '/').length
 }
 
+export function getMachineIdFromPath(path: string) {
+  const indexOf3rdSlash = '/machines/entities/'.length - 1
+  const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
+  return indexOf4thSlash === -1
+    ? path.substring(indexOf3rdSlash + 1)
+    : path.substring(indexOf3rdSlash + 1, indexOf4thSlash)
+}
+
 export function getJobIdFromPath(path: string) {
   const indexOf3rdSlash = '/jobs/entities/'.length - 1
+  const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
+  return indexOf4thSlash === -1
+    ? path.substring(indexOf3rdSlash + 1)
+    : path.substring(indexOf3rdSlash + 1, indexOf4thSlash)
+}
+
+export function getJobColorIdFromPath(path: string) {
+  const indexOf3rdSlash = '/jobColors/entities/'.length - 1
   const indexOf4thSlash = path.indexOf('/', indexOf3rdSlash + 1)
   return indexOf4thSlash === -1
     ? path.substring(indexOf3rdSlash + 1)
