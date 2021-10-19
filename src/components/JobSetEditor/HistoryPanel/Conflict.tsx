@@ -20,6 +20,7 @@ type ConflictProps = {
   undone: boolean,
 }
 
+// key is StepId-conflictIndex
 export const Conflict = ({
   stepId,
   conflictIndex,
@@ -28,7 +29,7 @@ export const Conflict = ({
 }: ConflictProps) => {
   const editorDispatch = useJobSetEditorDispatch()
   const hasRelatedChangesSelector = useRef(createHasRelatedChangesSelector(stepId, conflictIndex)).current
-  const hasRelatedChanges = useJobSetEditorSelector()
+  const hasRelatedChanges = useJobSetEditorSelector(hasRelatedChangesSelector)
   const disabled = undone || hasRelatedChanges
   return (
     <div>

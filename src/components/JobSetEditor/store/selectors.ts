@@ -1,3 +1,4 @@
+import memoize from 'lodash/memoize'
 import {
   createSelector,
   createSelectorCreator,
@@ -7,6 +8,8 @@ import {
   arraysEqual,
   shallowEqualObjects,
 } from '../../../utility'
+import { conflictHasRelatedChanges } from './editHistory'
+import type { Operation, Step } from './editHistory'
 import {
   formData_To_UpdateJobSetRequest,
   formData_To_CreateJobSetRequest,
@@ -202,6 +205,58 @@ export const createStepDoneStatusSelector = (id: string) => createSelector(
   }
 )
 
-export const createHasRelatedChangesSelector = (stepId: string, conflictIndex: number) => {
+export const createHasRelatedChangesSelector = (
+  stepId: string,
+  conflictIndex: number
+) => {
+  // if the conflict changes, re-create the memoized function
+  const hasRelatedChangesWithStepMemoize = defaultMemoize(
+    (conflict: Operation) => {
+      const hasRelatedChangesWithStep = (step: Step) => {
+        return conflictHasRelatedChanges(conflict, step)
+      }
+      const memoized = memoize(hasRelatedChangesWithStep)
+      memoized.cache = new WeakMap()
+      return memoized
+    }
+  )
+  const hasRelatedChangesMemoized = defaultMemoize(
+    (
+      hasRelatedChangesWithStepFn: (step: Step) => boolean,
+      steps: Step[],
+      stepIndex: number,
+      currentStepIndex: number
+    ) => {
+      for (const step of steps.slice(stepIndex + 1, currentStepIndex + 1)) {
+        if (hasRelatedChangesWithStepFn(step)) {
+          return true
+        }
+      }
+      return false
+    }
+  )
 
+  function selector(state: JobSetEditorState) {
+    const stepIndex = state.steps.findIndex(s => s.id === stepId)
+    if (stepIndex === -1) {
+      return undefined
+    }
+    const conflict = state.steps[stepIndex].operations?.[conflictIndex]
+    if (!conflict) {
+      return undefined
+    }
+    const hasRelatedChangesWithStepFn = hasRelatedChangesWithStepMemoize(conflict)
+    const steps = state.steps
+    const currentStepIndex = state.currentStepIndex
+
+    const hasRelatedChanges = hasRelatedChangesMemoized(
+      hasRelatedChangesWithStepFn,
+      steps,
+      stepIndex,
+      currentStepIndex
+    )
+    return hasRelatedChanges
+  }
+
+  return selector
 }
