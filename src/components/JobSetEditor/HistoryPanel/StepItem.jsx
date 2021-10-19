@@ -17,6 +17,8 @@ import {
   FormLabel,
   FormControlLabel,
   Radio,
+  FormGroup,
+  Checkbox,
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import {
@@ -90,7 +92,7 @@ const useVersionedStepItemStyles = makeStyles(theme => createStyles({
     padding: theme.spacing(1),
   },
   mergeOptions: {
-    paddingLeft: theme.spacing(3),
+    paddingLeft: theme.spacing(2),
     borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
   },
   expandMore: {
@@ -106,6 +108,14 @@ const useVersionedStepItemStyles = makeStyles(theme => createStyles({
   },
   smallFont: {
     fontSize: '0.875rem',
+  },
+  conflicts: {
+    paddingLeft: theme.spacing(1),
+  },
+  conflictLabel: {
+    '&:not(:last-child)': {
+      borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+    },
   }
 }))
 
@@ -186,7 +196,7 @@ const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
             />
             <FormControlLabel
               value='merge'
-              label="Merge"
+              label={'Merge' + (conflicts.length !== 0 ? '*' : '')}
               disabled={!isCurrent}
               control={<Radio size='small' className={classes.radioButton} />}
               classes={{
@@ -194,6 +204,45 @@ const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
               }}
             />
           </RadioGroup>
+          <Collapse in={conflicts.length !== 0} timeout="auto" unmountOnExit>
+            <FormControl variant='outlined' component="fieldset" fullWidth className={classes.conflicts}>
+              <FormLabel component="legend" focused>Conflicts</FormLabel>
+              <FormGroup>
+                <FormControlLabel
+                  label="Gilad Gray"
+                  control={<Checkbox size='small' checked={true} onChange={() => { }} />}
+                  classes={{
+                    root: classes.conflictLabel,
+                    label: classes.smallFont
+                  }}
+                />
+                <FormControlLabel
+                  label="Jason Killian"
+                  control={<Checkbox size='small' checked={true} onChange={() => { }} />}
+                  classes={{
+                    root: classes.conflictLabel,
+                    label: classes.smallFont
+                  }}
+                />
+                <FormControlLabel
+                  label="Antoine Llorca"
+                  control={<Checkbox size='small' checked={true} onChange={() => { }} />}
+                  classes={{
+                    root: classes.conflictLabel,
+                    label: classes.smallFont
+                  }}
+                />
+                <FormControlLabel
+                  label="Edit procedure's machine"
+                  control={<Checkbox size='small' checked={true} onChange={() => { }} />}
+                  classes={{
+                    root: classes.conflictLabel,
+                    label: classes.smallFont
+                  }}
+                />
+              </FormGroup>
+            </FormControl>
+          </Collapse>
         </Paper>
       </Collapse>
     </>
