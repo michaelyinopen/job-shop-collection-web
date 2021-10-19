@@ -67,6 +67,12 @@ export const JobSetEditor: FunctionComponent<JobSetEditorProps> = WithJobSetEdit
     const editorDispatch = useJobSetEditorDispatch()
 
     useEffect(() => {
+      if (isNew) {
+        editorDispatch(resetJobSetEditor())
+      }
+    }, [editorDispatch, isNew])
+
+    useEffect(() => {
       editorDispatch(setJobSetEditorId(id))
       return () => {
         if (!isNew) { // does not reset if change from new to an activity with id

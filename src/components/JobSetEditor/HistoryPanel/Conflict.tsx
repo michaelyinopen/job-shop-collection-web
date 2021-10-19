@@ -1,8 +1,5 @@
 import { useRef } from 'react'
-import memoize from 'lodash/memoize'
-import { conflictHasRelatedChanges } from './store/editHistory'
 import type {
-  Step as StepType,
   Operation as OperationType,
 } from '../store/editHistory'
 import {
