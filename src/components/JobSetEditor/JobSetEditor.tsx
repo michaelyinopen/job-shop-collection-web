@@ -31,6 +31,7 @@ import { JobSetEditorState } from './JobSetEditorState'
 import { ExitPrompt } from './ExitPrompt'
 import { HistoryPanel } from './HistoryPanel'
 import { JobSetEditorLayout } from './JobSetEditorLayout'
+import { ErrorBoundary } from '../ErrorBoundary'
 
 type JobSetEditorProps = {
   id: number | undefined
@@ -42,9 +43,11 @@ type WithJobSetEditorProviderType =
 
 const WithJobSetEditorProvider: WithJobSetEditorProviderType = (Component) => (props) => {
   return (
-    <JobSetEditorProvider>
-      <Component key={props.id} {...props} />
-    </JobSetEditorProvider>
+    <ErrorBoundary>
+      <JobSetEditorProvider>
+        <Component key={props.id} {...props} />
+      </JobSetEditorProvider>
+    </ErrorBoundary>
   )
 }
 

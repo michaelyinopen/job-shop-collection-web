@@ -9,6 +9,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { routePaths } from './route'
 
 import { Layout } from './components/Layout'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { Home } from './components/Home'
 import { About } from './components/About'
 import { JobSets } from './components/JobSets'

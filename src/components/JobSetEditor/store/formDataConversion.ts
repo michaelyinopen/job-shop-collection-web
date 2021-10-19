@@ -124,7 +124,6 @@ export function mergeUninitializedJobSet(
   }
 }
 
-
 export function formData_To_CreateJobSetRequest(
   formData: FormDataState
 ): CreateJobSetRequest {

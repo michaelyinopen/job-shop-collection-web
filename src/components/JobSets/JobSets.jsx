@@ -6,6 +6,7 @@ import {
   jobSetHeadersSelector,
 } from '../../store'
 import { PageContainer } from '../../styles'
+import { ErrorBoundary } from '../ErrorBoundary'
 import {
   jobSetsPageSetItems,
   jobSetsPageReset,
@@ -43,12 +44,14 @@ export const JobSets = () => {
   }, [dispatch, isLoading, jobSetHeaders])
 
   return (
-    <PageContainer classes={{ pageContainer: classes.pageContainer }}>
-      <Paper>
-        <JobSetsToolbarTitle />
-        <JobSetsTable />
-        <JobSetsTablePagination />
-      </Paper>
-    </PageContainer>
+    <ErrorBoundary>
+      <PageContainer classes={{ pageContainer: classes.pageContainer }}>
+        <Paper>
+          <JobSetsToolbarTitle />
+          <JobSetsTable />
+          <JobSetsTablePagination />
+        </Paper>
+      </PageContainer>
+    </ErrorBoundary>
   )
 }
