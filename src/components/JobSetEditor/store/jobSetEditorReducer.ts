@@ -486,8 +486,10 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
       state.steps[stepIndex].saveStatus = 'saved'
     })
-    .addCase(setMergeBehaviourMerge, (state, { payload: { stepIndex } }) => {
-      if (state.currentStepIndex !== stepIndex
+    .addCase(setMergeBehaviourMerge, (state, { payload: { stepId } }) => {
+      const stepIndex = state.steps.findIndex(s => s.id === stepId)
+      if (stepIndex === -1
+        || state.currentStepIndex !== stepIndex
         || state.steps[stepIndex].mergeBehaviour === 'merge'
       ) {
         return
@@ -514,8 +516,10 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         step.saveStatus = undefined
       }
     })
-    .addCase(setMergeBehaviourDiscardLocal, (state, { payload: { stepIndex } }) => {
-      if (state.currentStepIndex !== stepIndex
+    .addCase(setMergeBehaviourDiscardLocal, (state, { payload: { stepId } }) => {
+      const stepIndex = state.steps.findIndex(s => s.id === stepId)
+      if (stepIndex === -1
+        || state.currentStepIndex !== stepIndex
         || state.steps[stepIndex].mergeBehaviour === 'discard local changes'
       ) {
         return
@@ -538,8 +542,9 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         step.saveStatus = undefined
       }
     })
-    .addCase(applyConflict, (state, { payload: { stepIndex, conflictIndex } }) => {
-      if (state.steps[stepIndex].mergeBehaviour !== 'merge') {
+    .addCase(applyConflict, (state, { payload: { stepId, conflictIndex } }) => {
+      const stepIndex = state.steps.findIndex(s => s.id === stepId)
+      if (stepIndex === -1 || state.steps[stepIndex].mergeBehaviour !== 'merge') {
         return
       }
       state.steps.splice(state.currentStepIndex + 1)
@@ -571,8 +576,9 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         step.saveStatus = undefined
       }
     })
-    .addCase(unApplyConflict, (state, { payload: { stepIndex, conflictIndex } }) => {
-      if (state.steps[stepIndex].mergeBehaviour !== 'merge') {
+    .addCase(unApplyConflict, (state, { payload: { stepId, conflictIndex } }) => {
+      const stepIndex = state.steps.findIndex(s => s.id === stepId)
+      if (stepIndex === -1 || state.steps[stepIndex].mergeBehaviour !== 'merge') {
         return
       }
       state.steps.splice(state.currentStepIndex + 1)

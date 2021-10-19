@@ -321,34 +321,34 @@ export const savedStep = createAction(
 
 export const setMergeBehaviourMerge = createAction(
   'jobSetEditor/setMergeBehaviourMerge',
-  (stepIndex: number) => ({
+  (stepId: string) => ({
     payload: {
-      stepIndex,
+      stepId,
     }
   })
 )
 export const setMergeBehaviourDiscardLocal = createAction(
   'jobSetEditor/setMergeBehaviourDiscardLocal',
-  (stepIndex: number) => ({
+  (stepId: string) => ({
     payload: {
-      stepIndex,
+      stepId,
     }
   })
 )
 export const applyConflict = createAction(
   'jobSetEditor/applyConflict',
-  (stepIndex: number, conflictIndex: number) => ({
+  (stepId: string, conflictIndex: number) => ({
     payload: {
-      stepIndex,
+      stepId,
       conflictIndex,
     }
   })
 )
 export const unApplyConflict = createAction(
   'jobSetEditor/unApplyConflict',
-  (stepIndex: number, conflictIndex: number) => ({
+  (stepId: string, conflictIndex: number) => ({
     payload: {
-      stepIndex,
+      stepId,
       conflictIndex,
     }
   })

@@ -201,3 +201,7 @@ export const createStepDoneStatusSelector = (id: string) => createSelector(
         : 'past'
   }
 )
+
+export const createHasRelatedChangesSelector = (stepId: string, conflictIndex: number) => {
+
+}
