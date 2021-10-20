@@ -102,7 +102,6 @@ const ProcedureMachine = ({ jobId, id }) => {
   )
 }
 
-
 const useProcessingTimeStyles = makeStyles(theme => createStyles({
   wrapper: {
     overflow: 'hidden'
@@ -209,7 +208,7 @@ export const Procedure = memo(({ jobId, id }) => {
   const jobColor = useJobSetEditorSelector(createJobColorSelector(jobId))
 
   const procedureIndex = useJobSetEditorSelector(createProcedureIndexSelector(jobId, id))
-  const sequence = procedureIndex + 1
+  const sequence = procedureIndex + 1 ?? ''
 
   return (
     <div

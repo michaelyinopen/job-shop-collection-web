@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => createStyles({
     display: 'flex',
     border: `1px solid ${theme.palette.divider}`,
     flexWrap: 'wrap'
+  },
+  toggleButtonRoot: {
+    color: theme.palette.grey[600]
   }
 }))
 
@@ -60,7 +63,7 @@ export const EditReadonly = ({ id }) => {
               grouped: classes.grouped
             }}
           >
-            <ToggleButton value={true} disabled>
+            <ToggleButton classes={{ root: classes.toggleButtonRoot }} value={true} disabled>
               <LockIcon />
             </ToggleButton>
           </ToggleButtonGroup>
@@ -87,12 +90,12 @@ export const EditReadonly = ({ id }) => {
           e.stopPropagation()
         }}
       >
-        <ToggleButton value={true} >
+        <ToggleButton classes={{ root: classes.toggleButtonRoot }} value={true}>
           <Tooltip title="Edit" placement="bottom-end">
             <EditIcon />
           </Tooltip>
         </ToggleButton>
-        <ToggleButton value={false}>
+        <ToggleButton classes={{ root: classes.toggleButtonRoot }} value={false}>
           <Tooltip title="Read-only" placement="bottom-end">
             <div className={classes.icon}>
               <IconifyIcon icon={pencilOffOutline} />

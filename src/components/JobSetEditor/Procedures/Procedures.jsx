@@ -57,7 +57,7 @@ export const Procedures = ({ jobId }) => {
         Job {jobTitle} Procedures
         <Tooltip title={`${procedureIdsOfJob?.length} procedures in Job ${jobTitle}`}>
           <span className={classes.countMessage}>
-            {procedureIdsOfJob?.length === 0 ? "" : ` (${procedureIdsOfJob?.length})`}
+            {(procedureIdsOfJob?.length ?? 0) === 0 ? "" : ` (${procedureIdsOfJob?.length})`}
           </span>
         </Tooltip>
       </div>

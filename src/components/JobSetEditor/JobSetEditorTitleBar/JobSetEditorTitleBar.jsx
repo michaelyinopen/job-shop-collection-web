@@ -34,29 +34,6 @@ import { MoreOptions } from './MoreOptions'
 
 export const jobSetEditorTitleBarHeight = 64
 
-const useStyles = makeStyles(theme => createStyles({
-  toolbar: {
-    position: "sticky",
-    top: 0,
-    display: "flex",
-    flexWrap: "wrap",
-    zIndex: theme.zIndex.appBar - 2,
-    backgroundColor: theme.palette.background.default,
-    boxShadow: "0px 6px 4px -6px rgba(0,0,0,0.75)",
-    paddingRight: theme.spacing(2),
-  },
-  allActions: {
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap-reverse",
-  },
-  grouped: {
-    display: "flex",
-    alignItems: "center",
-  },
-  separator: { flexGrow: 1 },
-}))
-
 const RefreshJobSetButton = ({ id }) => {
   const dispatch = useAppDispatch()
   const editorDispatch = useJobSetEditorDispatch()
@@ -103,6 +80,34 @@ const RefreshJobSetButton = ({ id }) => {
   )
 }
 
+const useStyles = makeStyles(theme => createStyles({
+  toolbar: {
+    position: "sticky",
+    top: 0,
+    display: "flex",
+    flexWrap: "wrap",
+    zIndex: theme.zIndex.appBar - 2,
+    backgroundColor: theme.palette.background.default,
+    boxShadow: "0px 6px 4px -6px rgba(0,0,0,0.75)",
+    paddingRight: theme.spacing(2),
+  },
+  allActions: {
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap-reverse",
+  },
+  grouped: {
+    display: "flex",
+    alignItems: "center",
+  },
+  readonlyText: {
+    color: theme.palette.text.hint,
+    fontStyle: 'italic',
+    margin: theme.spacing(1),
+  },
+  separator: { flexGrow: 1 },
+}))
+
 export const JobSetEditorTitleBar = () => {
   const classes = useStyles()
 
@@ -118,6 +123,7 @@ export const JobSetEditorTitleBar = () => {
       <div className={classes.separator} />
       <div className={classes.allActions}>
         <div className={classes.grouped}>
+          {!editable && <Typography variant='h6' className={classes.readonlyText}>(read-only)</Typography>}
           {editable && <HistoryButtons />}
           {editable && <SaveJobSetButton id={id} />}
         </div>

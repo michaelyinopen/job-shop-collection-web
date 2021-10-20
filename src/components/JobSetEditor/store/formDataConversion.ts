@@ -166,7 +166,7 @@ export function formData_To_CreateJobSetRequest(
     jobColors: JSON.stringify(formData.jobColors.entities),
     isAutoTimeOptions: formData.isAutoTimeOptions,
     timeOptions: formData.isAutoTimeOptions
-      ? JSON.stringify(formData.autoTimeOptions) ?? JSON.stringify(formData.manualTimeOptions)//todo some default value, or autoTimeOptions should not be undefined
+      ? JSON.stringify(formData.autoTimeOptions)
       : JSON.stringify(formData.manualTimeOptions),
   }
 }
