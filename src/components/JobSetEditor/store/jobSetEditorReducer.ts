@@ -2,47 +2,7 @@ import {
   createReducer,
 } from '@reduxjs/toolkit'
 import { getNewJobColor } from '../../../utility'
-import {
-  resetJobSetEditor,
-  setJobSetEditorId,
-  setJobSetEditorIsEdit,
-  loadedJobSet,
-  failedToLoadJobSet,
-  openHistoryPanel,
-  closeHistoryPanel,
-  setJobSetFromAppStore,
-  setTitle,
-  setDescription,
-  addMachine,
-  setMachineTitle,
-  setMachineDescription,
-  removeMachine,
-  createJob,
-  changeJobColor,
-  deleteJob,
-  createProcedure,
-  setProcedureMachineId,
-  setProcedureProcessingTime,
-  moveProcedure,
-  deleteProcedure,
-  setIsAutoTimeOptions,
-  setMaxTime,
-  setViewStartTime,
-  setViewEndTime,
-  setMinViewDuration,
-  setMaxViewDuration,
-  middlewareCalculatedAutoTimeOptions,
-  replaceLastStep,
-  undo,
-  redo,
-  jumpToStep,
-  savingStep,
-  savedStep,
-  setMergeBehaviourMerge,
-  setMergeBehaviourDiscardLocal,
-  applyConflict,
-  unApplyConflict,
-} from './actions'
+import * as actions from './actions'
 import { appStoreJobSet_To_FormData, mergeUninitializedJobSet } from './formDataConversion'
 import { calculateRefreshedStep, redoStep, undoStep } from './editHistory'
 import type { Step } from './editHistory'
@@ -180,13 +140,13 @@ const jobSetEditorInitialState: JobSetEditorState = {
 
 export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) => {
   builder
-    .addCase(resetJobSetEditor, (state) => {
+    .addCase(actions.resetJobSetEditor, (state) => {
       return jobSetEditorInitialState
     })
-    .addCase(setJobSetEditorId, (state, { payload: id }) => {
+    .addCase(actions.setJobSetEditorId, (state, { payload: id }) => {
       state.id = id
     })
-    .addCase(setJobSetEditorIsEdit, (state, { payload: isEdit }) => {
+    .addCase(actions.setJobSetEditorIsEdit, (state, { payload: isEdit }) => {
       if (isEdit && !state.isEdit) {
         state.isEdit = true
       }
@@ -197,19 +157,19 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         state.formData = state.lastVersion?.formData ?? jobSetEditorInitialState.formData
       }
     })
-    .addCase(loadedJobSet, (state) => {
+    .addCase(actions.loadedJobSet, (state) => {
       state.loadStatus = 'loaded'
     })
-    .addCase(failedToLoadJobSet, (state) => {
+    .addCase(actions.failedToLoadJobSet, (state) => {
       state.loadStatus = 'failed'
     })
-    .addCase(openHistoryPanel, (state) => {
+    .addCase(actions.openHistoryPanel, (state) => {
       state.isHistoryPanelOpen = true
     })
-    .addCase(closeHistoryPanel, (state) => {
+    .addCase(actions.closeHistoryPanel, (state) => {
       state.isHistoryPanelOpen = false
     })
-    .addCase(setJobSetFromAppStore, (state, action) => {
+    .addCase(actions.setJobSetFromAppStore, (state, action) => {
       const { payload: { jobSet, loaded } } = action
       if (!state.initialized) {
         const newState = mergeUninitializedJobSet(
@@ -254,13 +214,13 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
     })
     //#region edit form actions
-    .addCase(setTitle, (state, { payload }) => {
+    .addCase(actions.setTitle, (state, { payload }) => {
       state.formData.title = payload
     })
-    .addCase(setDescription, (state, { payload }) => {
+    .addCase(actions.setDescription, (state, { payload }) => {
       state.formData.description = payload
     })
-    .addCase(addMachine, (state, { payload: { id } }) => {
+    .addCase(actions.addMachine, (state, { payload: { id } }) => {
       state.formData.machines.ids.push(id)
       const machineNumber = (Math.max(
         0,
@@ -274,14 +234,14 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         description: `Machine ${machineNumber}`,
       }
     })
-    .addCase(setMachineTitle, (state, { payload: { machineId, value } }) => {
+    .addCase(actions.setMachineTitle, (state, { payload: { machineId, value } }) => {
       state.formData.machines.entities[machineId].title = value
     })
-    .addCase(setMachineDescription, (state, { payload: { machineId, value } }) => {
+    .addCase(actions.setMachineDescription, (state, { payload: { machineId, value } }) => {
       state.formData.machines.entities[machineId].description = value
     })
     // move machines
-    .addCase(removeMachine, (state, { payload: { machineId } }) => {
+    .addCase(actions.removeMachine, (state, { payload: { machineId } }) => {
       const index = state.formData.machines.ids.findIndex(mId => mId === machineId)
       if (index !== -1) {
         state.formData.machines.ids.splice(index, 1)
@@ -295,7 +255,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         procedure.machineId = null
       }
     })
-    .addCase(createJob, (state, { payload: { id } }) => {
+    .addCase(actions.createJob, (state, { payload: { id } }) => {
       state.formData.jobs.ids.push(id)
       const jobTitle = (Math.max(
         0,
@@ -323,7 +283,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
     })
     // set job title
     // move jobs
-    .addCase(changeJobColor, (state, { payload: { jobId } }) => {
+    .addCase(actions.changeJobColor, (state, { payload: { jobId } }) => {
       const excludeColors = Object.values(state.formData.jobColors.entities)
         .map(jc => jc!.color)
       const lastColor = state.formData.jobColors.entities[jobId]!.color
@@ -334,7 +294,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         textColor,
       }
     })
-    .addCase(deleteJob, (state, { payload: { jobId } }) => {
+    .addCase(actions.deleteJob, (state, { payload: { jobId } }) => {
       const jobIndex = state.formData.jobs.ids.findIndex(jId => jId === jobId)
       if (jobIndex !== -1) {
         state.formData.jobs.ids.splice(jobIndex, 1)
@@ -347,7 +307,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
       delete state.formData.jobColors.entities[jobId]
     })
-    .addCase(createProcedure, (state, { payload: { jobId, id } }) => {
+    .addCase(actions.createProcedure, (state, { payload: { jobId, id } }) => {
       state.formData.jobs.entities[jobId].procedures.ids.push(id)
       state.formData.jobs.entities[jobId].procedures.entities[id] = {
         id,
@@ -356,17 +316,17 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         processingTimeMs: 0,
       }
     })
-    .addCase(setProcedureMachineId, (state, action) => {
+    .addCase(actions.setProcedureMachineId, (state, action) => {
       const { payload: { jobId, procedureId, machineIdValue } } = action
       state.formData.jobs.entities[jobId].procedures.entities[procedureId].machineId
         = machineIdValue
     })
-    .addCase(setProcedureProcessingTime, (state, action) => {
+    .addCase(actions.setProcedureProcessingTime, (state, action) => {
       const { payload: { jobId, procedureId, processingMs } } = action
       state.formData.jobs.entities[jobId].procedures.entities[procedureId].processingTimeMs
         = processingMs
     })
-    .addCase(moveProcedure, (state, action) => {
+    .addCase(actions.moveProcedure, (state, action) => {
       const { payload: { jobId, procedureId, targetIndex } } = action
       const originalIndex = state.formData.jobs.entities[jobId].procedures.ids.indexOf(procedureId)
       if (originalIndex > targetIndex) {
@@ -385,14 +345,14 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         ]
       }
     })
-    .addCase(deleteProcedure, (state, { payload: { jobId, procedureId } }) => {
+    .addCase(actions.deleteProcedure, (state, { payload: { jobId, procedureId } }) => {
       const index = state.formData.jobs.entities[jobId].procedures.ids.findIndex(pId => pId === procedureId)
       if (index !== -1) {
         state.formData.jobs.entities[jobId].procedures.ids.splice(index, 1)
       }
       delete state.formData.jobs.entities[jobId].procedures.entities[procedureId]
     })
-    .addCase(setIsAutoTimeOptions, (state, { payload }) => {
+    .addCase(actions.setIsAutoTimeOptions, (state, { payload }) => {
       state.formData.isAutoTimeOptions = payload
       if (state.formData.autoTimeOptions
         && state.formData.manualTimeOptions.maxTimeMs === 0
@@ -406,46 +366,46 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         }
       }
     })
-    .addCase(setMaxTime, (state, { payload: { maxTimeMs } }) => {
+    .addCase(actions.setMaxTime, (state, { payload: { maxTimeMs } }) => {
       state.formData.manualTimeOptions.maxTimeMs = maxTimeMs
     })
-    .addCase(setViewStartTime, (state, { payload: { viewStartTimeMs } }) => {
+    .addCase(actions.setViewStartTime, (state, { payload: { viewStartTimeMs } }) => {
       state.formData.manualTimeOptions.viewStartTimeMs = viewStartTimeMs
     })
-    .addCase(setViewEndTime, (state, { payload: { viewEndTimeMs } }) => {
+    .addCase(actions.setViewEndTime, (state, { payload: { viewEndTimeMs } }) => {
       state.formData.manualTimeOptions.viewEndTimeMs = viewEndTimeMs
     })
-    .addCase(setMinViewDuration, (state, { payload: { minViewDurationMs } }) => {
+    .addCase(actions.setMinViewDuration, (state, { payload: { minViewDurationMs } }) => {
       state.formData.manualTimeOptions.minViewDurationMs = minViewDurationMs
     })
-    .addCase(setMaxViewDuration, (state, { payload: { maxViewDurationMs } }) => {
+    .addCase(actions.setMaxViewDuration, (state, { payload: { maxViewDurationMs } }) => {
       state.formData.manualTimeOptions.maxViewDurationMs = maxViewDurationMs
     })
-    .addCase(middlewareCalculatedAutoTimeOptions, (state, { payload: { timeOptions } }) => {
+    .addCase(actions.middlewareCalculatedAutoTimeOptions, (state, { payload: { timeOptions } }) => {
       state.formData.autoTimeOptions = {
         ...timeOptions
       }
     })
     //#endregion edit form actions
     //#region Step
-    .addCase(replaceLastStep, (state, { payload }) => {
+    .addCase(actions.replaceLastStep, (state, { payload }) => {
       state.steps.splice(state.currentStepIndex)
       state.steps.push(...payload)
       state.currentStepIndex = state.steps.length - 1
     })
-    .addCase(undo, (state) => {
+    .addCase(actions.undo, (state) => {
       if (state.currentStepIndex > 0) {
         state.formData = undoStep(state.steps[state.currentStepIndex], state.formData)
         state.currentStepIndex = state.currentStepIndex - 1
       }
     })
-    .addCase(redo, (state) => {
+    .addCase(actions.redo, (state) => {
       if (state.currentStepIndex < state.steps.length - 1) {
         state.formData = redoStep(state.steps[state.currentStepIndex + 1], state.formData)
         state.currentStepIndex = state.currentStepIndex + 1
       }
     })
-    .addCase(jumpToStep, (state, { payload: { stepId } }) => {
+    .addCase(actions.jumpToStep, (state, { payload: { stepId } }) => {
       const targetStepIndex = state.steps.findIndex(s => s.id === stepId)
       if (targetStepIndex >= 0 && targetStepIndex <= state.steps.length - 1) {
         let formData = state.formData
@@ -468,7 +428,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         state.currentStepIndex = targetStepIndex
       }
     })
-    .addCase(savingStep, (state, { payload: { stepIndex, saving } }) => {
+    .addCase(actions.savingStep, (state, { payload: { stepIndex, saving } }) => {
       if (stepIndex > state.steps.length - 1) {
         return
       }
@@ -477,7 +437,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
       state.steps[stepIndex].saveStatus = saving ? 'saving' : undefined
     })
-    .addCase(savedStep, (state, { payload: { stepIndex } }) => {
+    .addCase(actions.savedStep, (state, { payload: { stepIndex } }) => {
       if (stepIndex > state.steps.length - 1) {
         return
       }
@@ -486,7 +446,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
       state.steps[stepIndex].saveStatus = 'saved'
     })
-    .addCase(setMergeBehaviourMerge, (state, { payload: { stepId } }) => {
+    .addCase(actions.setMergeBehaviourMerge, (state, { payload: { stepId } }) => {
       const stepIndex = state.steps.findIndex(s => s.id === stepId)
       if (stepIndex === -1
         || state.currentStepIndex !== stepIndex
@@ -516,7 +476,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         step.saveStatus = undefined
       }
     })
-    .addCase(setMergeBehaviourDiscardLocal, (state, { payload: { stepId } }) => {
+    .addCase(actions.setMergeBehaviourDiscardLocal, (state, { payload: { stepId } }) => {
       const stepIndex = state.steps.findIndex(s => s.id === stepId)
       if (stepIndex === -1
         || state.currentStepIndex !== stepIndex
@@ -542,7 +502,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         step.saveStatus = undefined
       }
     })
-    .addCase(applyConflict, (state, { payload: { stepId, conflictIndex } }) => {
+    .addCase(actions.applyConflict, (state, { payload: { stepId, conflictIndex } }) => {
       const stepIndex = state.steps.findIndex(s => s.id === stepId)
       if (stepIndex === -1 || state.steps[stepIndex].mergeBehaviour !== 'merge') {
         return
@@ -576,7 +536,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         step.saveStatus = undefined
       }
     })
-    .addCase(unApplyConflict, (state, { payload: { stepId, conflictIndex } }) => {
+    .addCase(actions.unApplyConflict, (state, { payload: { stepId, conflictIndex } }) => {
       const stepIndex = state.steps.findIndex(s => s.id === stepId)
       if (stepIndex === -1 || state.steps[stepIndex].mergeBehaviour !== 'merge') {
         return
