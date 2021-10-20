@@ -778,24 +778,24 @@ function getMachinesFieldChanges(previousFormData: FormData, currentFormData: Fo
               newValue: currentMachineId
             }))
           }
+        }
+        else {
+          // previousMachineId != null
+          if (!addedMachineProcedureIds.includes(procedureId)) {
+            procedureMachineIdFieldChanges.push(({
+              path: `/jobs/entities/${jobId}/procedures/entities/${procedureId}/machineId`,
+              previousValue: previousMachineId,
+              newValue: currentMachineId
+            }))
+          }
           else {
-            // previousMachineId != null
-            if (!addedMachineProcedureIds.includes(procedureId)) {
+            // addedMachineProcedureIds.includes(procedureId)
+            if (!removedMachineProcedureIds.includes(procedureId)) {
               procedureMachineIdFieldChanges.push(({
                 path: `/jobs/entities/${jobId}/procedures/entities/${procedureId}/machineId`,
                 previousValue: previousMachineId,
-                newValue: currentMachineId
+                newValue: null // set to null first, then the fieldChanged grouped with create, will set to current value, if applied
               }))
-            }
-            else {
-              // addedMachineProcedureIds.includes(procedureId)
-              if (!removedMachineProcedureIds.includes(procedureId)) {
-                procedureMachineIdFieldChanges.push(({
-                  path: `/jobs/entities/${jobId}/procedures/entities/${procedureId}/machineId`,
-                  previousValue: previousMachineId,
-                  newValue: null // set to null first, then the fieldChanged grouped with create, will set to current value, if applied
-                }))
-              }
             }
           }
         }

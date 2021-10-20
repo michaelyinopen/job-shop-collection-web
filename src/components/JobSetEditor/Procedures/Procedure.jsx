@@ -87,7 +87,7 @@ const ProcedureMachine = ({ jobId, id }) => {
             label="Machine *"
             value={procedureMachineId ?? ''}
             onFocus={() => { }/*todo */}
-            onChange={e => editorDispatch(setProcedureMachineId(jobId, id, e.target.value ?? null))}
+            onChange={e => editorDispatch(setProcedureMachineId(jobId, id, !e.target.value ? null : e.target.value))}
             inputProps={{ readOnly: !editable }}
           >
             {machines.map(m => (
