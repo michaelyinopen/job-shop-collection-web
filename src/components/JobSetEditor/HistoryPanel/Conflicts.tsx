@@ -2,20 +2,9 @@ import { useRef } from 'react'
 import {
   makeStyles,
   createStyles,
-  Paper,
-  Divider,
-  Button,
-  Typography,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Collapse,
-  IconButton,
   FormControl,
-  RadioGroup,
   FormLabel,
   FormControlLabel,
-  Radio,
   FormGroup,
   Checkbox,
 } from '@material-ui/core'
@@ -30,53 +19,12 @@ import {
   createHasRelatedChangesSelector,
 } from '../store'
 
-type ConflictProps = {
-  stepId: string,
-  conflictIndex: number,
-  conflict: OperationType,
-  undone: boolean,
-}
-
-// key is StepId-conflictIndex
-export const Conflict = ({
-  stepId,
-  conflictIndex,
-  conflict,
-  undone,
-}: ConflictProps) => {
-  const editorDispatch = useJobSetEditorDispatch()
-  const hasRelatedChangesSelector = useRef(createHasRelatedChangesSelector(stepId, conflictIndex)).current
-  const hasRelatedChanges = useJobSetEditorSelector(hasRelatedChangesSelector)
-  const disabled = undone || hasRelatedChanges
-  return (
-    <div>
-      <input
-        type="checkbox"
-        id={`conflict-${stepId}-${conflictIndex}`}
-        checked={conflict.conflictApplied}
-        onChange={e => {
-          if (e.target.checked) {
-            editorDispatch(applyConflict(stepId, conflictIndex))
-          } else {
-            editorDispatch(unApplyConflict(stepId, conflictIndex))
-          }
-        }}
-        disabled={disabled}
-      />
-      <label htmlFor={`conflict-${stepId}-${conflictIndex}`}>{conflict.conflictName}</label>
-    </div>
-  )
-}
-
-const useConflictsStyles = makeStyles(theme => createStyles({
+const useConflictStyles = makeStyles(theme => createStyles({
   smallFont: {
     fontSize: '0.875rem',
   },
   checkbox: {
     padding: theme.spacing(0.5),
-  },
-  conflicts: {
-    paddingLeft: theme.spacing(1),
   },
   conflictLabel: {
     '&:not(:last-child)': {
@@ -85,51 +33,81 @@ const useConflictsStyles = makeStyles(theme => createStyles({
   }
 }))
 
+type ConflictProps = {
+  stepId: string,
+  conflictIndex: number,
+  conflict: OperationType,
+  undone: boolean,
+}
+
+export const Conflict = ({
+  stepId,
+  conflictIndex,
+  conflict,
+  undone,
+}: ConflictProps) => {
+  const classes = useConflictStyles()
+  const editorDispatch = useJobSetEditorDispatch()
+  const hasRelatedChangesSelector = useRef(createHasRelatedChangesSelector(stepId, conflictIndex)).current
+  const hasRelatedChanges = useJobSetEditorSelector(hasRelatedChangesSelector)
+  const disabled = undone || hasRelatedChanges
+  return (
+    <FormControlLabel
+      label={conflict.conflictName}
+      disabled={disabled}
+      classes={{
+        root: classes.conflictLabel,
+        label: classes.smallFont
+      }}
+      control={(
+        <Checkbox
+          size='small'
+          checked={conflict.conflictApplied}
+          className={classes.checkbox}
+          onChange={e => {
+            if (e.target.checked) {
+              editorDispatch(applyConflict(stepId, conflictIndex))
+            } else {
+              editorDispatch(unApplyConflict(stepId, conflictIndex))
+            }
+          }}
+        />
+      )}
+    />
+  )
+}
+
+const useConflictsStyles = makeStyles(theme => createStyles({
+  conflicts: {
+    paddingLeft: theme.spacing(1),
+  }
+}))
+
+type ConflictsProps = {
+  stepId: string,
+  conflicts: OperationType[],
+  undone: boolean,
+}
+
 export const Conflicts = ({
+  stepId,
   conflicts,
-  isCurrent
-}) => {
+  undone
+}: ConflictsProps) => {
   const classes = useConflictsStyles()
   return (
     <FormControl variant='outlined' component="fieldset" fullWidth className={classes.conflicts}>
-      <FormLabel component="legend" focused>Conflicts</FormLabel>
+      <FormLabel component="legend" focused disabled={undone}>Conflicts</FormLabel>
       <FormGroup>
-        <FormControlLabel
-          label="Gilad Gray"
-          disabled={!isCurrent}
-          classes={{
-            root: classes.conflictLabel,
-            label: classes.smallFont
-          }}
-          control={<Checkbox size='small'  className={classes.checkbox} checked={true} onChange={() => { }} />}
-        />
-        <FormControlLabel
-          label="Jason Killian"
-          disabled={!isCurrent}
-          classes={{
-            root: classes.conflictLabel,
-            label: classes.smallFont
-          }}
-          control={<Checkbox size='small'  className={classes.checkbox} checked={true} onChange={() => { }} />}
-        />
-        <FormControlLabel
-          label="Antoine Llorca"
-          disabled={!isCurrent}
-          classes={{
-            root: classes.conflictLabel,
-            label: classes.smallFont
-          }}
-          control={<Checkbox size='small'  className={classes.checkbox} checked={true} onChange={() => { }} />}
-        />
-        <FormControlLabel
-          label="Edit procedure's machine"
-          disabled={!isCurrent}
-          classes={{
-            root: classes.conflictLabel,
-            label: classes.smallFont
-          }}
-          control={<Checkbox size='small' checked={true} onChange={() => { }} />}
-        />
+        {conflicts.map((c: OperationType, index: number) => (
+          <Conflict
+            key={`${stepId}-${index}`}
+            stepId={stepId}
+            conflict={c}
+            conflictIndex={index}
+            undone={undone}
+          />
+        ))}
       </FormGroup>
     </FormControl>
   )

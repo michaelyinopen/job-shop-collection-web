@@ -4,21 +4,14 @@ import {
   makeStyles,
   createStyles,
   Paper,
-  Divider,
-  Button,
-  Typography,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
   Collapse,
   IconButton,
-  FormControl,
   RadioGroup,
-  FormLabel,
   FormControlLabel,
   Radio,
-  FormGroup,
-  Checkbox,
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import {
@@ -109,14 +102,6 @@ const useVersionedStepItemStyles = makeStyles(theme => createStyles({
   },
   smallFont: {
     fontSize: '0.875rem',
-  },
-  conflicts: {
-    paddingLeft: theme.spacing(1),
-  },
-  conflictLabel: {
-    '&:not(:last-child)': {
-      borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-    },
   }
 }))
 
@@ -212,8 +197,9 @@ const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
           </RadioGroup>
           <Collapse in={conflicts.length !== 0} timeout="auto" unmountOnExit>
             <Conflicts
+              stepId={stepId}
               conflicts={conflicts}
-              isCurrent={isCurrent}
+              undone={undone}
             />
           </Collapse>
         </Paper>
