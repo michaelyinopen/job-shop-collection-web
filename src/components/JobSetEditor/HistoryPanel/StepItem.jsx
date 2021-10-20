@@ -31,6 +31,7 @@ import {
   setMergeBehaviourDiscardLocal,
   setMergeBehaviourMerge,
 } from '../store'
+import { Conflicts } from './Conflicts'
 
 const useNormalStepItemStyles = makeStyles(theme => createStyles({
   step: {
@@ -177,14 +178,19 @@ const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
           elevation={0}
           className={classes.mergeOptions}
         >
-          <RadioGroup size='small' value={step.mergeBehaviour} onChange={e => {
-            if (e.target.value === 'discard local changes') {
-              editorDispatch(setMergeBehaviourDiscardLocal(stepId))
-            }
-            else if (e.target.value === 'merge') {
-              editorDispatch(setMergeBehaviourMerge(stepId))
-            }
-          }}>
+          <RadioGroup
+            size='small'
+            value={step.mergeBehaviour}
+            disabled={!isCurrent}
+            onChange={e => {
+              if (e.target.value === 'discard local changes') {
+                editorDispatch(setMergeBehaviourDiscardLocal(stepId))
+              }
+              else if (e.target.value === 'merge') {
+                editorDispatch(setMergeBehaviourMerge(stepId))
+              }
+            }}
+          >
             <FormControlLabel
               value='discard local changes'
               label="Discard local changes"
@@ -205,43 +211,10 @@ const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
             />
           </RadioGroup>
           <Collapse in={conflicts.length !== 0} timeout="auto" unmountOnExit>
-            <FormControl variant='outlined' component="fieldset" fullWidth className={classes.conflicts}>
-              <FormLabel component="legend" focused>Conflicts</FormLabel>
-              <FormGroup>
-                <FormControlLabel
-                  label="Gilad Gray"
-                  control={<Checkbox size='small' checked={true} onChange={() => { }} />}
-                  classes={{
-                    root: classes.conflictLabel,
-                    label: classes.smallFont
-                  }}
-                />
-                <FormControlLabel
-                  label="Jason Killian"
-                  control={<Checkbox size='small' checked={true} onChange={() => { }} />}
-                  classes={{
-                    root: classes.conflictLabel,
-                    label: classes.smallFont
-                  }}
-                />
-                <FormControlLabel
-                  label="Antoine Llorca"
-                  control={<Checkbox size='small' checked={true} onChange={() => { }} />}
-                  classes={{
-                    root: classes.conflictLabel,
-                    label: classes.smallFont
-                  }}
-                />
-                <FormControlLabel
-                  label="Edit procedure's machine"
-                  control={<Checkbox size='small' checked={true} onChange={() => { }} />}
-                  classes={{
-                    root: classes.conflictLabel,
-                    label: classes.smallFont
-                  }}
-                />
-              </FormGroup>
-            </FormControl>
+            <Conflicts
+              conflicts={conflicts}
+              isCurrent={isCurrent}
+            />
           </Collapse>
         </Paper>
       </Collapse>
