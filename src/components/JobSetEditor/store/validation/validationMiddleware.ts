@@ -1,9 +1,28 @@
-import type { Middleware } from 'redux'
+import type { Middleware, Dispatch } from 'redux'
+import throttle from 'lodash/throttle'
 import { middlewareSetValidationErrors } from '../actions'
 import type {
   FormDataState,
 } from '../jobSetEditorReducer'
 import { validateFormData } from './validateFormData'
+
+
+function validateAndDispatch(
+  dispatch: Dispatch,
+  currentFormData: FormDataState
+) {
+  const validationErrors = validateFormData(currentFormData)
+  dispatch(middlewareSetValidationErrors(validationErrors))
+}
+
+const validateAndDispatchThrottled = throttle(
+  validateAndDispatch,
+  16,
+  {
+    leading: true,
+    trailing: true
+  }
+)
 
 export const validationMiddleware: Middleware = store => next => action => {
   const dispatch = store.dispatch
@@ -23,9 +42,7 @@ export const validationMiddleware: Middleware = store => next => action => {
     && currentIsEdit
     && previousFormData !== currentFormData
   ) {
-    // throttle if performance is a problem
-    const validationErrors = validateFormData(currentFormData)
-    dispatch(middlewareSetValidationErrors(validationErrors))
+    validateAndDispatchThrottled(dispatch, currentFormData)
   }
 
   return nextResult

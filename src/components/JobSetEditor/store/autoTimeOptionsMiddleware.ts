@@ -1,4 +1,5 @@
-import type { Middleware } from 'redux'
+import type { Middleware, Dispatch } from 'redux'
+import throttle from 'lodash/throttle'
 import { middlewareCalculatedAutoTimeOptions } from './actions'
 import type {
   FormDataState,
@@ -30,6 +31,28 @@ function calculateAutoTimeOptions(jobEntities: {
   }
 }
 
+function calculateAndDispatch(
+  dispatch: Dispatch,
+  currentAutoTimeOptions: TimeOptionsState | undefined,
+  jobEntities: {
+    [id: string]: JobState
+  }
+) {
+  const newTimeOptions = calculateAutoTimeOptions(jobEntities)
+  if (!shallowEqualObjects(newTimeOptions, currentAutoTimeOptions)) {
+    dispatch(middlewareCalculatedAutoTimeOptions(newTimeOptions))
+  }
+}
+
+const calculateAndDispatchThrottled = throttle(
+  calculateAndDispatch,
+  16,
+  {
+    leading: true,
+    trailing: true
+  }
+)
+
 export const autoTimeOptionsMiddleware: Middleware = store => next => action => {
   const dispatch = store.dispatch
 
@@ -47,11 +70,11 @@ export const autoTimeOptionsMiddleware: Middleware = store => next => action => 
     && (previousFormData.jobs !== currentFormData.jobs || !previousFormData.isAutoTimeOptions)
     && currentFormData.isAutoTimeOptions
   ) {
-    const newTimeOptions = calculateAutoTimeOptions(currentFormData.jobs.entities)
-    if (!shallowEqualObjects(newTimeOptions, currentFormData.autoTimeOptions)) {
-      dispatch(middlewareCalculatedAutoTimeOptions(newTimeOptions))
-    }
+    calculateAndDispatchThrottled(
+      dispatch,
+      currentFormData.autoTimeOptions,
+      currentFormData.jobs.entities
+    )
   }
-
   return nextResult
 }
