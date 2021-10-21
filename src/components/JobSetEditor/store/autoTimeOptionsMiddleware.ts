@@ -9,7 +9,7 @@ import {
   shallowEqualObjects,
 } from '../../../utility'
 
-function claculateAutoTimeOptione(jobEntities: {
+function calculateAutoTimeOptions(jobEntities: {
   [id: string]: JobState
 }): TimeOptionsState {
   const processingTimes = Object.values(jobEntities)
@@ -47,7 +47,7 @@ export const autoTimeOptionsMiddleware: Middleware = store => next => action => 
     && (previousFormData.jobs !== currentFormData.jobs || !previousFormData.isAutoTimeOptions)
     && currentFormData.isAutoTimeOptions
   ) {
-    const newTimeOptions = claculateAutoTimeOptione(currentFormData.jobs.entities)
+    const newTimeOptions = calculateAutoTimeOptions(currentFormData.jobs.entities)
     if (!shallowEqualObjects(newTimeOptions, currentFormData.autoTimeOptions)) {
       dispatch(middlewareCalculatedAutoTimeOptions(newTimeOptions))
     }

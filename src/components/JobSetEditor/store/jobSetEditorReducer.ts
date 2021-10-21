@@ -6,6 +6,7 @@ import * as actions from './actions'
 import { appStoreJobSet_To_FormData, mergeUninitializedJobSet } from './formDataConversion'
 import { calculateRefreshedStep, redoStep, undoStep } from './editHistory'
 import type { Step } from './editHistory'
+import type { ValidationError } from './validation'
 
 export type JobSetEditorState = {
   id?: number
@@ -15,7 +16,6 @@ export type JobSetEditorState = {
   loadStatus: 'not loaded' | 'loaded' | 'failed'
   initialized: boolean
   formData: FormDataState
-  touched: TouchedState
   steps: Step[],
   currentStepIndex: number,
   lastVersion?: {
@@ -23,6 +23,8 @@ export type JobSetEditorState = {
     formData: FormDataState
   },
   isHistoryPanelOpen: boolean,
+  touched: TouchedState,
+  validationError: ValidationErrorState,
 }
 
 //#region FormDataState
@@ -94,7 +96,17 @@ export type TimeOptionsState = {
 export type TimeOptions = TimeOptionsState
 
 export type TouchedState = {
-  //todo follow formData shape
+  status: 'none' | 'normal' | 'all'
+  entities: {
+    [path: string]: boolean
+  }
+}
+
+export type ValidationErrorState = {
+  ids: string[],
+  entities: {
+    [path: string]: ValidationError
+  }
 }
 
 const formDataInitialState: FormDataState = {
@@ -131,11 +143,18 @@ const jobSetEditorInitialState: JobSetEditorState = {
   loadStatus: 'not loaded',
   initialized: false,
   formData: formDataInitialState,
-  touched: {},
   steps: [{ id: 'initial', name: 'initial', operations: [] }],
   currentStepIndex: 0,
   lastVersion: undefined,
   isHistoryPanelOpen: false,
+  touched: {
+    status: 'normal',
+    entities: {},
+  },
+  validationError: {
+    ids: [],
+    entities: {},
+  },
 }
 
 export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (builder) => {
@@ -570,5 +589,19 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         step.saveStatus = undefined
       }
     })
-  //#endregion Step
+    //#endregion Step
+    .addCase(actions.middlewareSetValidationErrors, (state, { payload: { validationErrors } }) => {
+      const removedErrorPaths = state.validationError.ids
+        .filter(path => !validationErrors.some(e => e.path === path))
+      for (const removedErrorPath of removedErrorPaths) {
+        delete state.validationError.entities[removedErrorPath]
+      }
+      if (removedErrorPaths.length > 0
+        || state.validationError.ids.length !== validationErrors.length) {
+        state.validationError.ids = validationErrors.map(e => e.path)
+      }
+      for (const validationError of validationErrors) {
+        state.validationError.entities[validationError.path] = validationError
+      }
+    })
 })

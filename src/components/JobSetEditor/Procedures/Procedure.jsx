@@ -91,7 +91,7 @@ const ProcedureMachine = ({ jobId, id }) => {
             inputProps={{ readOnly: !editable }}
           >
             {machines.map(m => (
-              <MenuItem key={m.id} value={m.id}>{m.title}</MenuItem>
+              <MenuItem key={m.id} value={m.id}>{m.title ? m.title : "\u00a0"}</MenuItem>
             ))}
             <MenuItem key='empty' value='' className={classes.emptyMenuItemText}>(empty)</MenuItem>
           </PopperSelect>

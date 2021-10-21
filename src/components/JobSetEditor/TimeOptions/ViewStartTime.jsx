@@ -40,12 +40,10 @@ export const ViewStartTime = () => {
           showSeconds
           value={msToFormattedTime(valueMs)}
           onChange={(_e, valueFormattedTime) => editorDispatch(setViewStartTime(formattedTimeToMs(valueFormattedTime)))}
-          onFocus={() => { }/*todo */}
           input={
             <TextField
               label='View Start Time'
               error={false/*todo */}
-              required
               size='small'
               margin="dense"
               variant="outlined"

@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid'
 import { createAction } from '@reduxjs/toolkit'
 import type { TimeOptions } from './jobSetEditorReducer'
 import type { Step } from './editHistory'
+import type { ValidationError } from './validation'
 
 export const resetJobSetEditor = createAction('jobSetEditor/resetJobSetEditor')
 export const setJobSetEditorId = createAction<number | undefined>('jobSetEditor/setJobSetEditorId')
@@ -242,7 +243,6 @@ export const setViewStartTime = createAction(
     }
   })
 )
-export const focusViewStartTime = createAction('jobSetEditor/focusViewStartTime')
 
 export const setViewEndTime = createAction(
   'jobSetEditor/setViewEndTime',
@@ -354,3 +354,14 @@ export const unApplyConflict = createAction(
   })
 )
 //#endregion Step
+
+export const middlewareSetValidationErrors = createAction(
+  'jobSetEditor/middlewareSetValidationErrors',
+  (validationErrors: ValidationError[]) => ({
+    payload: {
+      validationErrors
+    }
+  })
+)
+
+// Note: remember to set editHistory/editStep's excludeActionTypes

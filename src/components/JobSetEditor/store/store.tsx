@@ -9,6 +9,7 @@ import { jobSetEditorReducer } from './jobSetEditorReducer'
 import type { JobSetEditorState } from './jobSetEditorReducer'
 import { editHistoryMiddleware } from './editHistory'
 import { autoTimeOptionsMiddleware } from './autoTimeOptionsMiddleware'
+import { validationMiddleware } from './validation'
 
 const jobSetEditorContext = React.createContext<any>(null)
 
@@ -20,6 +21,7 @@ const jobSetEditorStore = createStore(
   applyMiddleware(
     editHistoryMiddleware,
     autoTimeOptionsMiddleware,
+    validationMiddleware,
   )
 )
 

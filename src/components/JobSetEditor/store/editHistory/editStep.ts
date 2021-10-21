@@ -1,31 +1,7 @@
 import type { Middleware } from 'redux'
 import { nanoid } from 'nanoid'
 import { arraysEqual } from '../../../../utility'
-import {
-  applyConflict,
-  jumpToStep,
-  undo,
-  redo,
-  replaceLastStep,
-  resetJobSetEditor,
-  setJobSetEditorIsEdit,
-  setJobSetFromAppStore,
-  setMergeBehaviourDiscardLocal,
-  setMergeBehaviourMerge,
-  unApplyConflict,
-  middlewareCalculatedAutoTimeOptions,
-  focusTitle,
-  focusMachineTitle,
-  focusProcedureMachineId,
-  focusProcedureProcessingTime,
-  focusMaxTime,
-  focusViewStartTime,
-  focusViewEndTime,
-  focusMinViewDuration,
-  focusMaxViewDuration,
-  openHistoryPanel,
-  closeHistoryPanel,
-} from '../actions'
+import * as actions from '../actions'
 import {
   calculateStepName,
   getFieldChanges,
@@ -37,31 +13,32 @@ import type {
 } from './types'
 
 const excludeActionTypes = [
-  replaceLastStep,
-  setJobSetFromAppStore,
-  resetJobSetEditor,
-  setJobSetEditorIsEdit,
+  actions.replaceLastStep,
+  actions.setJobSetFromAppStore,
+  actions.resetJobSetEditor,
+  actions.setJobSetEditorIsEdit,
 
-  undo,
-  redo,
-  jumpToStep,
-  setMergeBehaviourMerge,
-  setMergeBehaviourDiscardLocal,
-  applyConflict,
-  unApplyConflict,
+  actions.undo,
+  actions.redo,
+  actions.jumpToStep,
+  actions.setMergeBehaviourMerge,
+  actions.setMergeBehaviourDiscardLocal,
+  actions.applyConflict,
+  actions.unApplyConflict,
 
-  middlewareCalculatedAutoTimeOptions,
-  focusTitle,
-  focusMachineTitle,
-  focusProcedureMachineId,
-  focusProcedureProcessingTime,
-  focusMaxTime,
-  focusViewStartTime,
-  focusViewEndTime,
-  focusMinViewDuration,
-  focusMaxViewDuration,
-  openHistoryPanel,
-  closeHistoryPanel,
+  actions.middlewareCalculatedAutoTimeOptions,
+  actions.focusTitle,
+  actions.focusMachineTitle,
+  actions.focusProcedureMachineId,
+  actions.focusProcedureProcessingTime,
+  actions.focusMaxTime,
+  actions.focusViewEndTime,
+  actions.focusMinViewDuration,
+  actions.focusMaxViewDuration,
+  actions.openHistoryPanel,
+  actions.closeHistoryPanel,
+
+  actions.middlewareSetValidationErrors,
 ].map(a => a.type)
 
 function combineFieldChanges(a: FieldChange, b: FieldChange): FieldChange[] {
@@ -180,7 +157,7 @@ export const editHistoryMiddleware: Middleware = store => next => action => {
       currentFormData
     )
     if (steps.length !== 1 || steps[0] !== previousStep) {
-      dispatch(replaceLastStep(steps))
+      dispatch(actions.replaceLastStep(steps))
     }
   }
 
