@@ -13,6 +13,7 @@ import {
   createMachineTitleSelector,
   createMachineDescriptionSelector,
   setMachineTitle,
+  focusMachineTitle,
   setMachineDescription,
 } from '../store'
 import { RemoveMachineButton } from './RemoveMachineButton'
@@ -33,7 +34,11 @@ const MachineTitle = ({ id }) => {
     <TextField
       label='Title'
       value={value}
-      onFocus={() => { }/*todo */}
+      onFocus={() => {
+        if (editable) {
+          editorDispatch(focusMachineTitle(id))
+        }
+      }}
       onChange={e => editorDispatch(setMachineTitle(id, e.target.value))}
       error={false/*todo */}
       required

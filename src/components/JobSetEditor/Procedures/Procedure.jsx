@@ -21,7 +21,9 @@ import {
   createProcedureMachineIdSelector,
   machinesSelector,
   setProcedureMachineId,
+  focusProcedureMachineId,
   setProcedureProcessingTime,
+  focusProcedureProcessingTime,
 } from '../store'
 import { MoveProcedureButtons } from './MoveProcedureButtons'
 import { DeleteProcedureButton } from './DeleteProcedureButton'
@@ -86,7 +88,11 @@ const ProcedureMachine = ({ jobId, id }) => {
             id="machine-select-outlined"
             label="Machine *"
             value={procedureMachineId ?? ''}
-            onFocus={() => { }/*todo */}
+            onFocus={() => {
+              if (editable) {
+                editorDispatch(focusProcedureMachineId(jobId, id))
+              }
+            }}
             onChange={e => editorDispatch(setProcedureMachineId(jobId, id, !e.target.value ? null : e.target.value))}
             inputProps={{ readOnly: !editable }}
           >
@@ -127,7 +133,11 @@ const ProcedureProcessingTime = ({ jobId, id }) => {
         showSeconds
         value={msToFormattedTime(valueMs)}
         onChange={(_e, valueFormattedTime) => editorDispatch(setProcedureProcessingTime(jobId, id, formattedTimeToMs(valueFormattedTime)))}
-        onFocus={() => { }/*todo */}
+        onFocus={() => {
+          if (editable) {
+            editorDispatch(focusProcedureProcessingTime(jobId, id))
+          }
+        }}
         input={
           <TextField
             label='Time'

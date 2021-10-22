@@ -14,6 +14,7 @@ import {
   isAutoTimeOptionsSelector,
   minViewDurationMsSelector,
   setMinViewDuration,
+  focusMinViewDuration,
 } from '../store'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -40,7 +41,11 @@ export const MinimumViewDuration = () => {
           showSeconds
           value={msToFormattedTime(valueMs)}
           onChange={(_e, valueFormattedTime) => editorDispatch(setMinViewDuration(formattedTimeToMs(valueFormattedTime)))}
-          onFocus={() => { }/*todo */}
+          onFocus={() => {
+            if (editable && !isAuto) {
+              editorDispatch(focusMinViewDuration())
+            }
+          }}
           input={
             <TextField
               label='Minumum View Duration'

@@ -14,6 +14,7 @@ import {
   isAutoTimeOptionsSelector,
   maxTimeMsSelector,
   setMaxTime,
+  focusMaxTime,
 } from '../store'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -40,7 +41,11 @@ export const MaximumTime = () => {
           showSeconds
           value={msToFormattedTime(valueMs)}
           onChange={(_e, valueFormattedTime) => editorDispatch(setMaxTime(formattedTimeToMs(valueFormattedTime)))}
-          onFocus={() => { }/*todo */}
+          onFocus={() => {
+            if (editable && !isAuto) {
+              editorDispatch(focusMaxTime())
+            }
+          }}
           input={
             <TextField
               label='Maximun Time'

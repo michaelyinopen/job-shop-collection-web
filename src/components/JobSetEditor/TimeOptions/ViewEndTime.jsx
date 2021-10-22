@@ -14,6 +14,7 @@ import {
   isAutoTimeOptionsSelector,
   viewEndTimeMsSelector,
   setViewEndTime,
+  focusViewEndTime,
 } from '../store'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -40,7 +41,11 @@ export const ViewEndTime = () => {
           showSeconds
           value={msToFormattedTime(valueMs)}
           onChange={(_e, valueFormattedTime) => editorDispatch(setViewEndTime(formattedTimeToMs(valueFormattedTime)))}
-          onFocus={() => { }/*todo */}
+          onFocus={() => {
+            if (editable && !isAuto) {
+              editorDispatch(focusViewEndTime())
+            }
+          }}
           input={
             <TextField
               label='View End Time'

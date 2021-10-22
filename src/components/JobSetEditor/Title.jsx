@@ -10,6 +10,7 @@ import {
   fieldEditableSelector,
   titleSelector,
   setTitle,
+  focusTitle,
 } from './store'
 
 const useStyles = makeStyles(theme => createStyles({
@@ -31,7 +32,11 @@ export const Title = () => {
       <TextField
         label='Title'
         value={value}
-        onFocus={() => { }/*todo */}
+        onFocus={() => {
+          if (editable) {
+            editorDispatch(focusTitle())
+          }
+        }}
         onChange={e => editorDispatch(setTitle(e.target.value))}
         error={false/*todo */}
         required

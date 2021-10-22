@@ -96,7 +96,7 @@ export type TimeOptionsState = {
 export type TimeOptions = TimeOptionsState
 
 export type TouchedState = {
-  status: 'none' | 'normal' | 'all'
+  status: 'normal' | 'all'
   entities: {
     [path: string]: boolean
   }
@@ -174,6 +174,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         state.steps = jobSetEditorInitialState.steps
         state.currentStepIndex = jobSetEditorInitialState.currentStepIndex
         state.formData = state.lastVersion?.formData ?? jobSetEditorInitialState.formData
+        state.touched = jobSetEditorInitialState.touched
       }
     })
     .addCase(actions.loadedJobSet, (state) => {
@@ -604,4 +605,30 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
         state.validationError.entities[validationError.path] = validationError
       }
     })
+    //#region touched
+    .addCase(actions.focusTitle, (state) => {
+      state.touched.entities['/title'] = true
+    })
+    .addCase(actions.focusMachineTitle, (state, { payload: { machineId } }) => {
+      state.touched.entities[`/machines/entities/${machineId}/title`] = true
+    })
+    .addCase(actions.focusProcedureMachineId, (state, { payload: { jobId, procedureId } }) => {
+      state.touched.entities[`/jobs/entities/${jobId}/procedures/entities/${procedureId}/machineId`] = true
+    })
+    .addCase(actions.focusProcedureProcessingTime, (state, { payload: { jobId, procedureId } }) => {
+      state.touched.entities[`/jobs/entities/${jobId}/procedures/entities/${procedureId}/processingTimeMs`] = true
+    })
+    .addCase(actions.focusMaxTime, (state) => {
+      state.touched.entities[`/manualTimeOptions/maxTimeMs`] = true
+    })
+    .addCase(actions.focusViewEndTime, (state) => {
+      state.touched.entities[`/manualTimeOptions/viewEndTimeMs`] = true
+    })
+    .addCase(actions.focusMinViewDuration, (state) => {
+      state.touched.entities[`/manualTimeOptions/minViewDurationMs`] = true
+    })
+    .addCase(actions.focusMaxViewDuration, (state) => {
+      state.touched.entities[`/manualTimeOptions/maxViewDurationMs`] = true
+    })
+  //#endregion touched
 })
