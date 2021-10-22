@@ -24,6 +24,7 @@ import {
   fieldEditableSelector,
   jobSetsEditorLoadStatusSelector,
   jobSetsEditorInitializedSelector,
+  jobSetsEditorIsLockedSelector,
   useJobSetEditorDispatch,
   loadedJobSet,
 } from '../store'
@@ -113,6 +114,7 @@ export const JobSetEditorTitleBar = () => {
 
   const id = useJobSetEditorSelector(jobSetsEditorIdSelector)
   const editable = useJobSetEditorSelector(fieldEditableSelector)
+  const isLocked = useJobSetEditorSelector(jobSetsEditorIsLockedSelector)
 
   return (
     <Toolbar className={classes.toolbar} disableGutters>
@@ -124,6 +126,7 @@ export const JobSetEditorTitleBar = () => {
       <div className={classes.allActions}>
         <div className={classes.grouped}>
           {!editable && <Typography variant='h6' className={classes.readonlyText}>(read-only)</Typography>}
+          {isLocked && <Typography variant='h6' className={classes.readonlyText}>(locked)</Typography>}
           {editable && <HistoryButtons />}
           {editable && <SaveJobSetButton id={id} />}
         </div>
