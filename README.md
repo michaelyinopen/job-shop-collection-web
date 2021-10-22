@@ -186,7 +186,10 @@ server {
     }
 }
 ``` 
-
+```
+sudo ln -s /etc/nginx/sites-available/job-shop-collection.michael-yin.net /etc/nginx/sites-enabl
+ed/
+```
 ### Https
 The website uses free SSL certificate issued by Let's Encrypt.\
 Follow instructions in https://certbot.eff.org/lets-encrypt/debianbuster-nginx.
