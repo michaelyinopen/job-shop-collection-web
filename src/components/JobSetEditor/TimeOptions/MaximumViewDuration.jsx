@@ -13,6 +13,7 @@ import {
   fieldEditableSelector,
   isAutoTimeOptionsSelector,
   maxViewDurationMsSelector,
+  showErrorSelector,
   setMaxViewDuration,
   focusMaxViewDuration,
 } from '../store'
@@ -30,7 +31,7 @@ export const MaximumViewDuration = () => {
   const isAuto = useJobSetEditorSelector(isAutoTimeOptionsSelector)
   const valueMs = useJobSetEditorSelector(maxViewDurationMsSelector)
   const editorDispatch = useJobSetEditorDispatch()
-  //todo errorSelector
+  const showError = useJobSetEditorSelector(showErrorSelector('/manualTimeOptions/maxViewDurationMs'))
   return (
     <div className={classes.wrapper}>
       <Tooltip
@@ -49,7 +50,7 @@ export const MaximumViewDuration = () => {
           input={
             <TextField
               label='Maximum View Duration'
-              error={false/*todo */}
+              error={showError}
               required
               size='small'
               margin="dense"

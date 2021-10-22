@@ -148,7 +148,7 @@ const jobSetEditorInitialState: JobSetEditorState = {
   lastVersion: undefined,
   isHistoryPanelOpen: false,
   touched: {
-    status: 'normal',
+    status: 'all', // just always show all errors, change to normal to show error onFocus
     entities: {},
   },
   validationError: {
@@ -629,6 +629,9 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
     })
     .addCase(actions.focusMaxViewDuration, (state) => {
       state.touched.entities[`/manualTimeOptions/maxViewDurationMs`] = true
+    })
+    .addCase(actions.setAllTouched, (state) => {
+      state.touched.status = 'all'
     })
   //#endregion touched
 })

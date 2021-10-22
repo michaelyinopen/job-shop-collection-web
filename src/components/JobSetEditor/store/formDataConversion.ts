@@ -86,11 +86,11 @@ export function appStoreJobSet_To_FormData(
     isAutoTimeOptions: jobSet.isAutoTimeOptions,
     autoTimeOptions: undefined,
     manualTimeOptions: {
-      maxTimeMs: timeOptions.maxTimeMs,
-      viewStartTimeMs: timeOptions.viewStartTimeMs,
-      viewEndTimeMs: timeOptions.viewEndTimeMs,
-      minViewDurationMs: timeOptions.minViewDurationMs,
-      maxViewDurationMs: timeOptions.maxViewDurationMs,
+      maxTimeMs: timeOptions.maxTimeMs ?? 0,
+      viewStartTimeMs: timeOptions.viewStartTimeMs ?? 0,
+      viewEndTimeMs: timeOptions.viewEndTimeMs ?? 0,
+      minViewDurationMs: timeOptions.minViewDurationMs ?? 0,
+      maxViewDurationMs: timeOptions.maxViewDurationMs ?? 0,
     }
   }
 }

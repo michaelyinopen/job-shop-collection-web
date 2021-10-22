@@ -364,4 +364,6 @@ export const middlewareSetValidationErrors = createAction(
   })
 )
 
+export const setAllTouched = createAction('jobSetEditor/setAllTouched')
+
 // Note: remember to set editHistory/editStep's excludeActionTypes

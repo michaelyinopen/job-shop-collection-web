@@ -13,6 +13,7 @@ import {
   fieldEditableSelector,
   isAutoTimeOptionsSelector,
   viewEndTimeMsSelector,
+  showErrorSelector,
   setViewEndTime,
   focusViewEndTime,
 } from '../store'
@@ -30,7 +31,7 @@ export const ViewEndTime = () => {
   const isAuto = useJobSetEditorSelector(isAutoTimeOptionsSelector)
   const valueMs = useJobSetEditorSelector(viewEndTimeMsSelector)
   const editorDispatch = useJobSetEditorDispatch()
-  //todo errorSelector
+  const showError = useJobSetEditorSelector(showErrorSelector('/manualTimeOptions/viewEndTimeMs'))
   return (
     <div className={classes.wrapper}>
       <Tooltip
@@ -49,7 +50,7 @@ export const ViewEndTime = () => {
           input={
             <TextField
               label='View End Time'
-              error={false/*todo */}
+              error={showError}
               required
               size='small'
               margin="dense"

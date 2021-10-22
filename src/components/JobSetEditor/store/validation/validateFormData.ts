@@ -23,7 +23,7 @@ export function validateFormData(formData: FormDataState): ValidationError[] {
     for (const machine of Object.values(formData.machines.entities)) {
       if (!machine.title) {
         machineValidationErrors.push({
-          path: `/machines/entities/${machine.id}`,
+          path: `/machines/entities/${machine.id}/title`,
           severity: 'warning',
           message: 'Machine title is required'
         })

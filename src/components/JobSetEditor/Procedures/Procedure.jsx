@@ -20,6 +20,7 @@ import {
   createJobColorSelector,
   createProcedureMachineIdSelector,
   machinesSelector,
+  showErrorSelector,
   setProcedureMachineId,
   focusProcedureMachineId,
   setProcedureProcessingTime,
@@ -72,6 +73,7 @@ const ProcedureMachine = ({ jobId, id }) => {
   const editable = useJobSetEditorSelector(fieldEditableSelector)
   const machines = useJobSetEditorSelector(machinesSelector)
   const procedureMachineId = useJobSetEditorSelector(createProcedureMachineIdSelector(jobId, id))
+  const showError = useJobSetEditorSelector(showErrorSelector(`/jobs/entities/${jobId}/procedures/entities/${id}/machineId`))
   const editorDispatch = useJobSetEditorDispatch()
   return (
     <div className={classes.procedureMachineRoot}>
@@ -79,7 +81,7 @@ const ProcedureMachine = ({ jobId, id }) => {
         <FormControl
           variant="outlined"
           margin="dense"
-          error={false/*todo */}
+          error={showError}
           className={classes.machineLabelTextField}
         >
           <InputLabel id="machine-select-outlined-label">Machine *</InputLabel>
@@ -125,6 +127,7 @@ const ProcedureProcessingTime = ({ jobId, id }) => {
   const classes = useProcessingTimeStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
   const valueMs = useJobSetEditorSelector(createProcedureProcessingTimeMsSelector(jobId, id))
+  const showError = useJobSetEditorSelector(showErrorSelector(`/jobs/entities/${jobId}/procedures/entities/${id}/processingTimeMs`))
   const editorDispatch = useJobSetEditorDispatch()
   return (
     <div className={classes.wrapper}>
@@ -141,7 +144,7 @@ const ProcedureProcessingTime = ({ jobId, id }) => {
         input={
           <TextField
             label='Time'
-            error={false/*todo */}
+            error={showError}
             required
             size='small'
             margin="dense"

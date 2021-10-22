@@ -13,6 +13,7 @@ import {
   createMachineTitleSelector,
   createMachineDescriptionSelector,
   setMachineTitle,
+  showErrorSelector,
   focusMachineTitle,
   setMachineDescription,
 } from '../store'
@@ -30,6 +31,7 @@ const MachineTitle = ({ id }) => {
   const editable = useJobSetEditorSelector(fieldEditableSelector)
   const value = useJobSetEditorSelector(createMachineTitleSelector(id))
   const editorDispatch = useJobSetEditorDispatch()
+  const showError = useJobSetEditorSelector(showErrorSelector(`/machines/entities/${id}/title`))
   return (
     <TextField
       label='Title'
@@ -40,7 +42,7 @@ const MachineTitle = ({ id }) => {
         }
       }}
       onChange={e => editorDispatch(setMachineTitle(id, e.target.value))}
-      error={false/*todo */}
+      error={showError}
       required
       size='small'
       variant='filled'

@@ -32,6 +32,7 @@ import {
   loadedJobSet,
   savingStep,
   savedStep,
+  setAllTouched,
 } from '../store'
 
 const useStyles = makeStyles(theme => ({
@@ -56,6 +57,7 @@ const CreateJobSetButton = () => {
   const isCreating = useAppSelector(createJobSetIsLoadingSelector(creationToken))
 
   const tooltip = isCreating ? "Saving..." : "Create"
+  //todo error
   return (
     <ProgressOverlay
       isLoading={isCreating}
@@ -69,6 +71,7 @@ const CreateJobSetButton = () => {
             disabled={isCreating}
             onClick={() => {
               editorDispatch(savingStep(currentStepIndex, true))
+              editorDispatch(setAllTouched())
               dispatch(createJobSetTakingThunkAction(createJobSetRequest, creationToken))
                 .then(result => {
                   if (result?.kind === 'success') {
@@ -130,6 +133,7 @@ const UpdateJobSetButton = ({ id }) => {
       : loadStatus === 'failed' ? "load failed"
         : isSaving ? "Saving..."
           : "Save"
+  //todo error
   return (
     <ProgressOverlay
       isLoading={isSaving}
@@ -143,6 +147,7 @@ const UpdateJobSetButton = ({ id }) => {
             disabled={disabled}
             onClick={() => {
               editorDispatch(savingStep(currentStepIndex, true))
+              editorDispatch(setAllTouched())
               dispatch(updateJobSetTakingThunkAction(id, updateJobSetRequest))
                 .then(result => {
                   if (result?.kind === 'success') {

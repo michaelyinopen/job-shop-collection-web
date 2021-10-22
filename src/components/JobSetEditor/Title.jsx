@@ -9,6 +9,7 @@ import {
   useJobSetEditorDispatch,
   fieldEditableSelector,
   titleSelector,
+  showErrorSelector,
   setTitle,
   focusTitle,
 } from './store'
@@ -26,6 +27,7 @@ export const Title = () => {
   const editable = useJobSetEditorSelector(fieldEditableSelector)
   const value = useJobSetEditorSelector(titleSelector)
   const editorDispatch = useJobSetEditorDispatch()
+  const showError = useJobSetEditorSelector(showErrorSelector('/title'))
   //todo errorSelector
   return (
     <div className={classes.wrapper}>
@@ -38,7 +40,7 @@ export const Title = () => {
           }
         }}
         onChange={e => editorDispatch(setTitle(e.target.value))}
-        error={false/*todo */}
+        error={showError}
         required
         size='small'
         variant='filled'

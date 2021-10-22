@@ -260,3 +260,10 @@ export const createHasRelatedChangesSelector = (
 
   return selector
 }
+
+export const showErrorSelector = (path: string) => (state: JobSetEditorState) => {
+  const editable = fieldEditableSelector(state)
+  const touched = state.touched.status === 'all' || state.touched.entities[path] === true
+  const validationError = state.validationError.entities[path]
+  return editable && touched && validationError
+}

@@ -13,6 +13,7 @@ import {
   fieldEditableSelector,
   isAutoTimeOptionsSelector,
   minViewDurationMsSelector,
+  showErrorSelector,
   setMinViewDuration,
   focusMinViewDuration,
 } from '../store'
@@ -30,7 +31,7 @@ export const MinimumViewDuration = () => {
   const isAuto = useJobSetEditorSelector(isAutoTimeOptionsSelector)
   const valueMs = useJobSetEditorSelector(minViewDurationMsSelector)
   const editorDispatch = useJobSetEditorDispatch()
-  //todo errorSelector
+  const showError = useJobSetEditorSelector(showErrorSelector('/manualTimeOptions/minViewDurationMs'))
   return (
     <div className={classes.wrapper}>
       <Tooltip
@@ -49,7 +50,7 @@ export const MinimumViewDuration = () => {
           input={
             <TextField
               label='Minumum View Duration'
-              error={false/*todo */}
+              error={showError}
               required
               size='small'
               margin="dense"
