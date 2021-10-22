@@ -1,0 +1,1 @@
+export { HistoryPanel, historyPanelWidth } from './HistoryPanel'
