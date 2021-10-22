@@ -32,7 +32,7 @@ export type AppStoreJobSetContent = {
 export function appStoreJobSet_To_FormData(
   jobSet: AppStoreJobSetDetail
 ): FormDataState {
-  const timeOptions: TimeOptions = JSON.parse(jobSet.timeOptions)
+  const timeOptions: TimeOptions | undefined = jobSet.timeOptions ? JSON.parse(jobSet.timeOptions) : undefined
   const jobColors: { [id: string]: JobColorState } = JSON.parse(jobSet.jobColors)
   const content: AppStoreJobSetContent = JSON.parse(jobSet.content)
   return {
@@ -86,11 +86,11 @@ export function appStoreJobSet_To_FormData(
     isAutoTimeOptions: jobSet.isAutoTimeOptions,
     autoTimeOptions: undefined,
     manualTimeOptions: {
-      maxTimeMs: timeOptions.maxTimeMs ?? 0,
-      viewStartTimeMs: timeOptions.viewStartTimeMs ?? 0,
-      viewEndTimeMs: timeOptions.viewEndTimeMs ?? 0,
-      minViewDurationMs: timeOptions.minViewDurationMs ?? 0,
-      maxViewDurationMs: timeOptions.maxViewDurationMs ?? 0,
+      maxTimeMs: timeOptions?.maxTimeMs ?? 0,
+      viewStartTimeMs: timeOptions?.viewStartTimeMs ?? 0,
+      viewEndTimeMs: timeOptions?.viewEndTimeMs ?? 0,
+      minViewDurationMs: timeOptions?.minViewDurationMs ?? 0,
+      maxViewDurationMs: timeOptions?.maxViewDurationMs ?? 0,
     }
   }
 }

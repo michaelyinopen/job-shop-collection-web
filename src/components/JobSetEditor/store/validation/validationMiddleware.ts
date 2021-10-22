@@ -28,6 +28,7 @@ export const validationMiddleware: Middleware = store => next => action => {
   const dispatch = store.dispatch
 
   const previousState = store.getState()
+  const previousIsEdit = previousState.isEdit
   const previousFormData: FormDataState = previousState.formData
 
   const nextResult = next(action)
@@ -39,8 +40,10 @@ export const validationMiddleware: Middleware = store => next => action => {
   const currentInitialized = currentState.initialized
 
   if ((currentIsNew || currentInitialized)
-    && currentIsEdit
-    && previousFormData !== currentFormData
+    && (
+      (currentIsEdit && previousFormData !== currentFormData)
+      || (!previousIsEdit && currentIsEdit)
+    )
   ) {
     validateAndDispatchThrottled(dispatch, currentFormData)
   }

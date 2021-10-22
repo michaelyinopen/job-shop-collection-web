@@ -267,3 +267,29 @@ export const showErrorSelector = (path: string) => (state: JobSetEditorState) =>
   const validationError = state.validationError.entities[path]
   return editable && touched && validationError
 }
+
+const allErrorEntitiesSelector = (state: JobSetEditorState) => {
+  return state.validationError.entities
+}
+
+export const allErrorsSelector = createSelector(
+  allErrorEntitiesSelector,
+  (state: JobSetEditorState) => state.validationError.ids,
+  (errorEntities, paths) => {
+    return paths.map(p => errorEntities[p])
+  }
+)
+
+export const hasBlockingErrorsSelector = createSelector(
+  allErrorEntitiesSelector,
+  (errors) => {
+    return Object.values(errors).some(e => e.severity === 'error')
+  }
+)
+
+export const hasWarningsSelector = createSelector(
+  allErrorEntitiesSelector,
+  (errors) => {
+    return Object.values(errors).some(e => e.severity === 'warning')
+  }
+)
