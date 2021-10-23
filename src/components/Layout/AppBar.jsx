@@ -71,7 +71,7 @@ const WideAppBar = ({
           href="https://github.com/michaelyinopen/job-shop-collection-web"
           variant="outlined"
           target="_blank"
-          rel="noopener"
+          rel="noreferrer"
         >
           <GitHubIcon />
         </IconButton>

@@ -7,16 +7,19 @@ import { ErrorBoundary } from '../ErrorBoundary'
 import { routePaths } from '../../route'
 import { hostsConstants } from '../../hostsConstants'
 
-import keyFeatureOverview from './key-feature-overview.mp4'
+import keyFeatureManageData from './key-feature-manage-data.mp4'
+import keyFeatureEditHistory from './key-feature-edit-history.mp4'
 import keyFeatureResponsive from './key-feature-responsive.mp4'
-import keyFeatureInputLogic from './key-feature-input-logic.mp4'
-import keyFeatureDnd from './key-feature-dnd.mp4'
 import keyFeatureTests from './key-feature-tests.png'
+import schedulerOverview from './SchedulerOverview.png'
 
 const useStyles = makeStyles(theme => createStyles({
   noBottomMargin: {
     marginBlockEnd: 0,
     marginBottom: 0
+  },
+  list: {
+    marginBlockStart: 0,
   },
   keyFeatures: {
     display: "flex",
@@ -85,7 +88,7 @@ export const Home = () => {
       <PageContainer>
         <Typography variant="h4">Job Shop Collection</Typography>
         <p className={classes.noBottomMargin}>
-          Welcome to Job Shop Collection where you can find examples of the <a href="#about-the-job-shop-scheduling-problem">The Job Shop Scheduling Problem</a>.<br />
+          Welcome to Job Shop Collection where you scheduling data of <a href="#about-the-job-shop-scheduling-problem">The Job Shop Scheduling Problem</a>.<br />
           <ViewExamplesButton />
         </p>
         <Typography
@@ -103,10 +106,10 @@ export const Home = () => {
                 component="h3"
                 className={classes.cardTitle}
               >
-                CRUD Application
+                Manage Data
               </Typography>
               <p>
-                This website allows users to view, store and edit scheduling data.
+                This website has a custom-built form to view, and edit scheduling data.
               </p>
               <p>
                 The data is machines, jobs and procedures.
@@ -115,8 +118,35 @@ export const Home = () => {
             <CardMedia
               className={classes.media}
               component="video"
-              src={keyFeatureOverview}
-              title="CRUD Application"
+              src={keyFeatureManageData}
+              title="Manage Data"
+              alt="Manage Data"
+              controls
+              muted
+            />
+          </Card>
+          <Card component="li" raised className={classes.card}>
+            <CardContent className={classes.content}>
+              <Typography
+                variant="h5"
+                component="h3"
+                className={classes.cardTitle}
+              >
+                Edit History and Conflict Resolution
+              </Typography>
+              <p>
+                The input form keeps the edit history, to allow undo and redo.
+              </p>
+              <p>
+                If another user updates while you are editing, the changes are merged and conflicts can be resolved, to avoid losing progress.
+              </p>
+            </CardContent>
+            <CardMedia
+              className={classes.media}
+              component="video"
+              src={keyFeatureEditHistory}
+              title="Edit History"
+              alt="Edit History"
               controls
               muted
             />
@@ -153,63 +183,10 @@ export const Home = () => {
                 component="h3"
                 className={classes.cardTitle}
               >
-                Logical Input
-              </Typography>
-              <p>
-                The input form contains logic and shared data among different sections. Redux is used for state management to ensure shared data are updated properly.
-              </p>
-              <p>
-                For example, the addition and removal of a machine updates the options in procedures.
-              </p>
-            </CardContent>
-            <CardMedia
-              className={classes.media}
-              component="video"
-              src={keyFeatureInputLogic}
-              title="Logical Input"
-              controls
-              muted
-            />
-          </Card>
-          <Card component="li" raised className={classes.card}>
-            <CardContent className={classes.content}>
-              <Typography
-                variant="h5"
-                component="h3"
-                className={classes.cardTitle}
-              >
-                Drag & Drop
-              </Typography>
-              <p>
-                Users can re-order the procedures within a job. Mouse and touch are both supported.
-              </p>
-            </CardContent>
-            <CardMedia
-              className={classes.media}
-              component="video"
-              src={keyFeatureDnd}
-              title="Drag and drop example"
-              controls
-              muted
-            />
-          </Card>
-          <Card component="li" raised className={classes.card}>
-            <CardContent className={classes.content}>
-              <Typography
-                variant="h5"
-                component="h3"
-                className={classes.cardTitle}
-              >
                 Tests
               </Typography>
               <p>
                 Jest.js is used for testing.
-              </p>
-              <p>
-                (left) The test suites that includes unit tests and application wide tests.
-              </p>
-              <p>
-                (right) The tests in one test suite about the redux store changes.
               </p>
             </CardContent>
             <CardMedia
@@ -233,22 +210,56 @@ export const Home = () => {
         </p>
         <ul>
           <li>Multiple jobs are processed on several machines</li>
-          <li>Each job consists of a sequence of tasks, which must be performed in a given order</li>
-          <li>Each task must be processed on a specific machine</li>
+          <li>Each job consists of a sequence of procedures, which must be performed in a given order</li>
+          <li>Each procedure is processed on a specific machine</li>
         </ul>
         <p>
-          The solution of the problem is a schedule, which describes clearly how the tasks are scheduled on the machines.<br />
+          The solution of the problem is a schedule, which describes how the tasks are scheduled on the machines.<br />
           This schedule provides visibility and control over the production process and ultimately boost production efficiency.
         </p>
         <Typography
           variant="subtitle1"
+          noBottomMargin
         >
           References
         </Typography>
-        <ul>
-          <li><a href='https://en.wikipedia.org/wiki/Job_shop_scheduling'>Wikipedia</a></li>
-          <li><a href='https://developers.google.com/optimization/scheduling/job_shop'>Google OR-Tools</a></li>
+        <ul className={classes.list}>
+          <li>
+            <a
+              href='https://en.wikipedia.org/wiki/Job_shop_scheduling'
+              target="_blank"
+              rel="noreferrer"
+            >
+              Wikipedia
+            </a>
+          </li>
+          <li>
+            <a
+              href='https://developers.google.com/optimization/scheduling/job_shop'
+              target="_blank"
+              rel="noreferrer"
+            >
+              Google OR-Tools
+            </a>
+          </li>
         </ul>
+        Check out another project of mine {
+          <a
+            href='https://michaelyinopen.github.io/job-shop-scheduler/'
+            target="_blank"
+            rel="noreferrer"
+          >
+            Job Shop Scheduler
+          </a>
+        }.
+        <br />
+        <a
+          href='https://michaelyinopen.github.io/job-shop-scheduler/'
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img title='Job Shop Scheduler' src={schedulerOverview} alt='Job Shop Scheduler' />
+        </a>
         <Typography
           id="this-application-is-built-with"
           variant="h5"
@@ -257,16 +268,17 @@ export const Home = () => {
           This application is built with
         </Typography>
         <ul>
-          <li><a href='https://facebook.github.io/react/'>React</a> for client-side code</li>
-          <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for server-side code</li>
-          <li><a href='https://material-ui.com/'>Material-ui</a> for layout and styling</li>
+          <li><a href='https://facebook.github.io/react/' target="_blank" rel="noreferrer">React</a> for client-side code</li>
+          <li><a href='https://get.asp.net/' target="_blank" rel="noreferrer">ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx' target="_blank" rel="noreferrer">C#</a> for server-side code</li>
+          <li><a href='https://material-ui.com/' target="_blank" rel="noreferrer">Material-ui</a> for layout and styling</li>
           {currentHostBuiltWiths?.map(b => (
             <li>
               {b}
             </li>
           ))}
         </ul>
+        Source code: {<a href='https://github.com/michaelyinopen/job-shop-collection-web' target="_blank" rel="noreferrer">Github</a>}
       </PageContainer>
-    </ErrorBoundary>
+    </ErrorBoundary >
   )
 }

@@ -53,12 +53,12 @@ const useBuiltWithsAzure: UseBuiltWiths = () => {
   }, [])
   return [
     (<>
-      Web API and Database hosted on <a href="https://azure.microsoft.com/en-au/services/app-service/">Azure Web Service</a> and <a href="https://azure.microsoft.com/en-au/services/sql-database/">Azure SQL Database</a><br />
-      Continuously deployed {apiLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-api/actions/workflows/main_job-shop-collection-api.yml'>this Github Actions workflow</a>
+      Web API and Database hosted on <a href="https://azure.microsoft.com/en-au/services/app-service/" target="_blank" rel="noreferrer">Azure Web Service</a> and <a href="https://azure.microsoft.com/en-au/services/sql-database/" target="_blank" rel="noreferrer">Azure SQL Database</a><br />
+      Continuously deployed {apiLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-api/actions/workflows/main_job-shop-collection-api.yml' target="_blank" rel="noreferrer">this Github Actions workflow</a>
     </>),
     (<>
-      React App hosted on <a href="https://azure.microsoft.com/en-au/services/storage/blobs/">Azure Blob Storage</a> with a CDN<br />
-      Continuously deployed {webLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-web/actions/workflows/main_azure.yml'>this Github Actions workflow</a>
+      React App hosted on <a href="https://azure.microsoft.com/en-au/services/storage/blobs/" target="_blank" rel="noreferrer">Azure Blob Storage</a> with a CDN<br />
+      Continuously deployed {webLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-web/actions/workflows/main_azure.yml' target="_blank" rel="noreferrer">this Github Actions workflow</a>
     </>),
   ]
 }
@@ -111,13 +111,13 @@ const useBuiltWithsLinode: UseBuiltWiths = () => {
   }, [])
   return [
     (<>
-      Web API hosted on a <a href="https://www.linode.com/">Linode</a><br />
-      <a href="https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu?view=sql-server-ver15">SQL Server 2019 Express</a> database hosted on another <a href="https://www.linode.com/">Linode</a><br />
-      Continuously deployed {apiLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-api/actions/workflows/main_linode.yml'>this Github Actions workflow</a>
+      Web API hosted on a <a href="https://www.linode.com/" target="_blank" rel="noreferrer">Linode</a><br />
+      <a href="https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu?view=sql-server-ver15" target="_blank" rel="noreferrer">SQL Server 2019 Express</a> database hosted on another <a href="https://www.linode.com/" target="_blank" rel="noreferrer">Linode</a><br />
+      Continuously deployed {apiLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-api/actions/workflows/main_linode.yml' target="_blank" rel="noreferrer">this Github Actions workflow</a>
     </>),
     (<>
       React App hosted on <a href="https://www.linode.com/">Linode</a> with a Reverse Proxy to proxy api requests<br />
-      Continuously deployed {webLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-web/actions/workflows/main_linode.yml'>this Github Actions workflow</a>
+      Continuously deployed {webLastDeployedDate} with <a href='https://github.com/michaelyinopen/job-shop-collection-web/actions/workflows/main_linode.yml' target="_blank" rel="noreferrer">this Github Actions workflow</a>
     </>),
   ]
 }
