@@ -20,6 +20,7 @@ export const About = () => {
           <Button
             href="https://github.com/michaelyinopen"
             target="_blank"
+            rel="noopener"
             variant="contained"
             color="primary"
             size="large"
@@ -39,6 +40,7 @@ export const About = () => {
           <Button
             href="https://github.com/michaelyinopen/job-shop-collection-web"
             target="_blank"
+            rel="noopener"
             variant="contained"
             color="primary"
             size="large"
@@ -59,6 +61,7 @@ export const About = () => {
           <Button
             href="https://github.com/michaelyinopen/job-shop-collection-web/releases"
             target="_blank"
+            rel="noopener"
             variant="contained"
             color="primary"
             size="large"
