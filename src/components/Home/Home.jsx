@@ -88,7 +88,7 @@ export const Home = () => {
       <PageContainer>
         <Typography variant="h4">Job Shop Collection</Typography>
         <p className={classes.noBottomMargin}>
-          Welcome to Job Shop Collection where you scheduling data of <a href="#about-the-job-shop-scheduling-problem">The Job Shop Scheduling Problem</a>.<br />
+          Welcome to Job Shop Collection where you manage data of <a href="#about-the-job-shop-scheduling-problem">The Job Shop Scheduling Problem</a>.<br />
           <ViewExamplesButton />
         </p>
         <Typography
