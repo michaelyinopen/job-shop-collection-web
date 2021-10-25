@@ -211,8 +211,6 @@ Added these sections for cache control.
 ### Enable gzip
 ```
 server {
-    listen 80;
-    listen [::]:80;
     server_name  job-shop-collection.michael-yin.net;
     gzip_static on;
     gzip_proxied  any;
