@@ -59,6 +59,12 @@ const useStyles = makeStyles(theme => createStyles({
       height: 224,
     }
   },
+  schedulerImage: {
+    maxWidth: '100%',
+    width: 700,
+    height: 'auto',
+    objectFit: 'contain',
+  },
   containImage: {
     objectFit: 'contain',
   },
@@ -258,7 +264,12 @@ export const Home = () => {
           target="_blank"
           rel="noreferrer"
         >
-          <img title='Job Shop Scheduler' src={schedulerOverview} alt='Job Shop Scheduler' />
+          <img
+            title='Job Shop Scheduler'
+            src={schedulerOverview}
+            alt='Job Shop Scheduler'
+            className={classes.schedulerImage}
+          />
         </a>
         <Typography
           id="this-application-is-built-with"
