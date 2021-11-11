@@ -58,6 +58,7 @@ jobs:
         inlineScript: |
             az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION }}
             az account show
+            az storage blob upload-batch --account-name jobshopcollectionblob --auth-mode key -d '$web' -s
 #            az storage blob upload-batch --account-name jobshopcollectionblob -s . -d '$web' --subscription ${{ secrets.AZURE_SUBSCRIPTION }}
 
     - name: Purge CDN endpoint
