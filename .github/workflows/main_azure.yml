@@ -56,15 +56,14 @@ jobs:
       with:
         azcliversion: 2.0.72
         inlineScript: |
-            az account set -s ${{ secrets.AZURE_SUBSCRIPTION }}
-            az storage blob upload-batch --account-name jobshopcollectionblob -s . -d '$web'
+            az storage blob upload-batch --account-name jobshopcollectionblob -s . -d '$web' --subscription ${{ secrets.AZURE_SUBSCRIPTION }}
 
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
       with:
         azcliversion: 2.0.72
         inlineScript: |
-           az cdn endpoint purge --content-paths  "/*" --profile-name "jobshopcollection" --name "jobshopcollection" --resource-group "JobShopCollectionResourceGroup"
+           az cdn endpoint purge --content-paths  "/*" --profile-name "jobshopcollection" --name "jobshopcollection" --resource-group "JobShopCollectionResourceGroup" --subscription ${{ secrets.AZURE_SUBSCRIPTION }}
 
     - name: Logout of Azure
       if: ${{ always() && steps.login_azure.outcome == 'success' }}
