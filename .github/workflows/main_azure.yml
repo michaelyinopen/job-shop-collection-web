@@ -1,3 +1,4 @@
+# Disabling thisi workflow. Deployment to azure suddenly does not work, with no change on my end. Change to deploy manually.
 name: Blob storage website CI
 
 on:
