@@ -101,6 +101,12 @@ sudo apt install nginx
 </details>
 
 ### Continuous Deployment by Github Actions
+Command to change right of the directory rsync copies to
+```
+sudo chmod 755 -R /var/www/example.com
+sudo chown -R example_user /var/www/example.com
+```
+
 
 Generate ssh key pair. e.g. on Windows CMD
 
