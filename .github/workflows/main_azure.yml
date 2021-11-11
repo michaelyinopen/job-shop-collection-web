@@ -57,7 +57,7 @@ jobs:
         azcliversion: 2.0.72
         inlineScript: |
             az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION }}
-            az storage blob upload-batch --account-name jobshopcollectionblob -s . -d '$web' --subscription ${{ secrets.AZURE_SUBSCRIPTION }}
+#            az storage blob upload-batch --account-name jobshopcollectionblob -s . -d '$web' --subscription ${{ secrets.AZURE_SUBSCRIPTION }}
 
     - name: Purge CDN endpoint
       uses: azure/CLI@v1
