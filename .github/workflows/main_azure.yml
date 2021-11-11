@@ -37,7 +37,7 @@ jobs:
       id: login_azure
       uses: Azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: ${{ secrets.AZURE_CREDENTIALS_2 }}
 
     - name: Download artifact from build job
       uses: actions/download-artifact@v2
