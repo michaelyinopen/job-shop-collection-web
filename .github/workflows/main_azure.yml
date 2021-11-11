@@ -44,18 +44,19 @@ jobs:
       with:
         name: .build-app
 
-    - name: Set Azure subscription
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.0.72
-        inlineScript: |
-            az account set -s ${{ secrets.AZURE_SUBSCRIPTION }}
+#    - name: Set Azure subscription
+#      uses: azure/CLI@v1
+#      with:
+#        azcliversion: 2.0.72
+#        inlineScript: |
+#            az account set -s ${{ secrets.AZURE_SUBSCRIPTION }}
 
     - name: Upload to blob storage
       uses: azure/CLI@v1
       with:
         azcliversion: 2.0.72
         inlineScript: |
+            az account set -s ${{ secrets.AZURE_SUBSCRIPTION }}
             az storage blob upload-batch --account-name jobshopcollectionblob -s . -d '$web'
 
     - name: Purge CDN endpoint
