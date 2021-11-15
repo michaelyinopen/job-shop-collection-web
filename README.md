@@ -27,7 +27,7 @@ Most CI servers set it automatically.
 Do not need these environment variables when running locally.
 
 ## Deployment
-[deployment](https://github.com/michaelyinopen/job-shop-collection-web/tree/main/deployment.README.md)
+[deployment](deployment.README.md)
 
 ## Useful for testing the built files
 ```
