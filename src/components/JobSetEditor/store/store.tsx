@@ -1,5 +1,7 @@
 import React from 'react'
-import { createStore, applyMiddleware } from 'redux'
+import {
+  configureStore,
+} from '@reduxjs/toolkit'
 import {
   Provider,
   createDispatchHook,
@@ -16,14 +18,14 @@ const jobSetEditorContext = React.createContext<any>(null)
 export const useJobSetEditorDispatch = createDispatchHook(jobSetEditorContext)
 export const useJobSetEditorSelector = createSelectorHook<JobSetEditorState>(jobSetEditorContext)
 
-const jobSetEditorStore = createStore(
-  jobSetEditorReducer,
-  applyMiddleware(
-    editHistoryMiddleware,
-    autoTimeOptionsMiddleware,
-    validationMiddleware,
-  )
-)
+const jobSetEditorStore = configureStore({
+  reducer: jobSetEditorReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+    .concat(editHistoryMiddleware)
+    .concat(autoTimeOptionsMiddleware)
+    .concat(validationMiddleware),
+  devTools: { name: 'editor' }
+})
 
 export function JobSetEditorProvider({ children }) {
   return (

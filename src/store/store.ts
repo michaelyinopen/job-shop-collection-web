@@ -25,6 +25,7 @@ export const store = configureStore({
       thunkMiddleware,
       createReduxTakingThunkMiddleware(),
     ],
+  devTools: { name: 'App' }
 })
 
 export type AppDispatch = typeof store.dispatch
