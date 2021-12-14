@@ -128,3 +128,26 @@ Check `editHistory.test.js`
 
 Refresh Collection Operations
 ![Refresh Collection Operations](./documentationImages/RefreshCollectionOperations.png)
+
+## Test
+For each edit pattern, test:
+1. Edit
+2. Combine edits: consecutive edits combine into one field change and one step
+3. Undo/Redo
+4. Local Edit: when refresh, local edit will not be overriden by unrelated remote changes
+    1. Can undo/redo the refreshed step
+5. Remote Edit: when refresh, remote edit will be merged(applied to form data)
+    1. Can undo/redo the refreshed step
+6. Same Edits: when refresh, local and remote could have made the same edit
+7. Conflicting Edits: when local and remote have conflicting edits, for each conflict type:
+    1. Unapply the conflict operation
+        1. Undo/redo the refreshed step
+    2. Reapply the conflict operation
+        1. Undo/redo the refreshed step
+    3. After the refreshed step, for each type of related change:
+        1. a related change will cause conflictHasRelatedChanges to be true
+        2. undo the related change will cause conflictHasRelatedChanges to be false
+    4. (optional) Unrelated changes will not change conflictHasRelatedChanges
+
+Note: different local and remote edit combinations will create different Local Edit, Remote Edit, Same Edits and Conflicting Edits operations.\
+E.g. a collection's item create/update/delete/move, the tests are organized to show the different combinations.
