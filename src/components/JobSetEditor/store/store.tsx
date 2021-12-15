@@ -1,4 +1,4 @@
-import React from 'react'
+import { createContext } from 'react'
 import {
   configureStore,
 } from '@reduxjs/toolkit'
@@ -13,7 +13,7 @@ import { editHistoryMiddleware } from './editHistory'
 import { autoTimeOptionsMiddleware } from './autoTimeOptionsMiddleware'
 import { validationMiddleware } from './validation'
 
-const jobSetEditorContext = React.createContext<any>(null)
+const jobSetEditorContext = createContext<any>(null)
 
 export const useJobSetEditorDispatch = createDispatchHook(jobSetEditorContext)
 export const useJobSetEditorSelector = createSelectorHook<JobSetEditorState>(jobSetEditorContext)

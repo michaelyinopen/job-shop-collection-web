@@ -150,4 +150,4 @@ For each edit pattern, test:
     4. (optional) Unrelated changes will not change conflictHasRelatedChanges
 
 Note: different local and remote edit combinations will create different Local Edit, Remote Edit, Same Edits and Conflicting Edits operations.\
-E.g. a collection's item create/update/delete/move, the tests are organized to show the different combinations.
+E.g. a collection's item add/update/remove/move, the tests are organized to show the different combinations.
