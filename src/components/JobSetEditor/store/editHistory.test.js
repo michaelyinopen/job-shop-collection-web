@@ -46,8 +46,8 @@ describe('Verify that nanoid mock works', () => {
   })
 })
 
-describe.skip('Edit Title', () => {
-  const createLoadedAppStore = () => {
+describe('Edit Title', () => {
+  const createLoadedEditorStore = () => {
     const jobSetEditorStore = configureStore({
       reducer: jobSetEditorReducer,
       middleware: (getDefaultMiddleware) => getDefaultMiddleware()
@@ -87,30 +87,32 @@ describe.skip('Edit Title', () => {
     return jobSetEditorStore
   }
   test('Edit', () => {
-    const activityEditorStore = createLoadedAppStore()
+    const jobSetEditorStore = createLoadedEditorStore()
 
     // act
-    activityEditorStore.dispatch(actions.setTitle('Title edited'))
+    jobSetEditorStore.dispatch(actions.setTitle('Title edited')) // stepId: 1
 
     // assert
-    const actualState = activityEditorStore.getState()
+    const actualState = jobSetEditorStore.getState()
     expect(actualState.formData.title).toEqual('Title edited')
     expect(actualState.steps).toEqual({
-      ids: ['1', '2'],
+      ids: ['initial', '1'],
       items: {
-        '1': {
+        'initial': {
+          id: 'initial',
           name: 'initial',
           operations: []
         },
-        '2': {
-          name: 'Edit Title',
+        '1': {
+          id: '1',
+          name: 'Edit title',
           operations: [
             {
               type: 'edit',
               fieldChanges: [
                 {
                   path: '/title',
-                  previousValue: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+                  previousValue: 'A Sample Job Set',
                   newValue: 'Title edited'
                 }
               ],
@@ -120,5 +122,393 @@ describe.skip('Edit Title', () => {
         },
       }
     })
+  })
+  test('Combine Edits', () => {
+    const jobSetEditorStore = createLoadedEditorStore()
+
+    // act
+    jobSetEditorStore.dispatch(actions.setTitle('Title edited 1')) // stepId: 1
+    jobSetEditorStore.dispatch(actions.setTitle('Title edited 2')) // stepId: 1 (combined)
+    jobSetEditorStore.dispatch(actions.setDescription('Description edited in between')) // stepId: 2
+    jobSetEditorStore.dispatch(actions.setTitle('Title edited 3')) // stepId: 3
+
+    // assert
+    const actualState = jobSetEditorStore.getState()
+    expect(actualState.formData.title).toEqual('Title edited 3')
+    expect(actualState.steps).toEqual({
+      ids: ['initial', '1', '2', '3'],
+      items: {
+        'initial': {
+          id: 'initial',
+          name: 'initial',
+          operations: []
+        },
+        '1': {
+          id: '1',
+          name: 'Edit title',
+          operations: [
+            {
+              type: 'edit',
+              fieldChanges: [
+                {
+                  path: '/title',
+                  previousValue: 'A Sample Job Set',
+                  newValue: 'Title edited 2'
+                }
+              ],
+              applied: true
+            }
+          ]
+        },
+        '2': {
+          id: '2',
+          name: 'Edit description',
+          operations: [
+            {
+              type: 'edit',
+              fieldChanges: [
+                {
+                  path: '/description',
+                  previousValue: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+                  newValue: 'Description edited in between'
+                }
+              ],
+              applied: true
+            }
+          ]
+        },
+        '3': {
+          id: '3',
+          name: 'Edit title',
+          operations: [
+            {
+              type: 'edit',
+              fieldChanges: [
+                {
+                  path: '/title',
+                  previousValue: 'Title edited 2',
+                  newValue: 'Title edited 3'
+                }
+              ],
+              applied: true
+            }
+          ]
+        },
+      }
+    })
+  })
+  test('Undo Redo', () => {
+    const jobSetEditorStore = createLoadedEditorStore()
+    jobSetEditorStore.dispatch(actions.setTitle('Title edited')) // stepId: 1
+
+    // act Undo
+    jobSetEditorStore.dispatch(actions.undo())
+
+    // assert Undo
+    const actualUndoState = jobSetEditorStore.getState()
+    expect(actualUndoState.formData.title).toEqual('A Sample Job Set')
+    expect(actualUndoState.steps).toEqual({
+      ids: ['initial', '1'],
+      items: {
+        'initial': {
+          id: 'initial',
+          name: 'initial',
+          operations: []
+        },
+        '1': {
+          id: '1',
+          name: 'Edit title',
+          operations: [
+            {
+              type: 'edit',
+              fieldChanges: [
+                {
+                  path: '/title',
+                  previousValue: 'A Sample Job Set',
+                  newValue: 'Title edited'
+                }
+              ],
+              applied: true
+            }
+          ]
+        },
+      }
+    })
+    expect(actualUndoState.currentStepIndex).toBe(0)
+
+    // act Redo
+    jobSetEditorStore.dispatch(actions.redo())
+
+    // assert Redo
+    const actualRedoState = jobSetEditorStore.getState()
+    expect(actualRedoState.formData.title).toEqual('Title edited')
+    expect(actualRedoState.steps).toEqual({
+      ids: ['initial', '1'],
+      items: {
+        'initial': {
+          id: 'initial',
+          name: 'initial',
+          operations: []
+        },
+        '1': {
+          id: '1',
+          name: 'Edit title',
+          operations: [
+            {
+              type: 'edit',
+              fieldChanges: [
+                {
+                  path: '/title',
+                  previousValue: 'A Sample Job Set',
+                  newValue: 'Title edited'
+                }
+              ],
+              applied: true
+            }
+          ]
+        },
+      }
+    })
+    expect(actualRedoState.currentStepIndex).toBe(1)
+  })
+  test('Refreshed local edit', () => {
+    // Will created refreshed step with unapplied reverse local operation
+    const jobSetEditorStore = createLoadedEditorStore()
+    jobSetEditorStore.dispatch(actions.setTitle('Local edited')) // stepId: 1
+
+    // act
+    jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+      {
+        id: 1,
+        title: 'A Sample Job Set',
+        description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+        content: JSON.stringify({
+          machines: [],
+          jobs: []
+        }),
+        jobColors: JSON.stringify({}),
+        isAutoTimeOptions: true,
+        timeOptions: JSON.stringify({
+          maxTimeMs: 0,
+          viewStartTimeMs: 0,
+          viewEndTimeMs: 0,
+          minViewDurationMs: 0,
+          maxViewDurationMs: 0
+        }),
+        isLocked: false,
+        versionToken: '1',
+        hasDetail: true
+      },
+      true
+    ))
+
+    // assert
+    const actualState = jobSetEditorStore.getState()
+    expect(actualState.formData.title).toEqual('Local edited')
+    expect(actualState.steps).toEqual({
+      ids: ['initial', '1', '2'],
+      items: {
+        'initial': {
+          id: 'initial',
+          name: 'initial',
+          operations: []
+        },
+        '1': {
+          id: '1',
+          name: 'Edit title',
+          operations: [
+            {
+              type: 'edit',
+              fieldChanges: [
+                {
+                  path: '/title',
+                  previousValue: 'A Sample Job Set',
+                  newValue: 'Local edited'
+                }
+              ],
+              applied: true
+            }
+          ]
+        },
+        '2': {
+          id: '2',
+          name: 'Refreshed',
+          versionToken: "1",
+          mergeBehaviour: "merge",
+          operations: [
+            {
+              type: "reverse local",
+              fieldChanges: [
+                {
+                  path: "/title",
+                  previousValue: "Local edited",
+                  newValue: "A Sample Job Set",
+                },
+              ],
+              applied: false,
+            },
+          ],
+        },
+      }
+    })
+  })
+  test('Refreshed remote edit', () => {
+    const jobSetEditorStore = createLoadedEditorStore()
+
+    // act
+    jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+      {
+        id: 1,
+        title: 'Remote edited',
+        description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+        content: JSON.stringify({
+          machines: [],
+          jobs: []
+        }),
+        jobColors: JSON.stringify({}),
+        isAutoTimeOptions: true,
+        timeOptions: JSON.stringify({
+          maxTimeMs: 0,
+          viewStartTimeMs: 0,
+          viewEndTimeMs: 0,
+          minViewDurationMs: 0,
+          maxViewDurationMs: 0
+        }),
+        isLocked: false,
+        versionToken: '2',
+        hasDetail: true
+      },
+      true
+    ))
+
+    // assert
+    const actualState = jobSetEditorStore.getState()
+    expect(actualState.formData.title).toEqual('Remote edited')
+    expect(actualState.steps).toEqual({
+      ids: ['initial', '1'],
+      items: {
+        'initial': {
+          id: 'initial',
+          name: 'initial',
+          operations: []
+        },
+        '1': {
+          id: '1',
+          name: 'Refreshed',
+          versionToken: "2",
+          mergeBehaviour: 'discard local changes',
+          operations: [
+            {
+              type: "merge",
+              fieldChanges: [
+                {
+                  path: "/title",
+                  previousValue: "A Sample Job Set",
+                  newValue: "Remote edited",
+                },
+              ],
+              applied: true,
+            },
+          ],
+        },
+      }
+    })
+    expect(actualState.currentStepIndex).toBe(1)
+    expect(actualState.lastVersion?.versionToken).toEqual('2')
+  })
+  test('Refreshed remote edit merge with local edit', () => {
+    // Refreshed will merge local and remote changes if there are no conflicts
+    const jobSetEditorStore = createLoadedEditorStore()
+    jobSetEditorStore.dispatch(actions.setTitle('Local edited title')) // stepId: 1
+
+    // act
+    jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+      {
+        id: 1,
+        title: 'A Sample Job Set',
+        description: 'Remote edited description',
+        content: JSON.stringify({
+          machines: [],
+          jobs: []
+        }),
+        jobColors: JSON.stringify({}),
+        isAutoTimeOptions: true,
+        timeOptions: JSON.stringify({
+          maxTimeMs: 0,
+          viewStartTimeMs: 0,
+          viewEndTimeMs: 0,
+          minViewDurationMs: 0,
+          maxViewDurationMs: 0
+        }),
+        isLocked: false,
+        versionToken: '2',
+        hasDetail: true
+      },
+      true
+    ))
+
+    // assert
+    const actualState = jobSetEditorStore.getState()
+    expect(actualState.formData.title).toEqual('Local edited title')
+    expect(actualState.formData.description).toEqual("Remote edited description")
+    expect(actualState.steps).toEqual({
+      ids: ['initial', '1', '2'],
+      items: {
+        'initial': {
+          id: 'initial',
+          name: 'initial',
+          operations: []
+        },
+        '1': {
+          id: '1',
+          name: 'Edit title',
+          operations: [
+            {
+              type: 'edit',
+              fieldChanges: [
+                {
+                  path: '/title',
+                  previousValue: 'A Sample Job Set',
+                  newValue: 'Local edited title'
+                }
+              ],
+              applied: true
+            }
+          ]
+        },
+        '2': {
+          id: '2',
+          name: 'Refreshed',
+          versionToken: "2",
+          mergeBehaviour: "merge",
+          operations: [
+            {
+              type: "reverse local",
+              fieldChanges: [
+                {
+                  path: "/title",
+                  previousValue: "Local edited title",
+                  newValue: "A Sample Job Set",
+                },
+              ],
+              applied: false,
+            },
+            {
+              type: "merge",
+              fieldChanges: [
+                {
+                  path: "/description",
+                  previousValue: "A Job Set contains the machines, jobs and procedures of a schedule.",
+                  newValue: "Remote edited description",
+                },
+              ],
+              applied: true,
+            },
+          ],
+        },
+      }
+    })
+    expect(actualState.currentStepIndex).toBe(2)
+    expect(actualState.lastVersion?.versionToken).toEqual('2')
   })
 })

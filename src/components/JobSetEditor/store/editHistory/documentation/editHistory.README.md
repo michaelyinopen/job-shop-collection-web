@@ -77,7 +77,10 @@ When `mergeBehaviour` is `merge`, operations with type `merge`, and `conflict` w
 
 When `mergeBehaviour` is `discard local changes`, all operation types `merge`, `conflict` and `reverse local` are applied. The result formData will be the remote's formData.
 
-A refreshed step can many one or more operations.
+If there are no local changes, the default merge behaviour will be `discard local changes`.\
+If there are local changes, the default merge behaviour will be `merge`.
+
+A refreshed step can one or many operations.
 
 ### Conflict
 A conflict is a special kind of Operation. It has a name, similar to step name. It contains one or more field changes. When the step's `mergeBehaviour` is `merge`, the user can choose to apply or unapply the conflict with a checkbox. Apply a conflict means take remote version of the data, unapply means take the local version.
@@ -134,12 +137,13 @@ For each edit pattern, test:
 1. Edit
 2. Combine edits: consecutive edits combine into one field change and one step
 3. Undo/Redo
-4. Local Edit: when refresh, local edit will not be overriden by unrelated remote changes
+4. (optional) Merge/Discard local changes
+5. Local Edit: when refresh, local edit will not be overriden by unrelated remote changes
     1. Can undo/redo the refreshed step
-5. Remote Edit: when refresh, remote edit will be merged(applied to form data)
+6. Remote Edit: when refresh, remote edit will be merged(applied to form data)
     1. Can undo/redo the refreshed step
-6. Same Edits: when refresh, local and remote could have made the same edit
-7. Conflicting Edits: when local and remote have conflicting edits, for each conflict type:
+7. Same Edits: when refresh, local and remote could have made the same edit
+8. Conflicting Edits: when local and remote have conflicting edits, for each conflict type:
     1. Unapply the conflict operation
         1. Undo/redo the refreshed step
     2. Reapply the conflict operation
