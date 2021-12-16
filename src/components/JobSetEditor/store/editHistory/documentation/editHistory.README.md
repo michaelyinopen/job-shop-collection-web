@@ -137,7 +137,6 @@ For each edit pattern, test:
 1. Edit
 2. Combine edits: consecutive edits combine into one field change and one step
 3. Undo/Redo
-4. (optional) Merge/Discard local changes
 5. Local Edit: when refresh, local edit will not be overriden by unrelated remote changes
     1. Can undo/redo the refreshed step
 6. Remote Edit: when refresh, remote edit will be merged(applied to form data)
