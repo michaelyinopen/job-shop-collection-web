@@ -646,7 +646,7 @@ function redoProcedureIdFieldChangesForJob(
 }
 
 export function redoStep(step: Step, previousFormData: FormData): FormData {
-  let formData = isDraft(previousFormData)
+  let formData = isDraft(previousFormData) //todo: do not need to call current
     ? current(previousFormData)
     : previousFormData
 
@@ -1282,7 +1282,7 @@ function undoProcedureIdFieldChangesForJob(
 }
 
 export function undoStep(step: Step, previousFormData: FormData): FormData {
-  let formData = isDraft(previousFormData)
+  let formData = isDraft(previousFormData) //todo: do not need to call current
     ? current(previousFormData)
     : previousFormData
 

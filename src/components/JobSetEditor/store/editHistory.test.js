@@ -3,7 +3,10 @@ import {
   configureStore,
 } from '@reduxjs/toolkit'
 import { jobSetEditorReducer } from './jobSetEditorReducer'
-import { editHistoryMiddleware } from './editHistory'
+import {
+  editHistoryMiddleware,
+  conflictHasRelatedChanges,
+} from './editHistory'
 import { autoTimeOptionsMiddleware } from './autoTimeOptionsMiddleware'
 import { validationMiddleware } from './validation'
 import * as actions from './actions'
@@ -687,8 +690,229 @@ describe('Edit Title', () => {
     })
     expect(actualState.lastVersion?.versionToken).toEqual('2')
   })
-  //describe('Refreshed local and remote conflicting edit',()=>{
-  //  test('Conflict', () => {
-    // test('Unapply re-apply undo redo',
-    // test('Conflict has related change'
+  describe('Refreshed local and remote conflicting edits', () => {
+    test('Conflict', () => {
+      const jobSetEditorStore = createLoadedEditorStore()
+      jobSetEditorStore.dispatch(actions.setTitle('Local edited title')) // stepId: 1
+
+      // act
+      jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+        {
+          id: 1,
+          title: 'Remote edited title',
+          description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+          content: JSON.stringify({
+            machines: [],
+            jobs: []
+          }),
+          jobColors: JSON.stringify({}),
+          isAutoTimeOptions: true,
+          timeOptions: JSON.stringify({
+            maxTimeMs: 0,
+            viewStartTimeMs: 0,
+            viewEndTimeMs: 0,
+            minViewDurationMs: 0,
+            maxViewDurationMs: 0
+          }),
+          isLocked: false,
+          versionToken: '2',
+          hasDetail: true
+        },
+        true
+      ))
+
+      // assert
+      const actualState = jobSetEditorStore.getState()
+      expect(actualState.formData.title).toEqual('Remote edited title')
+      expect(actualState.steps).toEqual({
+        ids: ['initial', '1', '2'],
+        items: {
+          'initial': {
+            id: 'initial',
+            name: 'initial',
+            operations: []
+          },
+          '1': {
+            id: '1',
+            name: 'Edit title',
+            operations: [
+              {
+                type: 'edit',
+                fieldChanges: [
+                  {
+                    path: '/title',
+                    previousValue: 'A Sample Job Set',
+                    newValue: 'Local edited title'
+                  }
+                ],
+                applied: true
+              }
+            ]
+          },
+          '2': {
+            id: '2',
+            name: 'Refreshed',
+            versionToken: "2",
+            mergeBehaviour: "merge",
+            operations: [
+              {
+                type: "conflict",
+                fieldChanges: [
+                  {
+                    path: "/title",
+                    previousValue: "Local edited title",
+                    newValue: "Remote edited title",
+                  },
+                ],
+                conflictName: 'Edit title',
+                conflictApplied: true,
+                applied: true,
+              },
+            ],
+          },
+        }
+      })
+      expect(actualState.currentStepIndex).toBe(2)
+      expect(actualState.lastVersion?.versionToken).toEqual('2')
+    })
+    test('Unapply re-apply undo redo', () => {
+      const jobSetEditorStore = createLoadedEditorStore()
+      jobSetEditorStore.dispatch(actions.setTitle('Local edited title')) // stepId: 1
+      jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+        {
+          id: 1,
+          title: 'Remote edited title',
+          description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+          content: JSON.stringify({
+            machines: [],
+            jobs: []
+          }),
+          jobColors: JSON.stringify({}),
+          isAutoTimeOptions: true,
+          timeOptions: JSON.stringify({
+            maxTimeMs: 0,
+            viewStartTimeMs: 0,
+            viewEndTimeMs: 0,
+            minViewDurationMs: 0,
+            maxViewDurationMs: 0
+          }),
+          isLocked: false,
+          versionToken: '2',
+          hasDetail: true
+        },
+        true
+      ))
+
+      // unapply
+      jobSetEditorStore.dispatch(actions.unApplyConflict('2', 0))
+      const unapplyState = jobSetEditorStore.getState()
+      expect(unapplyState.formData.title).toEqual('Local edited title')
+      expect(unapplyState.currentStepIndex).toBe(2)
+
+      // undo unapply
+      jobSetEditorStore.dispatch(actions.undo())
+      const undoUnapplyState = jobSetEditorStore.getState()
+      expect(undoUnapplyState.formData.title).toEqual('Local edited title')
+      expect(undoUnapplyState.currentStepIndex).toBe(1)
+
+      // redo unapply
+      jobSetEditorStore.dispatch(actions.redo())
+      const redoUnapplyState = jobSetEditorStore.getState()
+      expect(redoUnapplyState.formData.title).toEqual('Local edited title')
+      expect(redoUnapplyState.currentStepIndex).toBe(2)
+
+      // reapply
+      jobSetEditorStore.dispatch(actions.applyConflict('2', 0))
+      const reapplyState = jobSetEditorStore.getState()
+      expect(reapplyState.formData.title).toEqual('Remote edited title')
+      expect(reapplyState.currentStepIndex).toBe(2)
+
+      // undo reapply
+      jobSetEditorStore.dispatch(actions.undo())
+      const undoReapplyState = jobSetEditorStore.getState()
+      expect(undoReapplyState.formData.title).toEqual('Local edited title')
+      expect(undoReapplyState.currentStepIndex).toBe(1)
+
+      // redo reapply
+      jobSetEditorStore.dispatch(actions.redo())
+      const redoReapplyState = jobSetEditorStore.getState()
+      expect(redoReapplyState.formData.title).toEqual('Remote edited title')
+      expect(redoReapplyState.currentStepIndex).toBe(2)
+    })
+    test('Conflict has related change', () => {
+      const jobSetEditorStore = createLoadedEditorStore()
+      jobSetEditorStore.dispatch(actions.setTitle('Local edited title')) // stepId: 1
+      jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+        {
+          id: 1,
+          title: 'Remote edited title',
+          description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+          content: JSON.stringify({
+            machines: [],
+            jobs: []
+          }),
+          jobColors: JSON.stringify({}),
+          isAutoTimeOptions: true,
+          timeOptions: JSON.stringify({
+            maxTimeMs: 0,
+            viewStartTimeMs: 0,
+            viewEndTimeMs: 0,
+            minViewDurationMs: 0,
+            maxViewDurationMs: 0
+          }),
+          isLocked: false,
+          versionToken: '2',
+          hasDetail: true
+        },
+        true
+      ))
+      const conflictStepId = '2'
+      const conflictStepIndex = 2
+      const conflictIndex = 0
+
+      // edit
+      jobSetEditorStore.dispatch(actions.setTitle('Title edited after refreshed')) // stepId: 3
+      const editState = jobSetEditorStore.getState()
+      const editConflictOperation = editState.steps.items[conflictStepId].operations
+        .filter(op => op.type === 'conflict')[conflictIndex]
+      const editHasRelatedChanges = (() => {
+        const postConflictSteps = editState.steps.ids
+          .slice(
+            conflictStepIndex + 1,
+            editState.currentStepIndex + 1
+          )
+          .map(id => editState.steps.items[id])
+        for (const step of postConflictSteps) {
+          const conflictHasRelatedChangesWithStep = conflictHasRelatedChanges(editConflictOperation, step)
+          if (conflictHasRelatedChangesWithStep) {
+            return true
+          }
+        }
+        return false
+      })()
+      expect(editHasRelatedChanges).toBe(true)
+
+      // undo edit
+      jobSetEditorStore.dispatch(actions.undo())
+      const undoEditState = jobSetEditorStore.getState()
+      const undoEditConflictOperation = editState.steps.items[conflictStepId].operations
+        .filter(op => op.type === 'conflict')[conflictIndex]
+      const undoEditHasRelatedChanges = (() => {
+        const postConflictSteps = undoEditState.steps.ids
+          .slice(
+            conflictStepIndex + 1,
+            undoEditState.currentStepIndex + 1
+          )
+          .map(id => undoEditState.steps.items[id])
+        for (const step of postConflictSteps) {
+          const conflictHasRelatedChangesWithStep = conflictHasRelatedChanges(undoEditConflictOperation, step)
+          if (conflictHasRelatedChangesWithStep) {
+            return true
+          }
+        }
+        return false
+      })()
+      expect(undoEditHasRelatedChanges).toBe(false)
+    })
+  })
 })
