@@ -130,7 +130,7 @@ Check `editHistory.test.js`
 - Add item to collection
 
 Refresh Collection Operations
-![Refresh Collection Operations](./documentationImages/RefreshCollectionOperations.png)
+![Refresh Collection Operations](./RefreshCollectionOperations.png)
 
 ## Test
 For each edit pattern, test:

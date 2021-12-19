@@ -283,7 +283,7 @@ describe('Text field change: Edit Title', () => {
     })
     expect(actualRedoState.currentStepIndex).toBe(1)
   })
-  test('Refreshed local edit', () => {
+  test('Local edit', () => {
     // Will created refreshed step with unapplied reverse local operation
     const jobSetEditorStore = createLoadedEditorStore()
     jobSetEditorStore.dispatch(actions.setTitle('Local edited')) // stepId: 1
@@ -365,7 +365,7 @@ describe('Text field change: Edit Title', () => {
     })
     expect(actualState.lastVersion?.versionToken).toEqual('1')
   })
-  test('Refreshed remote edit', () => {
+  test('Remote edit', () => {
     const jobSetEditorStore = createLoadedEditorStore()
 
     // act
@@ -429,7 +429,7 @@ describe('Text field change: Edit Title', () => {
     expect(actualState.currentStepIndex).toBe(1)
     expect(actualState.lastVersion?.versionToken).toEqual('2')
   })
-  test('Refreshed remote edit merge with local edit', () => {
+  test('Remote edit merge with local edit', () => {
     // Refreshed will merge local and remote changes if there are no conflicts
     const jobSetEditorStore = createLoadedEditorStore()
     jobSetEditorStore.dispatch(actions.setTitle('Local edited title')) // stepId: 1
@@ -636,7 +636,7 @@ describe('Text field change: Edit Title', () => {
     expect(actualRedoState.formData.description).toEqual('Remote edited description')
     expect(actualRedoState.currentStepIndex).toBe(2)
   })
-  test('Refreshed local and remote same update', () => {
+  test('Local and remote same update', () => {
     // will not create any new step
     const jobSetEditorStore = createLoadedEditorStore()
     jobSetEditorStore.dispatch(actions.setTitle('Title edited')) // stepId: 1
@@ -699,7 +699,7 @@ describe('Text field change: Edit Title', () => {
     })
     expect(actualState.lastVersion?.versionToken).toEqual('2')
   })
-  describe('Refreshed local and remote conflicting edits', () => {
+  describe('Local and remote conflicting edits', () => {
     test('Conflict', () => {
       const jobSetEditorStore = createLoadedEditorStore()
       jobSetEditorStore.dispatch(actions.setTitle('Local edited title')) // stepId: 1
@@ -1029,14 +1029,656 @@ describe('Collection: Machines', () => {
         }
       })
     })
-    // combine
-    // undo redo
-    // Local Edit
-    // Remote Edit
-    // Same Edits
-    // Conflicting Edits
+    test('Combine Edits', () => {
+      const jobSetEditorStore = createLoadedEditorStore()
+      jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited 1')) // machine 2, stepId: 1
+
+      // act
+      jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited 2')) // machine 2, stepId: 2
+
+      // assert
+      const actualState = jobSetEditorStore.getState()
+      expect(actualState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2 edited 2')
+      expect(actualState.steps).toEqual({
+        ids: ['initial', '1'],
+        entities: {
+          'initial': {
+            id: 'initial',
+            name: 'initial',
+            operations: []
+          },
+          '1': {
+            id: '1',
+            name: 'Edit machine title',
+            operations: [
+              {
+                type: 'edit',
+                fieldChanges: [
+                  {
+                    path: '/machines/entities/2lqxJoUnwFKXvSJjntmCY/title',
+                    previousValue: 'M2',
+                    newValue: 'M2 edited 2'
+                  }
+                ],
+                applied: true
+              }
+            ]
+          },
+        }
+      })
+    })
+    test('Undo Redo', () => {
+      const jobSetEditorStore = createLoadedEditorStore()
+      jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited')) // machine 2, stepId: 1
+
+      // act Undo
+      jobSetEditorStore.dispatch(actions.undo())
+
+      // assert Undo
+      const actualUndoState = jobSetEditorStore.getState()
+      expect(actualUndoState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2')
+      expect(actualUndoState.steps).toEqual({
+        ids: ['initial', '1'],
+        entities: {
+          'initial': {
+            id: 'initial',
+            name: 'initial',
+            operations: []
+          },
+          '1': {
+            id: '1',
+            name: 'Edit machine title',
+            operations: [
+              {
+                type: 'edit',
+                fieldChanges: [
+                  {
+                    path: '/machines/entities/2lqxJoUnwFKXvSJjntmCY/title',
+                    previousValue: 'M2',
+                    newValue: 'M2 edited'
+                  }
+                ],
+                applied: true
+              }
+            ]
+          },
+        }
+      })
+      expect(actualUndoState.currentStepIndex).toBe(0)
+
+      // act Redo
+      jobSetEditorStore.dispatch(actions.redo())
+
+      // assert Redo
+      const actualRedoState = jobSetEditorStore.getState()
+      expect(actualRedoState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2 edited')
+      expect(actualRedoState.steps).toEqual({
+        ids: ['initial', '1'],
+        entities: {
+          'initial': {
+            id: 'initial',
+            name: 'initial',
+            operations: []
+          },
+          '1': {
+            id: '1',
+            name: 'Edit machine title',
+            operations: [
+              {
+                type: 'edit',
+                fieldChanges: [
+                  {
+                    path: '/machines/entities/2lqxJoUnwFKXvSJjntmCY/title',
+                    previousValue: 'M2',
+                    newValue: 'M2 edited'
+                  }
+                ],
+                applied: true
+              }
+            ]
+          },
+        }
+      })
+      expect(actualRedoState.currentStepIndex).toBe(1)
+    })
+    test('Local update', () => {
+      // Will created refreshed step with unapplied reverse local operation
+      const jobSetEditorStore = createLoadedEditorStore()
+      jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited')) // machine 2, stepId: 1
+
+      // act
+      jobSetEditorStore.dispatch(actions.setJobSetFromAppStore(
+        {
+          id: 1,
+          title: 'A Sample Job Set',
+          description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+          content: JSON.stringify({
+            machines: [
+              {
+                id: "HsDzur1T_YKl5ODHTeMIx",
+                sequence: 1,
+                title: "M1",
+                description: "Machine 1"
+              },
+              {
+                id: "2lqxJoUnwFKXvSJjntmCY",
+                sequence: 2,
+                title: "M2",
+                description: "Machine 2"
+              },
+              {
+                id: "XOPjM1xFGbStEP6UUrmvE",
+                sequence: 3,
+                title: "M3",
+                description: "Machine 3"
+              },
+              {
+                id: "_o8e68TiHD78pAJ6jDzBR",
+                sequence: 4,
+                title: "M4",
+                description: "Machine 4"
+              }],
+            jobs: []
+          }),
+          jobColors: JSON.stringify({}),
+          isAutoTimeOptions: true,
+          timeOptions: JSON.stringify({
+            maxTimeMs: 0,
+            viewStartTimeMs: 0,
+            viewEndTimeMs: 0,
+            minViewDurationMs: 0,
+            maxViewDurationMs: 0
+          }),
+          isLocked: false,
+          versionToken: '1',
+          hasDetail: true
+        },
+        true
+      ))
+
+      // assert
+      const actualState = jobSetEditorStore.getState()
+      expect(actualState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2 edited')
+      expect(actualState.steps).toEqual({
+        ids: ['initial', '1', '2'],
+        entities: {
+          'initial': {
+            id: 'initial',
+            name: 'initial',
+            operations: []
+          },
+          '1': {
+            id: '1',
+            name: 'Edit machine title',
+            operations: [
+              {
+                type: 'edit',
+                fieldChanges: [
+                  {
+                    path: '/machines/entities/2lqxJoUnwFKXvSJjntmCY/title',
+                    previousValue: 'M2',
+                    newValue: 'M2 edited'
+                  }
+                ],
+                applied: true
+              }
+            ]
+          },
+          '2': {
+            id: '2',
+            name: 'Refreshed',
+            versionToken: "1",
+            mergeBehaviour: "merge",
+            operations: [
+              {
+                type: "reverse local",
+                fieldChanges: [
+                  {
+                    path: "/machines/entities/2lqxJoUnwFKXvSJjntmCY/title",
+                    previousValue: "M2 edited",
+                    newValue: "M2",
+                  },
+                ],
+                applied: false,
+              },
+            ],
+          },
+        }
+      })
+      expect(actualState.lastVersion?.versionToken).toEqual('1')
+    })
+    describe('Local Update, Remote delete (Confict)', () => {
+      test('Confict', () => {
+        const jobSetEditorStore = createLoadedEditorStore()
+        jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited')) // machine 2, stepId: 1
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "XOPjM1xFGbStEP6UUrmvE",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "_o8e68TiHD78pAJ6jDzBR",
+                  sequence: 4,
+                  title: "M4",
+                  description: "Machine 4"
+                }],
+              jobs: []
+            }),
+            jobColors: JSON.stringify({}),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData.machines.ids).toEqual([
+          'HsDzur1T_YKl5ODHTeMIx',  // machine 1
+          'XOPjM1xFGbStEP6UUrmvE',  // machine 3
+          '_o8e68TiHD78pAJ6jDzBR'   // machine 4
+        ])
+        expect(actualState.formData.machines.entities['2lqxJoUnwFKXvSJjntmCY']).toBeUndefined()
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1', '2'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Edit machine title',
+              operations: [
+                {
+                  type: 'edit',
+                  fieldChanges: [
+                    {
+                      path: '/machines/entities/2lqxJoUnwFKXvSJjntmCY/title',
+                      previousValue: 'M2',
+                      newValue: 'M2 edited'
+                    }
+                  ],
+                  applied: true
+                }
+              ]
+            },
+            '2': {
+              id: '2',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "merge",
+              operations: [
+                {
+                  type: "conflict",
+                  fieldChanges: [
+                    {
+                      path: "/machines/ids",
+                      collectionChange: {
+                        type: 'remove',
+                        id: '2lqxJoUnwFKXvSJjntmCY',
+                        index: 1,
+                      }
+                    },
+                    {
+                      path: "/machines/entities/2lqxJoUnwFKXvSJjntmCY",
+                      previousValue:
+                      {
+                        id: "2lqxJoUnwFKXvSJjntmCY",
+                        title: "M2 edited",
+                        description: "Machine 2"
+                      },
+                      newValue: undefined
+                    },
+                  ],
+                  applied: true,
+                  conflictName: "Remove machine",
+                  conflictApplied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
+      })
+      test('Unapply re-apply undo redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore()
+        jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited')) // machine 2, stepId: 1
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "XOPjM1xFGbStEP6UUrmvE",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "_o8e68TiHD78pAJ6jDzBR",
+                  sequence: 4,
+                  title: "M4",
+                  description: "Machine 4"
+                }],
+              jobs: []
+            }),
+            jobColors: JSON.stringify({}),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // unapply
+        jobSetEditorStore.dispatch(actions.unApplyConflict('2', 0))
+        const unapplyState = jobSetEditorStore.getState()
+        expect(unapplyState.formData.machines.ids).toEqual([
+          'HsDzur1T_YKl5ODHTeMIx',  // machine 1
+          '2lqxJoUnwFKXvSJjntmCY',  // machine 2
+          'XOPjM1xFGbStEP6UUrmvE',  // machine 3
+          '_o8e68TiHD78pAJ6jDzBR'   // machine 4
+        ])
+        expect(unapplyState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2 edited')
+        expect(unapplyState.currentStepIndex).toBe(2)
+
+        // undo unapply
+        jobSetEditorStore.dispatch(actions.undo())
+        const undoUnapplyState = jobSetEditorStore.getState()
+        expect(undoUnapplyState.formData.machines.ids).toEqual([
+          'HsDzur1T_YKl5ODHTeMIx',  // machine 1
+          '2lqxJoUnwFKXvSJjntmCY',  // machine 2
+          'XOPjM1xFGbStEP6UUrmvE',  // machine 3
+          '_o8e68TiHD78pAJ6jDzBR'   // machine 4
+        ])
+        expect(undoUnapplyState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2 edited')
+        expect(undoUnapplyState.currentStepIndex).toBe(1)
+
+        // redo unapply
+        jobSetEditorStore.dispatch(actions.redo())
+        const redoUnapplyState = jobSetEditorStore.getState()
+        expect(redoUnapplyState.formData.machines.ids).toEqual([
+          'HsDzur1T_YKl5ODHTeMIx',  // machine 1
+          '2lqxJoUnwFKXvSJjntmCY',  // machine 2
+          'XOPjM1xFGbStEP6UUrmvE',  // machine 3
+          '_o8e68TiHD78pAJ6jDzBR'   // machine 4
+        ])
+        expect(redoUnapplyState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2 edited')
+        expect(redoUnapplyState.currentStepIndex).toBe(2)
+
+        // reapply
+        jobSetEditorStore.dispatch(actions.applyConflict('2', 0))
+        const reapplyState = jobSetEditorStore.getState()
+        expect(reapplyState.formData.machines.ids).toEqual([
+          'HsDzur1T_YKl5ODHTeMIx',  // machine 1
+          'XOPjM1xFGbStEP6UUrmvE',  // machine 3
+          '_o8e68TiHD78pAJ6jDzBR'   // machine 4
+        ])
+        expect(reapplyState.formData.machines.entities['2lqxJoUnwFKXvSJjntmCY']).toBeUndefined()
+        expect(reapplyState.currentStepIndex).toBe(2)
+
+        // undo reapply
+        jobSetEditorStore.dispatch(actions.undo())
+        const undoReapplyState = jobSetEditorStore.getState()
+        expect(undoReapplyState.formData.machines.ids).toEqual([
+          'HsDzur1T_YKl5ODHTeMIx',  // machine 1
+          '2lqxJoUnwFKXvSJjntmCY',  // machine 2
+          'XOPjM1xFGbStEP6UUrmvE',  // machine 3
+          '_o8e68TiHD78pAJ6jDzBR'   // machine 4
+        ])
+        expect(undoReapplyState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2 edited')
+        expect(undoReapplyState.currentStepIndex).toBe(1)
+
+        // redo reapply
+        jobSetEditorStore.dispatch(actions.redo())
+        const redoReapplyState = jobSetEditorStore.getState()
+        expect(redoReapplyState.formData.machines.ids).toEqual([
+          'HsDzur1T_YKl5ODHTeMIx',  // machine 1
+          'XOPjM1xFGbStEP6UUrmvE',  // machine 3
+          '_o8e68TiHD78pAJ6jDzBR'   // machine 4
+        ])
+        expect(redoReapplyState.formData.machines.entities['2lqxJoUnwFKXvSJjntmCY']).toBeUndefined()
+        expect(redoReapplyState.currentStepIndex).toBe(2)
+      })
+      test('Conflict has related change: Update', () => {
+        const jobSetEditorStore = createLoadedEditorStore()
+        jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited')) // machine 2, stepId: 1
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "XOPjM1xFGbStEP6UUrmvE",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "_o8e68TiHD78pAJ6jDzBR",
+                  sequence: 4,
+                  title: "M4",
+                  description: "Machine 4"
+                }],
+              jobs: []
+            }),
+            jobColors: JSON.stringify({}),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+        const conflictStepId = '2'
+        const conflictStepIndex = 2
+        const conflictIndex = 0
+        jobSetEditorStore.dispatch(actions.unApplyConflict(conflictStepId, 0))
+
+        // edit
+        jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited after refreshed')) // machine 2, stepId: 3
+        const editState = jobSetEditorStore.getState()
+        const editConflictOperation = editState.steps.entities[conflictStepId].operations
+          .filter(op => op.type === 'conflict')[conflictIndex]
+        const editHasRelatedChanges = (() => {
+          const postConflictSteps = editState.steps.ids
+            .slice(
+              conflictStepIndex + 1,
+              editState.currentStepIndex + 1
+            )
+            .map(id => editState.steps.entities[id])
+          for (const step of postConflictSteps) {
+            const conflictHasRelatedChangesWithStep = conflictHasRelatedChanges(editConflictOperation, step)
+            if (conflictHasRelatedChangesWithStep) {
+              return true
+            }
+          }
+          return false
+        })()
+        expect(editHasRelatedChanges).toBe(true)
+
+        // undo edit
+        jobSetEditorStore.dispatch(actions.undo())
+        const undoEditState = jobSetEditorStore.getState()
+        const undoEditConflictOperation = editState.steps.entities[conflictStepId].operations
+          .filter(op => op.type === 'conflict')[conflictIndex]
+        const undoEditHasRelatedChanges = (() => {
+          const postConflictSteps = undoEditState.steps.ids
+            .slice(
+              conflictStepIndex + 1,
+              undoEditState.currentStepIndex + 1
+            )
+            .map(id => undoEditState.steps.entities[id])
+          for (const step of postConflictSteps) {
+            const conflictHasRelatedChangesWithStep = conflictHasRelatedChanges(undoEditConflictOperation, step)
+            if (conflictHasRelatedChangesWithStep) {
+              return true
+            }
+          }
+          return false
+        })()
+        expect(undoEditHasRelatedChanges).toBe(false)
+      })
+      test('Conflict has related change: Delete', () => {
+        const jobSetEditorStore = createLoadedEditorStore()
+        jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited')) // machine 2, stepId: 1
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 2
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "XOPjM1xFGbStEP6UUrmvE",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "_o8e68TiHD78pAJ6jDzBR",
+                  sequence: 4,
+                  title: "M4",
+                  description: "Machine 4"
+                }],
+              jobs: []
+            }),
+            jobColors: JSON.stringify({}),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+        const conflictStepId = '2'
+        const conflictStepIndex = 2
+        const conflictIndex = 0
+        jobSetEditorStore.dispatch(actions.unApplyConflict(conflictStepId, 0))
+
+        // edit
+        jobSetEditorStore.dispatch(actions.removeMachine("2lqxJoUnwFKXvSJjntmCY")) // machine 2, stepId: 3
+        const editState = jobSetEditorStore.getState()
+        const editConflictOperation = editState.steps.entities[conflictStepId].operations
+          .filter(op => op.type === 'conflict')[conflictIndex]
+        const editHasRelatedChanges = (() => {
+          const postConflictSteps = editState.steps.ids
+            .slice(
+              conflictStepIndex + 1,
+              editState.currentStepIndex + 1
+            )
+            .map(id => editState.steps.entities[id])
+          for (const step of postConflictSteps) {
+            const conflictHasRelatedChangesWithStep = conflictHasRelatedChanges(editConflictOperation, step)
+            if (conflictHasRelatedChangesWithStep) {
+              return true
+            }
+          }
+          return false
+        })()
+        expect(editHasRelatedChanges).toBe(true)
+
+        // undo edit
+        jobSetEditorStore.dispatch(actions.undo())
+        const undoEditState = jobSetEditorStore.getState()
+        const undoEditConflictOperation = editState.steps.entities[conflictStepId].operations
+          .filter(op => op.type === 'conflict')[conflictIndex]
+        const undoEditHasRelatedChanges = (() => {
+          const postConflictSteps = undoEditState.steps.ids
+            .slice(
+              conflictStepIndex + 1,
+              undoEditState.currentStepIndex + 1
+            )
+            .map(id => undoEditState.steps.entities[id])
+          for (const step of postConflictSteps) {
+            const conflictHasRelatedChangesWithStep = conflictHasRelatedChanges(undoEditConflictOperation, step)
+            if (conflictHasRelatedChangesWithStep) {
+              return true
+            }
+          }
+          return false
+        })()
+        expect(undoEditHasRelatedChanges).toBe(false)
+      })
+    })
+    // Conflicting Updates
     // - Unapply Reapply Undo/redo
     // - Related change + Undo
+    // Local Update, Remote delete
+    // Same Updates
   })
   // move machine
   // remove machine
