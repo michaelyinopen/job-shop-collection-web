@@ -43,13 +43,22 @@ describe('Verify that nanoid mock works', () => {
     const secondId = nanoid()
     expect(secondId).toBe("2")
   })
+  test('mockReturnValueOnce to replace mocked impleemntation once', () => {
+    const firstId = nanoid()
+    expect(firstId).toBe("1")
+    nanoid.mockReturnValueOnce('kN0_Jo47lPQjjo5VL2XbF')
+    const mocekdOnceId = nanoid()
+    expect(mocekdOnceId).toBe('kN0_Jo47lPQjjo5VL2XbF')
+    const secondId = nanoid()
+    expect(secondId).toBe("2")
+  })
   test('module that imports nanoid uses the mock', () => {
     const jobAction = actions.createJob()
     expect(jobAction.payload.id).toBe("1")
   })
 })
 
-describe('Edit Title', () => {
+describe('Text field change: Edit Title', () => {
   const createLoadedEditorStore = () => {
     const jobSetEditorStore = configureStore({
       reducer: jobSetEditorReducer,
@@ -100,7 +109,7 @@ describe('Edit Title', () => {
     expect(actualState.formData.title).toEqual('Title edited')
     expect(actualState.steps).toEqual({
       ids: ['initial', '1'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -140,7 +149,7 @@ describe('Edit Title', () => {
     expect(actualState.formData.title).toEqual('Title edited 3')
     expect(actualState.steps).toEqual({
       ids: ['initial', '1', '2', '3'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -212,7 +221,7 @@ describe('Edit Title', () => {
     expect(actualUndoState.formData.title).toEqual('A Sample Job Set')
     expect(actualUndoState.steps).toEqual({
       ids: ['initial', '1'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -247,7 +256,7 @@ describe('Edit Title', () => {
     expect(actualRedoState.formData.title).toEqual('Title edited')
     expect(actualRedoState.steps).toEqual({
       ids: ['initial', '1'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -310,7 +319,7 @@ describe('Edit Title', () => {
     expect(actualState.formData.title).toEqual('Local edited')
     expect(actualState.steps).toEqual({
       ids: ['initial', '1', '2'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -390,7 +399,7 @@ describe('Edit Title', () => {
     expect(actualState.formData.title).toEqual('Remote edited')
     expect(actualState.steps).toEqual({
       ids: ['initial', '1'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -457,7 +466,7 @@ describe('Edit Title', () => {
     expect(actualState.formData.description).toEqual("Remote edited description")
     expect(actualState.steps).toEqual({
       ids: ['initial', '1', '2'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -551,7 +560,7 @@ describe('Edit Title', () => {
     expect(actualState.formData.description).toEqual("Remote edited description")
     expect(actualState.steps).toEqual({
       ids: ['initial', '1', '2'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -663,7 +672,7 @@ describe('Edit Title', () => {
     expect(actualState.formData.title).toEqual('Title edited')
     expect(actualState.steps).toEqual({
       ids: ['initial', '1'],
-      items: {
+      entities: {
         'initial': {
           id: 'initial',
           name: 'initial',
@@ -726,7 +735,7 @@ describe('Edit Title', () => {
       expect(actualState.formData.title).toEqual('Remote edited title')
       expect(actualState.steps).toEqual({
         ids: ['initial', '1', '2'],
-        items: {
+        entities: {
           'initial': {
             id: 'initial',
             name: 'initial',
@@ -873,7 +882,7 @@ describe('Edit Title', () => {
       // edit
       jobSetEditorStore.dispatch(actions.setTitle('Title edited after refreshed')) // stepId: 3
       const editState = jobSetEditorStore.getState()
-      const editConflictOperation = editState.steps.items[conflictStepId].operations
+      const editConflictOperation = editState.steps.entities[conflictStepId].operations
         .filter(op => op.type === 'conflict')[conflictIndex]
       const editHasRelatedChanges = (() => {
         const postConflictSteps = editState.steps.ids
@@ -881,7 +890,7 @@ describe('Edit Title', () => {
             conflictStepIndex + 1,
             editState.currentStepIndex + 1
           )
-          .map(id => editState.steps.items[id])
+          .map(id => editState.steps.entities[id])
         for (const step of postConflictSteps) {
           const conflictHasRelatedChangesWithStep = conflictHasRelatedChanges(editConflictOperation, step)
           if (conflictHasRelatedChangesWithStep) {
@@ -895,7 +904,7 @@ describe('Edit Title', () => {
       // undo edit
       jobSetEditorStore.dispatch(actions.undo())
       const undoEditState = jobSetEditorStore.getState()
-      const undoEditConflictOperation = editState.steps.items[conflictStepId].operations
+      const undoEditConflictOperation = editState.steps.entities[conflictStepId].operations
         .filter(op => op.type === 'conflict')[conflictIndex]
       const undoEditHasRelatedChanges = (() => {
         const postConflictSteps = undoEditState.steps.ids
@@ -903,7 +912,7 @@ describe('Edit Title', () => {
             conflictStepIndex + 1,
             undoEditState.currentStepIndex + 1
           )
-          .map(id => undoEditState.steps.items[id])
+          .map(id => undoEditState.steps.entities[id])
         for (const step of postConflictSteps) {
           const conflictHasRelatedChangesWithStep = conflictHasRelatedChanges(undoEditConflictOperation, step)
           if (conflictHasRelatedChangesWithStep) {
@@ -915,4 +924,121 @@ describe('Edit Title', () => {
       expect(undoEditHasRelatedChanges).toBe(false)
     })
   })
+})
+
+describe('Collection: Machines', () => {
+  const createLoadedEditorStore = () => {
+    const jobSetEditorStore = configureStore({
+      reducer: jobSetEditorReducer,
+      middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+        .concat(editHistoryMiddleware)
+        .concat(autoTimeOptionsMiddleware)
+        .concat(validationMiddleware)
+    })
+
+    jobSetEditorStore.dispatch(actions.setJobSetEditorId(1))
+    jobSetEditorStore.dispatch(actions.setJobSetEditorIsEdit(true))
+    jobSetEditorStore.dispatch(actions.loadedJobSet())
+
+    jobSetEditorStore.dispatch(actions.setJobSetFromAppStore(
+      {
+        id: 1,
+        title: 'A Sample Job Set',
+        description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+        content: JSON.stringify({
+          machines: [
+            {
+              id: "HsDzur1T_YKl5ODHTeMIx",
+              sequence: 1,
+              title: "M1",
+              description: "Machine 1"
+            },
+            {
+              id: "2lqxJoUnwFKXvSJjntmCY",
+              sequence: 2,
+              title: "M2",
+              description: "Machine 2"
+            },
+            {
+              id: "XOPjM1xFGbStEP6UUrmvE",
+              sequence: 3,
+              title: "M3",
+              description: "Machine 3"
+            },
+            {
+              id: "_o8e68TiHD78pAJ6jDzBR",
+              sequence: 4,
+              title: "M4",
+              description: "Machine 4"
+            }],
+          jobs: []
+        }),
+        jobColors: JSON.stringify({}),
+        isAutoTimeOptions: true,
+        timeOptions: JSON.stringify({
+          maxTimeMs: 0,
+          viewStartTimeMs: 0,
+          viewEndTimeMs: 0,
+          minViewDurationMs: 0,
+          maxViewDurationMs: 0
+        }),
+        isLocked: false,
+        versionToken: '1',
+        hasDetail: true
+      },
+      true
+    ))
+    return jobSetEditorStore
+  }
+  // describe Add item: add machine
+  describe('Item field change', () => {
+    test('Edit Machine Title', () => {
+      const jobSetEditorStore = createLoadedEditorStore()
+
+      // act
+      jobSetEditorStore.dispatch(actions.setMachineTitle("2lqxJoUnwFKXvSJjntmCY", 'M2 edited')) // machine 2, stepId: 1
+
+      // assert
+      const actualState = jobSetEditorStore.getState()
+      expect(actualState.formData.machines.entities["2lqxJoUnwFKXvSJjntmCY"].title).toEqual('M2 edited')
+      expect(actualState.steps).toEqual({
+        ids: ['initial', '1'],
+        entities: {
+          'initial': {
+            id: 'initial',
+            name: 'initial',
+            operations: []
+          },
+          '1': {
+            id: '1',
+            name: 'Edit machine title',
+            operations: [
+              {
+                type: 'edit',
+                fieldChanges: [
+                  {
+                    path: '/machines/entities/2lqxJoUnwFKXvSJjntmCY/title',
+                    previousValue: 'M2',
+                    newValue: 'M2 edited'
+                  }
+                ],
+                applied: true
+              }
+            ]
+          },
+        }
+      })
+    })
+    // combine
+    // undo redo
+    // Local Edit
+    // Remote Edit
+    // Same Edits
+    // Conflicting Edits
+    // - Unapply Reapply Undo/redo
+    // - Related change + Undo
+  })
+  // move machine
+  // remove machine
+  // mixed conflicts
 })

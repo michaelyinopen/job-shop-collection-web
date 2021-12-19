@@ -157,7 +157,7 @@ export const editHistoryMiddleware: Middleware = store => next => action => {
   const dispatch = store.dispatch
 
   const previousState = store.getState()
-  const previousStep = previousState.steps.items[previousState.steps.ids[previousState.currentStepIndex]]
+  const previousStep = previousState.steps.entities[previousState.steps.ids[previousState.currentStepIndex]]
   const previousFormData = previousState.formData
   const previousInitialized = previousState.initialized
   const previousIsNew = previousState.id === undefined

@@ -154,3 +154,16 @@ For each edit pattern, test:
 
 Note: different local and remote edit combinations will create different Local Edit, Remote Edit, Same Edits and Conflicting Edits operations.\
 E.g. a collection's item add/update/remove/move, the tests are organized to show the different combinations.
+
+In Short
+```
+edit
+combine
+undo redo
+Local Edit
+Remote Edit
+Same Edits
+Conflicting Edits
+- Unapply Reapply Undo/redo
+- Related change + Undo
+```
