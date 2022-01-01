@@ -128,6 +128,7 @@ Check `editHistory.test.js`
 - Move items in collection
 - Edit collection's item's field
 - Add item to collection
+- Procedure's machine id
 
 Refresh Collection Operations
 ![Refresh Collection Operations](./RefreshCollectionOperations.png)

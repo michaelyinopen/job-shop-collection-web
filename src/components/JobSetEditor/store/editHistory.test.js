@@ -5220,8 +5220,27 @@ describe('Collection move: Procedures', () => {
   })
 })
 
+describe('Procedure MachineId', () => {
+})
 // Procedure's MachineId
+// 
+// local
+// Set procedure's machine
+// Change Procedure's machine to another machine
+// Cleared Procedure's machine
+// Remove machine, thus cleared procedure's machine
+// 
+// Refreshed
+// Cleared Procedure's machine
+// Remove machine, thus cleared procedure's machine
+// Change Procedure's machine to another machine
+// Remove machine, thus cleared procedure's machine, and set procedure to another existing machine
+// Remove machine, thus cleared procedure's machine, and set procedure to a newly added machine
+// Change procedure machine to a newly added machine
+// Set procedure machine to a an existing machine
+// Set procedure machine to a newly added machine
 
 // Jobs and JobColors
 
 // Collection: Job update includes procedure edits
+// related change Job update includes procedure edits
