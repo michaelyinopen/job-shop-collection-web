@@ -1,3 +1,4 @@
+import { produce } from 'immer'
 import type {
   FormData,
   Step,
@@ -87,110 +88,41 @@ function redoFieldChange(fieldChange: ValueFieldChange, formData: FormData): For
   }
   else if (path.startsWith('/machines/entities/') && path.endsWith('title')) {
     const machineId = path.substring('/machines/entities/'.length, path.length - 'title'.length - 1)
-    return {
-      ...formData,
-      machines: {
-        ...formData.machines,
-        entities: {
-          ...formData.machines.entities,
-          [machineId]: {
-            ...formData.machines.entities[machineId],
-            title: newValue
-          }
-        }
-      }
-    }
+    return produce(formData, draft => {
+      draft.machines.entities[machineId].title = newValue
+    })
   }
   else if (path.startsWith('/machines/entities/') && path.endsWith('description')) {
     const machineId = path.substring('/machines/entities/'.length, path.length - 'description'.length - 1)
-    return {
-      ...formData,
-      machines: {
-        ...formData.machines,
-        entities: {
-          ...formData.machines.entities,
-          [machineId]: {
-            ...formData.machines.entities[machineId],
-            description: newValue
-          }
-        }
-      }
-    }
+    return produce(formData, draft => {
+      draft.machines.entities[machineId].description = newValue
+    })
   }
   else if (path.startsWith('/jobs/entities/') && path.endsWith('title') && pathNumberOfSlashes === 3) {
     const jobId = getJobIdFromPath(path)
-    return {
-      ...formData,
-      jobs: {
-        ...formData.jobs,
-        entities: {
-          ...formData.jobs.entities,
-          [jobId]: {
-            ...formData.jobs.entities[jobId],
-            title: newValue
-          }
-        }
-      }
-    }
+    return produce(formData, draft => {
+      draft.jobs.entities[jobId].title = newValue
+    })
   }
   else if (path.startsWith('/jobColors/entities/') && path.endsWith('textColor')) {
     const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'textColor'.length - 1)
-    return {
-      ...formData,
-      jobColors: {
-        ...formData.jobColors,
-        entities: {
-          ...formData.jobColors.entities,
-          [jobColorId]: {
-            ...formData.jobColors.entities[jobColorId],
-            textColor: newValue
-          }
-        }
-      }
-    }
+    return produce(formData, draft => {
+      draft.jobColors.entities[jobColorId].textColor = newValue
+    })
   }
   else if (path.startsWith('/jobColors/entities/') && path.endsWith('color')) {
     const jobColorId = path.substring('/jobColors/entities/'.length, path.length - 'color'.length - 1)
-    return {
-      ...formData,
-      jobColors: {
-        ...formData.jobColors,
-        entities: {
-          ...formData.jobColors.entities,
-          [jobColorId]: {
-            ...formData.jobColors.entities[jobColorId],
-            color: newValue
-          }
-        }
-      }
-    }
+    return produce(formData, draft => {
+      draft.jobColors.entities[jobColorId].color = newValue
+    })
   }
   else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('machineId')) {
     const jobId = getJobIdFromPath(path)
     const procedureId = getProcedureIdFromPath(path)
     if (formData.jobs.entities[jobId] && formData.jobs.entities[jobId].procedures.entities[procedureId]) {
-      return {
-        ...formData,
-        jobs: {
-          ...formData.jobs,
-          entities: {
-            ...formData.jobs.entities,
-            [jobId]: {
-              ...formData.jobs.entities[jobId],
-              procedures: {
-                ...formData.jobs.entities[jobId].procedures,
-                entities: {
-                  ...formData.jobs.entities[jobId].procedures.entities,
-                  [procedureId]: {
-                    ...formData.jobs.entities[jobId].procedures.entities[procedureId],
-                    machineId: newValue
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      return produce(formData, draft => {
+        draft.jobs.entities[jobId].procedures.entities[procedureId].machineId = newValue
+      })
     }
     else {
       return formData
@@ -199,146 +131,57 @@ function redoFieldChange(fieldChange: ValueFieldChange, formData: FormData): For
   else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && path.endsWith('processingTimeMs')) {
     const jobId = getJobIdFromPath(path)
     const procedureId = getProcedureIdFromPath(path)
-    return {
-      ...formData,
-      jobs: {
-        ...formData.jobs,
-        entities: {
-          ...formData.jobs.entities,
-          [jobId]: {
-            ...formData.jobs.entities[jobId],
-            procedures: {
-              ...formData.jobs.entities[jobId].procedures,
-              entities: {
-                ...formData.jobs.entities[jobId].procedures.entities,
-                [procedureId]: {
-                  ...formData.jobs.entities[jobId].procedures.entities[procedureId],
-                  processingTimeMs: newValue
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    return produce(formData, draft => {
+      draft.jobs.entities[jobId].procedures.entities[procedureId].processingTimeMs = newValue
+    })
   }
   else if (path.startsWith('/machines/entities/') && pathNumberOfSlashes === 3) {
     const machineId = path.substring('/machines/entities/'.length)
     if (newValue === undefined) {
-      let newMachineEntities = { ...formData.machines.entities }
-      delete newMachineEntities[machineId]
-      return {
-        ...formData,
-        machines: {
-          ...formData.machines,
-          entities: newMachineEntities
-        }
-      }
+      return produce(formData, draft => {
+        delete draft.machines.entities[machineId]
+      })
     } else {
-      return {
-        ...formData,
-        machines: {
-          ...formData.machines,
-          entities: {
-            ...formData.machines.entities,
-            [machineId]: newValue
-          }
-        }
-      }
+      return produce(formData, draft => {
+        draft.machines.entities[machineId] = newValue
+      })
     }
   }
   else if (path.startsWith('/jobs/entities/') && pathNumberOfSlashes === 3) {
     const jobId = path.substring('/jobs/entities/'.length)
     if (newValue === undefined) {
-      let newJobEntities = { ...formData.jobs.entities }
-      delete newJobEntities[jobId]
-      return {
-        ...formData,
-        jobs: {
-          ...formData.jobs,
-          entities: newJobEntities
-        }
-      }
+      return produce(formData, draft => {
+        delete draft.jobs.entities[jobId]
+      })
     } else {
-      return {
-        ...formData,
-        jobs: {
-          ...formData.jobs,
-          entities: {
-            ...formData.jobs.entities,
-            [jobId]: newValue
-          }
-        }
-      }
+      return produce(formData, draft => {
+        draft.jobs.entities[jobId] = newValue
+      })
     }
   }
   else if (path.startsWith('/jobColors/entities/') && pathNumberOfSlashes === 3) {
     const jobColorId = path.substring('/jobColors/entities/'.length)
     if (newValue === undefined) {
-      let newJobColorEntities = { ...formData.jobColors.entities }
-      delete newJobColorEntities[jobColorId]
-      return {
-        ...formData,
-        jobColors: {
-          ...formData.jobColors,
-          entities: newJobColorEntities
-        }
-      }
+      return produce(formData, draft => {
+        delete draft.jobColors.entities[jobColorId]
+      })
     } else {
-      return {
-        ...formData,
-        jobColors: {
-          ...formData.jobColors,
-          entities: {
-            ...formData.jobColors.entities,
-            [jobColorId]: newValue
-          }
-        }
-      }
+      return produce(formData, draft => {
+        draft.jobColors.entities[jobColorId] = newValue
+      })
     }
   }
   else if (path.startsWith('/jobs/entities/') && path.includes('/procedures/entities/') && pathNumberOfSlashes === 6) {
     const jobId = getJobIdFromPath(path)
     const procedureId = getProcedureIdFromPath(path)
     if (newValue === undefined) {
-      let newProcedureEntities = { ...formData.jobs.entities[jobId].procedures.entities }
-      delete newProcedureEntities[procedureId]
-      return {
-        ...formData,
-        jobs: {
-          ...formData.jobs,
-          entities: {
-            ...formData.jobs.entities,
-            [jobId]: {
-              ...formData.jobs.entities[jobId],
-              procedures: {
-                ...formData.jobs.entities[jobId].procedures,
-                entities: newProcedureEntities
-              }
-            }
-          }
-        }
-      }
+      return produce(formData, draft => {
+        delete draft.jobs.entities[jobId].procedures.entities[procedureId]
+      })
     } else {
-      return {
-        ...formData,
-        jobs: {
-          ...formData.jobs,
-          entities: {
-            ...formData.jobs.entities,
-            [jobId]: {
-              ...formData.jobs.entities[jobId],
-              procedures: {
-                ...formData.jobs.entities[jobId].procedures,
-                entities: {
-                  ...formData.jobs.entities[jobId].procedures.entities,
-                  [procedureId]: newValue
-                }
-              }
-            }
-          }
-        }
-      }
+      return produce(formData, draft => {
+        draft.jobs.entities[jobId].procedures.entities[procedureId] = newValue
+      })
     }
   }
   return formData
@@ -357,7 +200,7 @@ function redoMachineIdFieldChanges(
   const appliedMoveFieldChangeIndex = machineIdFieldChangeApplies
     .findIndex(ca => ca.fieldChange.collectionChange?.type === 'move' && ca.applied)
   if (appliedMoveFieldChangeIndex === -1) {
-    machineIds = formData.machines.ids
+    machineIds = [...formData.machines.ids]
   } else {
     const previousMoveMachineIds: string[] =
       (machineIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
@@ -402,13 +245,9 @@ function redoMachineIdFieldChanges(
     machineIds = machineIds.filter(id => id !== removeChange.id)
   }
 
-  return {
-    ...formData,
-    machines: {
-      ...formData.machines,
-      ids: machineIds
-    }
-  }
+  return produce(formData, draft => {
+    draft.machines.ids = machineIds
+  })
 }
 
 function redoJobIdFieldChanges(
@@ -424,7 +263,7 @@ function redoJobIdFieldChanges(
   const appliedMoveFieldChangeIndex = jobIdFieldChangeApplies
     .findIndex(ca => ca.fieldChange.collectionChange?.type === 'move' && ca.applied)
   if (appliedMoveFieldChangeIndex === -1) {
-    jobIds = formData.jobs.ids
+    jobIds = [...formData.jobs.ids]
   } else {
     const previousMoveJobIds: string[] =
       (jobIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
@@ -469,13 +308,9 @@ function redoJobIdFieldChanges(
     jobIds = jobIds.filter(id => id !== removeChange.id)
   }
 
-  return {
-    ...formData,
-    jobs: {
-      ...formData.jobs,
-      ids: jobIds
-    }
-  }
+  return produce(formData, draft => {
+    draft.jobs.ids = jobIds
+  })
 }
 
 function redoJobColorIdFieldChanges(
@@ -491,7 +326,7 @@ function redoJobColorIdFieldChanges(
   const appliedMoveFieldChangeIndex = jobColorIdFieldChangeApplies
     .findIndex(ca => ca.fieldChange.collectionChange?.type === 'move' && ca.applied)
   if (appliedMoveFieldChangeIndex === -1) {
-    jobColorIds = formData.jobColors.ids
+    jobColorIds = [...formData.jobColors.ids]
   } else {
     const previousMoveJobIds: string[] =
       (jobColorIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
@@ -536,13 +371,9 @@ function redoJobColorIdFieldChanges(
     jobColorIds = jobColorIds.filter(id => id !== removeChange.id)
   }
 
-  return {
-    ...formData,
-    jobColors: {
-      ...formData.jobColors,
-      ids: jobColorIds
-    }
-  }
+  return produce(formData, draft => {
+    draft.jobColors.ids = jobColorIds
+  })
 }
 
 function redoProcedureIdFieldChanges(
@@ -581,7 +412,7 @@ function redoProcedureIdFieldChangesForJob(
   const appliedMoveFieldChangeIndex = procedureIdFieldChangeApplies
     .findIndex(ca => ca.fieldChange.collectionChange?.type === 'move' && ca.applied)
   if (appliedMoveFieldChangeIndex === -1) {
-    procedureIds = formData.jobs.entities[jobId].procedures.ids
+    procedureIds = [...formData.jobs.entities[jobId].procedures.ids]
   } else {
     const previousMoveProcedureIds: string[] =
       (procedureIdFieldChangeApplies[appliedMoveFieldChangeIndex].fieldChange.collectionChange as CollectionMoveChange).previousValue
@@ -626,22 +457,9 @@ function redoProcedureIdFieldChangesForJob(
     procedureIds = procedureIds.filter(id => id !== removeChange.id)
   }
 
-  return {
-    ...formData,
-    jobs: {
-      ...formData.jobs,
-      entities: {
-        ...formData.jobs.entities,
-        [jobId]: {
-          ...formData.jobs.entities[jobId],
-          procedures: {
-            ...formData.jobs.entities[jobId].procedures,
-            ids: procedureIds
-          }
-        }
-      }
-    }
-  }
+  return produce(formData, draft => {
+    draft.jobs.entities[jobId].procedures.ids = procedureIds
+  })
 }
 
 export function redoStep(step: Step, previousFormData: FormData): FormData {
