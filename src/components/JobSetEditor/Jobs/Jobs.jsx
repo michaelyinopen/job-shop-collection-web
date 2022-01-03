@@ -9,7 +9,6 @@ import { TransitionGroup } from 'react-transition-group'
 import {
   useJobSetEditorSelector,
   fieldEditableSelector,
-  jobSetsEditorHasDetailSelector,
   jobIdsSelector,
 } from '../store'
 import { Job } from './Job'
@@ -40,12 +39,8 @@ const useStyles = makeStyles(theme => createStyles({
 export const Jobs = () => {
   const classes = useStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
-  const hasDetail = useJobSetEditorSelector(jobSetsEditorHasDetailSelector)
   const jobIds = useJobSetEditorSelector(jobIdsSelector)
 
-  if (!hasDetail) {
-    return null
-  }
   return (
     <section>
       <Typography variant='h5' gutterBottom>

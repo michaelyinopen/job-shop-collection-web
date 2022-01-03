@@ -9,7 +9,6 @@ import { TransitionGroup } from 'react-transition-group'
 import {
   useJobSetEditorSelector,
   fieldEditableSelector,
-  jobSetsEditorHasDetailSelector,
   machineIdsSelector
 } from '../store'
 import { Machine } from './Machine'
@@ -40,12 +39,8 @@ const useStyles = makeStyles(theme => createStyles({
 export const Machines = () => {
   const classes = useStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
-  const hasDetail = useJobSetEditorSelector(jobSetsEditorHasDetailSelector)
   const machineIds = useJobSetEditorSelector(machineIdsSelector)
 
-  if (!hasDetail) {
-    return null
-  }
   return (
     <section className={classes.section}>
       <Typography variant='h5' gutterBottom>
