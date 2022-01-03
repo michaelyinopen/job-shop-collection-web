@@ -14,6 +14,7 @@ import type { JobSetEditorState } from './jobSetEditorReducer'
 export const jobSetsEditorIdSelector = (state: JobSetEditorState) => state.id
 export const jobSetsEditorIsLockedSelector = (state: JobSetEditorState) => state.isLocked
 export const jobSetsEditorIsEditSelector = (state: JobSetEditorState) => state.isEdit
+export const jobSetsEditorHasDetailSelector = (state: JobSetEditorState) => state.hasDetail
 export const jobSetsEditorLoadStatusSelector = (state: JobSetEditorState) => state.loadStatus
 export const jobSetsEditorInitializedSelector = (state: JobSetEditorState) => state.initialized
 export const currentStepIndexSelector = (state: JobSetEditorState) => state.currentStepIndex

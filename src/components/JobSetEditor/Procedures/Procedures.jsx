@@ -9,6 +9,7 @@ import { TransitionGroup } from 'react-transition-group'
 import {
   useJobSetEditorSelector,
   fieldEditableSelector,
+  jobSetsEditorHasDetailSelector,
   createJobTitleSelector,
   createProcedureIdsOfJobSelector,
 } from '../store'
@@ -49,8 +50,13 @@ const useStyles = makeStyles(theme => createStyles({
 export const Procedures = ({ jobId }) => {
   const classes = useStyles()
   const editable = useJobSetEditorSelector(fieldEditableSelector)
+  const hasDetail = useJobSetEditorSelector(jobSetsEditorHasDetailSelector)
   const jobTitle = useJobSetEditorSelector(createJobTitleSelector(jobId))
   const procedureIdsOfJob = useJobSetEditorSelector(createProcedureIdsOfJobSelector(jobId))
+  
+  if (!hasDetail) {
+    return null
+  }
   return (
     <section className={classes.root}>
       <div className={classes.proceduresTitle}>
