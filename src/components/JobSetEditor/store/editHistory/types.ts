@@ -11,6 +11,7 @@ export type CollectionFieldChange = {
   collectionChange: CollectionChange
 }
 
+// position.index is the original index before any add and removes
 export type CollectionChange = CollectionRemoveChange | CollectionMoveChange | CollectionAddChange
 export type CollectionAddChange = { type: 'add', id: string, position: { index: number | 'beginning', subindex: number }, }
 export type CollectionMoveChange = { type: 'move', previousValue: any, newValue: any, }

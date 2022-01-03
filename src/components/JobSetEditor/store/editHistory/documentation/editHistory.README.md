@@ -77,7 +77,7 @@ When `mergeBehaviour` is `merge`, operations with type `merge`, and `conflict` w
 
 When `mergeBehaviour` is `discard local changes`, all operation types `merge`, `conflict` and `reverse local` are applied. The result formData will be the remote's formData.
 
-If there are no local changes, the default merge behaviour will be `discard local changes`.\
+If there are no local changes, the default merge behaviour will be `discard local changes`. (UI does not show merge or discard local changes)\
 If there are local changes, the default merge behaviour will be `merge`.
 
 A refreshed step can one or many operations.

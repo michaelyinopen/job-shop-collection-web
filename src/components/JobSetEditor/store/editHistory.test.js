@@ -5270,7 +5270,7 @@ describe('Procedure MachineId', () => {
                   id: 'xni5aW_j9EI2FQXx80UYz',
                   sequence: 1,
                   jobId: 'qfDwuWBUIygzXlR0-1mLY',
-                  machineId: setProcedureMachine ? "HsDzur1T_YKl5ODHTeMIx" : undefined,
+                  machineId: setProcedureMachine ? "HsDzur1T_YKl5ODHTeMIx" : null,
                   processingTimeMs: 0
                 },
               ]
@@ -5679,51 +5679,1747 @@ describe('Procedure MachineId', () => {
   })
   describe('Refreshed Remote Edits', () => {
     describe("Cleared Procedure's machine", () => {
-      test('Edit', () => {
+      test('Refreshed', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: undefined,
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "discard local changes",
+              operations: [
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: null
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
       })
       test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: undefined,
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualRedoState.currentStepIndex).toBe(1)
       })
     })
     describe("Remove machine, clearing procedure's machine", () => {
-      test('Edit', () => {
+      test('Refreshed', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: undefined,
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "discard local changes",
+              operations: [
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/machines/ids",
+                      collectionChange: {
+                        type: 'remove',
+                        id: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                        index: 0,
+                      }
+                    },
+                    {
+                      path: "/machines/entities/HsDzur1T_YKl5ODHTeMIx",
+                      previousValue: {
+                        id: 'HsDzur1T_YKl5ODHTeMIx',
+                        title: 'M1',
+                        description: 'Machine 1',
+                      },
+                      newValue: undefined
+                    },
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: null
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
       })
       test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: undefined,
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualRedoState.currentStepIndex).toBe(1)
       })
     })
     describe("Change Procedure's machine to another machine", () => {
-      test('Edit', () => {
+      test('Refreshed', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "discard local changes",
+              operations: [
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
       })
       test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualRedoState.currentStepIndex).toBe(1)
       })
     })
     describe("Remove machine, clearing procedure's machine, and set procedure to another existing machine", () => {
-      test('Edit', () => {
+      test('Refreshed', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "discard local changes",
+              operations: [
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/machines/ids",
+                      collectionChange: {
+                        type: 'remove',
+                        id: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                        index: 0,
+                      }
+                    },
+                    {
+                      path: "/machines/entities/HsDzur1T_YKl5ODHTeMIx",
+                      previousValue: {
+                        id: 'HsDzur1T_YKl5ODHTeMIx',
+                        title: 'M1',
+                        description: 'Machine 1',
+                      },
+                      newValue: undefined
+                    },
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: null
+                    }
+                  ],
+                  applied: true,
+                },
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: 'KkrjXxkjBXRq6-FRtWKgu', // machine 3
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
       })
       test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualRedoState.currentStepIndex).toBe(1)
       })
     })
     describe("Remove machine, clearing procedure's machine, and set procedure to a newly added machine", () => {
-      test('Edit', () => {
+      test('Refreshed', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 1,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 2,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "TWhdHb8qdBhjXdk5OLstP",
+                  sequence: 3,
+                  title: "M4",
+                  description: "Machine 4"
+                },
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('TWhdHb8qdBhjXdk5OLstP') // machine 4
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "discard local changes",
+              operations: [
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/machines/ids",
+                      collectionChange: {
+                        type: 'remove',
+                        id: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                        index: 0,
+                      }
+                    },
+                    {
+                      path: "/machines/entities/HsDzur1T_YKl5ODHTeMIx",
+                      previousValue: {
+                        id: 'HsDzur1T_YKl5ODHTeMIx',
+                        title: 'M1',
+                        description: 'Machine 1',
+                      },
+                      newValue: undefined
+                    },
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: null
+                    }
+                  ],
+                  applied: true,
+                },
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/machines/ids",
+                      collectionChange: {
+                        type: 'add',
+                        id: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                        position: {
+                          index: 2,
+                          subindex: 0
+                        }
+                      }
+                    },
+                    {
+                      path: "/machines/entities/TWhdHb8qdBhjXdk5OLstP",
+                      previousValue: undefined,
+                      newValue: {
+                        id: 'TWhdHb8qdBhjXdk5OLstP',
+                        title: 'M4',
+                        description: 'Machine 4',
+                      }
+                    },
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
       })
       test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 1,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 2,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "TWhdHb8qdBhjXdk5OLstP",
+                  sequence: 3,
+                  title: "M4",
+                  description: "Machine 4"
+                },
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('TWhdHb8qdBhjXdk5OLstP') // machine 4
+        expect(actualRedoState.currentStepIndex).toBe(1)
       })
     })
     describe("Change procedure machine to a newly added machine", () => {
-      test('Edit', () => {
+      test('Refreshed', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "TWhdHb8qdBhjXdk5OLstP",
+                  sequence: 4,
+                  title: "M4",
+                  description: "Machine 4"
+                },
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('TWhdHb8qdBhjXdk5OLstP') // machine 4
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "discard local changes",
+              operations: [
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: null,
+                    }
+                  ],
+                  applied: true,
+                },
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/machines/ids",
+                      collectionChange: {
+                        type: 'add',
+                        id: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                        position: {
+                          index: 2,
+                          subindex: 0
+                        }
+                      }
+                    },
+                    {
+                      path: "/machines/entities/TWhdHb8qdBhjXdk5OLstP",
+                      previousValue: undefined,
+                      newValue: {
+                        id: 'TWhdHb8qdBhjXdk5OLstP',
+                        title: 'M4',
+                        description: 'Machine 4',
+                      }
+                    },
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
       })
       test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "TWhdHb8qdBhjXdk5OLstP",
+                  sequence: 4,
+                  title: "M4",
+                  description: "Machine 4"
+                },
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('TWhdHb8qdBhjXdk5OLstP') // machine 4
+        expect(actualRedoState.currentStepIndex).toBe(1)
       })
     })
     describe("Set procedure machine to a an existing machine", () => {
-      test('Edit', () => {
+      test('Refreshed', () => {
+        const jobSetEditorStore = createLoadedEditorStore(false)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "discard local changes",
+              operations: [
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: null,
+                      newValue: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
       })
       test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(false)
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                }
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualRedoState.currentStepIndex).toBe(1)
       })
     })
     describe("Set procedure machine to a newly added machine", () => {
-      test('Edit', () => {
+      test('Refreshed', () => {
+        const jobSetEditorStore = createLoadedEditorStore(false)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "TWhdHb8qdBhjXdk5OLstP",
+                  sequence: 4,
+                  title: "M4",
+                  description: "Machine 4"
+                },
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('TWhdHb8qdBhjXdk5OLstP') // machine 4
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: 'Refreshed',
+              versionToken: "2",
+              mergeBehaviour: "discard local changes",
+              operations: [
+                {
+                  type: "merge",
+                  fieldChanges: [
+                    {
+                      path: "/machines/ids",
+                      collectionChange: {
+                        type: 'add',
+                        id: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                        position: {
+                          index: 2,
+                          subindex: 0
+                        }
+                      }
+                    },
+                    {
+                      path: "/machines/entities/TWhdHb8qdBhjXdk5OLstP",
+                      previousValue: undefined,
+                      newValue: {
+                        id: 'TWhdHb8qdBhjXdk5OLstP',
+                        title: 'M4',
+                        description: 'Machine 4',
+                      }
+                    },
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: null,
+                      newValue: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+        expect(actualState.lastVersion?.versionToken).toEqual('2')
       })
       test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(false)
+        jobSetEditorStore.dispatch(actions.setJobSetFromAppStore( // stepId: 1
+          {
+            id: 1,
+            title: 'A Sample Job Set',
+            description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+            content: JSON.stringify({
+              machines: [
+                {
+                  id: "HsDzur1T_YKl5ODHTeMIx",
+                  sequence: 1,
+                  title: "M1",
+                  description: "Machine 1"
+                },
+                {
+                  id: "KkrjXxkjBXRq6-FRtWKgu",
+                  sequence: 2,
+                  title: "M2",
+                  description: "Machine 2"
+                },
+                {
+                  id: "mor1EkwJJ-90n7TwAZoz4",
+                  sequence: 3,
+                  title: "M3",
+                  description: "Machine 3"
+                },
+                {
+                  id: "TWhdHb8qdBhjXdk5OLstP",
+                  sequence: 4,
+                  title: "M4",
+                  description: "Machine 4"
+                },
+              ],
+              jobs: [
+                {
+                  id: 'qfDwuWBUIygzXlR0-1mLY',
+                  sequence: 1,
+                  title: '1',
+                  procedures: [
+                    {
+                      id: 'xni5aW_j9EI2FQXx80UYz',
+                      sequence: 1,
+                      jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                      machineId: 'TWhdHb8qdBhjXdk5OLstP', // machine 4
+                      processingTimeMs: 0
+                    },
+                  ]
+                }
+              ]
+            }),
+            jobColors: JSON.stringify({
+              'qfDwuWBUIygzXlR0-1mLY': {
+                jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                color: '#3cb44b',
+                textColor: '"#000000'
+              }
+            }),
+            isAutoTimeOptions: true,
+            timeOptions: JSON.stringify({
+              maxTimeMs: 0,
+              viewStartTimeMs: 0,
+              viewEndTimeMs: 0,
+              minViewDurationMs: 0,
+              maxViewDurationMs: 0
+            }),
+            isLocked: false,
+            versionToken: '2',
+            hasDetail: true
+          },
+          true
+        ))
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('TWhdHb8qdBhjXdk5OLstP') // machine 4
+        expect(actualRedoState.currentStepIndex).toBe(1)
       })
     })
   })
