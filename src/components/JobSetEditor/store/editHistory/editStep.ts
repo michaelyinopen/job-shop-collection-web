@@ -1,5 +1,4 @@
 import type { Middleware, Dispatch } from 'redux'
-import throttle from 'lodash/throttle'
 import { nanoid } from 'nanoid'
 import { arraysEqual } from '../../../../utility'
 import * as actions from '../actions'
@@ -154,20 +153,11 @@ function calculateStepAndDispatch(
   }
 }
 
-const calculateStepAndDispatchThrottled = throttle(
-  calculateStepAndDispatch,
-  16,
-  {
-    leading: true,
-    trailing: true
-  }
-)
-
 export const editHistoryMiddleware: Middleware = store => next => action => {
   const dispatch = store.dispatch
 
   const previousState = store.getState()
-  const previousStep = previousState.steps[previousState.currentStepIndex]
+  const previousStep = previousState.steps.entities[previousState.steps.ids[previousState.currentStepIndex]]
   const previousFormData = previousState.formData
   const previousInitialized = previousState.initialized
   const previousIsNew = previousState.id === undefined
@@ -177,7 +167,7 @@ export const editHistoryMiddleware: Middleware = store => next => action => {
   const currentFormData = store.getState().formData
 
   if ((previousIsNew || previousInitialized) && !excludeActionTypes.includes(action.type)) {
-    calculateStepAndDispatchThrottled(
+    calculateStepAndDispatch(
       dispatch,
       previousStep,
       previousFormData,

@@ -14,7 +14,7 @@ import {
   useJobSetEditorDispatch,
   closeHistoryPanel,
   useJobSetEditorSelector,
-  stepIdsSelector,
+  reversedStepIdsSelector,
 } from '../store'
 import { StepItem } from './StepItem'
 
@@ -48,7 +48,7 @@ export const historyPanelWidth = 200
 export const HistoryPanel = () => {
   const classes = useStyles()
   const editorDispatch = useJobSetEditorDispatch()
-  const stepIds = useJobSetEditorSelector(stepIdsSelector)
+  const stepIds = useJobSetEditorSelector(reversedStepIdsSelector)
   return (
     <Paper square classes={{ root: classes.root }}>
       <div className={classes.content}>

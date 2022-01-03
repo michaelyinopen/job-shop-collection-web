@@ -104,7 +104,7 @@ export const minViewDurationMsSelector = (state: JobSetEditorState) =>
 //#endregion formData
 
 export const promptExitWhenSavingSelector = (state: JobSetEditorState) => {
-  const currentStep = state.steps[state.currentStepIndex]
+  const currentStep = state.steps.entities[state.steps.ids[state.currentStepIndex]]
   const isCurrentStepSaved = currentStep.saveStatus === 'saved'
 
   const isNew = state.id === undefined
@@ -151,52 +151,22 @@ export const showDetailSelector = (state: JobSetEditorState) => {
 
 export const canUndoSelector = (state: JobSetEditorState) => state.currentStepIndex !== 0
 
-export const canRedoSelector = (state: JobSetEditorState) => state.currentStepIndex !== state.steps.length - 1
+export const canRedoSelector = (state: JobSetEditorState) => state.currentStepIndex !== state.steps.ids.length - 1
 
 export const isHistoryPanelOpenSelector = (state: JobSetEditorState) => state.isHistoryPanelOpen
 
-const createArraysEqualSelectorCreator = createSelectorCreator(
-  defaultMemoize,
-  arraysEqual
+export const reversedStepIdsSelector = createSelector(
+  (state: JobSetEditorState) => state.steps.ids,
+  (stepIds) => stepIds.slice().reverse()
 )
 
-export const stepIdsSelector = createArraysEqualSelectorCreator(
-  (state: JobSetEditorState) => state.steps.map(s => s.id).reverse(),
-  (stepIds) => stepIds
-)
-
-export const createStepSelector = (id: string) => createSelector(
-  (state: JobSetEditorState) => state.steps,
-  (steps) => {
-    return steps.find(s => s.id === id)
-  }
-)
-
-const createShallowEqualSelectorCreator = createSelectorCreator(
-  defaultMemoize,
-  shallowEqualObjects
-)
-
-export const createNormalStepSelector = (id: string) => createShallowEqualSelectorCreator(
-  (state: JobSetEditorState) => {
-    const step = state.steps.find(s => s.id === id)
-    if (!step) {
-      return undefined
-    }
-    return {
-      id: step.id,
-      versionToken: step.versionToken,
-      name: step.name
-    }
-  },
-  (step) => step
-)
+export const createStepSelector = (id: string) => (state: JobSetEditorState) => state.steps.entities[id]
 
 export const createStepDoneStatusSelector = (id: string) => createSelector(
-  (state: JobSetEditorState) => state.steps,
+  (state: JobSetEditorState) => state.steps.ids,
   currentStepIndexSelector,
-  (steps, currentStepIndex) => {
-    const index = steps.findIndex(s => s.id === id)
+  (stepIds, currentStepIndex) => {
+    const index = stepIds.indexOf(id)
     return index > currentStepIndex
       ? 'undone'
       : index === currentStepIndex
@@ -223,12 +193,17 @@ export const createHasRelatedChangesSelector = (
   const hasRelatedChangesMemoized = defaultMemoize(
     (
       hasRelatedChangesWithStepFn: (step: Step) => boolean,
-      steps: Step[],
-      stepIndex: number,
+      steps: {
+        ids: string[],
+        entities: {
+          [key: string]: Step
+        }
+      },
       currentStepIndex: number
     ) => {
-      for (const step of steps.slice(stepIndex + 1, currentStepIndex + 1)) {
-        if (hasRelatedChangesWithStepFn(step)) {
+      const conflictStepId = steps.ids.indexOf(stepId)
+      for (const stepId of steps.ids.slice(conflictStepId + 1, currentStepIndex + 1)) {
+        if (hasRelatedChangesWithStepFn(steps.entities[stepId])) {
           return true
         }
       }
@@ -237,23 +212,20 @@ export const createHasRelatedChangesSelector = (
   )
 
   function selector(state: JobSetEditorState) {
-    const stepIndex = state.steps.findIndex(s => s.id === stepId)
-    if (stepIndex === -1) {
+    const step = createStepSelector(stepId)(state)
+    if (step === undefined) {
       return undefined
     }
-    const conflict = state.steps[stepIndex].operations?.[conflictIndex]
+    const conflict = step.operations?.[conflictIndex]
     if (!conflict) {
       return undefined
     }
     const hasRelatedChangesWithStepFn = hasRelatedChangesWithStepMemoize(conflict)
-    const steps = state.steps
-    const currentStepIndex = state.currentStepIndex
 
     const hasRelatedChanges = hasRelatedChangesMemoized(
       hasRelatedChangesWithStepFn,
-      steps,
-      stepIndex,
-      currentStepIndex
+      state.steps,
+      state.currentStepIndex
     )
     return hasRelatedChanges
   }

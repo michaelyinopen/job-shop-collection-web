@@ -16,7 +16,12 @@ export type JobSetEditorState = {
   loadStatus: 'not loaded' | 'loaded' | 'failed'
   initialized: boolean
   formData: FormDataState
-  steps: Step[],
+  steps: {
+    ids: string[],
+    entities: {
+      [key: string]: Step
+    }
+  },
   currentStepIndex: number,
   lastVersion?: {
     versionToken: string,
@@ -143,7 +148,12 @@ const jobSetEditorInitialState: JobSetEditorState = {
   loadStatus: 'not loaded',
   initialized: false,
   formData: formDataInitialState,
-  steps: [{ id: 'initial', name: 'initial', operations: [] }],
+  steps: {
+    ids: ['initial'],
+    entities: {
+      'initial': { id: 'initial', name: 'initial', operations: [] },
+    },
+  },
   currentStepIndex: 0,
   lastVersion: undefined,
   isHistoryPanelOpen: false,
@@ -221,10 +231,15 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       )
       if (refreshedStep) {
         state.formData = redoStep(refreshedStep, state.formData)
-        state.steps.splice(state.currentStepIndex + 1)
-        state.steps.push(refreshedStep)
-        state.currentStepIndex = state.steps.length - 1
-        for (const step of state.steps.filter(s => s.saveStatus)) {
+        const undoneStepIds = state.steps.ids.slice(state.currentStepIndex + 1)
+        state.steps.ids.splice(state.currentStepIndex + 1)
+        for (const undoneStepId of undoneStepIds) {
+          delete state.steps.entities[undoneStepId]
+        }
+        state.steps.ids.push(refreshedStep.id)
+        state.steps.entities[refreshedStep.id] = refreshedStep
+        state.currentStepIndex = state.steps.ids.length - 1
+        for (const step of Object.values(state.steps.entities).filter(s => s.saveStatus)) {
           step.saveStatus = undefined
         }
       }
@@ -408,38 +423,50 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
     })
     //#endregion edit form actions
     //#region Step
-    .addCase(actions.replaceLastStep, (state, { payload }) => {
-      state.steps.splice(state.currentStepIndex)
-      state.steps.push(...payload)
-      state.currentStepIndex = state.steps.length - 1
+    .addCase(actions.replaceLastStep, (state, { payload: newSteps }) => {
+      const undoneOrReplacingStepIds = state.steps.ids.slice(state.currentStepIndex)
+      state.steps.ids.splice(state.currentStepIndex)
+      for (const stepId of undoneOrReplacingStepIds) {
+        delete state.steps.entities[stepId]
+      }
+
+      for (const newStep of newSteps) {
+        state.steps.ids.push(newStep.id)
+        state.steps.entities[newStep.id] = newStep
+      }
+      state.currentStepIndex = state.steps.ids.length - 1
     })
     .addCase(actions.undo, (state) => {
       if (state.currentStepIndex > 0) {
-        state.formData = undoStep(state.steps[state.currentStepIndex], state.formData)
+        const stepId = state.steps.ids[state.currentStepIndex]
+        state.formData = undoStep(state.steps.entities[stepId], state.formData)
         state.currentStepIndex = state.currentStepIndex - 1
       }
     })
     .addCase(actions.redo, (state) => {
-      if (state.currentStepIndex < state.steps.length - 1) {
-        state.formData = redoStep(state.steps[state.currentStepIndex + 1], state.formData)
+      if (state.currentStepIndex < state.steps.ids.length - 1) {
+        const stepId = state.steps.ids[state.currentStepIndex + 1]
+        state.formData = redoStep(state.steps.entities[stepId], state.formData)
         state.currentStepIndex = state.currentStepIndex + 1
       }
     })
     .addCase(actions.jumpToStep, (state, { payload: { stepId } }) => {
-      const targetStepIndex = state.steps.findIndex(s => s.id === stepId)
-      if (targetStepIndex >= 0 && targetStepIndex <= state.steps.length - 1) {
+      const targetStepIndex = state.steps.ids.findIndex(sId => sId === stepId)
+      if (targetStepIndex >= 0) {
         let formData = state.formData
         if (targetStepIndex < state.currentStepIndex) {
-          const stepsToUndo = state.steps
+          const stepsToUndo = state.steps.ids
             .slice(targetStepIndex + 1, state.currentStepIndex + 1)
             .reverse()
+            .map(sId => state.steps.entities[sId])
           for (const stepToUndo of stepsToUndo) {
             formData = undoStep(stepToUndo, formData)
           }
         }
         else if (targetStepIndex > state.currentStepIndex) {
-          const stepsToRedo = state.steps
+          const stepsToRedo = state.steps.ids
             .slice(state.currentStepIndex + 1, targetStepIndex + 1)
+            .map(sId => state.steps.entities[sId])
           for (const stepToRedo of stepsToRedo) {
             formData = redoStep(stepToRedo, formData)
           }
@@ -449,35 +476,41 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
     })
     .addCase(actions.savingStep, (state, { payload: { stepIndex, saving } }) => {
-      if (stepIndex > state.steps.length - 1) {
+      if (stepIndex > state.steps.ids.length - 1) {
         return
       }
-      for (const step of state.steps.filter(s => s.saveStatus)) {
+      for (const step of Object.values(state.steps.entities).filter(s => s.saveStatus)) {
         step.saveStatus = undefined
       }
-      state.steps[stepIndex].saveStatus = saving ? 'saving' : undefined
+      const stepId = state.steps.ids[stepIndex]
+      state.steps.entities[stepId].saveStatus = saving ? 'saving' : undefined
     })
     .addCase(actions.savedStep, (state, { payload: { stepIndex } }) => {
-      if (stepIndex > state.steps.length - 1) {
+      if (stepIndex > state.steps.ids.length - 1) {
         return
       }
-      for (const step of state.steps.filter(s => s.saveStatus)) {
+      for (const step of Object.values(state.steps.entities).filter(s => s.saveStatus)) {
         step.saveStatus = undefined
       }
-      state.steps[stepIndex].saveStatus = 'saved'
+      const stepId = state.steps.ids[stepIndex]
+      state.steps.entities[stepId].saveStatus = 'saved'
     })
     .addCase(actions.setMergeBehaviourMerge, (state, { payload: { stepId } }) => {
-      const stepIndex = state.steps.findIndex(s => s.id === stepId)
+      const stepIndex = state.steps.ids.findIndex(sId => sId === stepId)
       if (stepIndex === -1
         || state.currentStepIndex !== stepIndex
-        || state.steps[stepIndex].mergeBehaviour === 'merge'
+        || state.steps.entities[stepId].mergeBehaviour === 'merge'
       ) {
         return
       }
-      state.steps.splice(state.currentStepIndex + 1)
+      const undoneStepIds = state.steps.ids.slice(state.currentStepIndex + 1)
+      state.steps.ids.splice(state.currentStepIndex + 1)
+      for (const undoneStepId of undoneStepIds) {
+        delete state.steps.entities[undoneStepId]
+      }
 
       // undo step, then change step to merge, then redo the updated step
-      const step = state.steps[stepIndex]
+      const step = state.steps.entities[stepId]
 
       let formData = state.formData
       formData = undoStep(step, formData)
@@ -492,22 +525,26 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       formData = redoStep(step, formData)
       state.formData = formData
 
-      for (const step of state.steps.slice(stepIndex).filter(s => s.saveStatus)) {
+      for (const step of Object.values(state.steps.entities).filter(s => s.saveStatus)) {
         step.saveStatus = undefined
       }
     })
     .addCase(actions.setMergeBehaviourDiscardLocal, (state, { payload: { stepId } }) => {
-      const stepIndex = state.steps.findIndex(s => s.id === stepId)
+      const stepIndex = state.steps.ids.findIndex(sId => sId === stepId)
       if (stepIndex === -1
         || state.currentStepIndex !== stepIndex
-        || state.steps[stepIndex].mergeBehaviour === 'discard local changes'
+        || state.steps.entities[stepId].mergeBehaviour === 'discard local changes'
       ) {
         return
       }
-      state.steps.splice(state.currentStepIndex + 1)
+      const undoneStepIds = state.steps.ids.slice(state.currentStepIndex + 1)
+      state.steps.ids.splice(state.currentStepIndex + 1)
+      for (const undoneStepId of undoneStepIds) {
+        delete state.steps.entities[undoneStepId]
+      }
 
       // undo step, then change step to merge, then redo the updated step
-      const step = state.steps[stepIndex]
+      const step = state.steps.entities[stepId]
 
       let formData = state.formData
       formData = undoStep(step, formData)
@@ -518,27 +555,32 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       formData = redoStep(step, formData)
       state.formData = formData
 
-      for (const step of state.steps.slice(stepIndex).filter(s => s.saveStatus)) {
+      for (const step of Object.values(state.steps.entities).filter(s => s.saveStatus)) {
         step.saveStatus = undefined
       }
     })
     .addCase(actions.applyConflict, (state, { payload: { stepId, conflictIndex } }) => {
-      const stepIndex = state.steps.findIndex(s => s.id === stepId)
-      if (stepIndex === -1 || state.steps[stepIndex].mergeBehaviour !== 'merge') {
+      const stepIndex = state.steps.ids.findIndex(sId => sId === stepId)
+      if (stepIndex === -1 || state.steps.entities[stepId].mergeBehaviour !== 'merge') {
         return
       }
-      state.steps.splice(state.currentStepIndex + 1)
+      const undoneStepIds = state.steps.ids.slice(state.currentStepIndex + 1)
+      state.steps.ids.splice(state.currentStepIndex + 1)
+      for (const undoneStepId of undoneStepIds) {
+        delete state.steps.entities[undoneStepId]
+      }
 
       // undo all subsequent steps and the refreshed step
       // then update step's conflict's conflictApplied and apply
       // then redo the refreshed step and subsequent steps
-      const step = state.steps[stepIndex]
+      const step = state.steps.entities[stepId]
       const conflictToApply = step.operations.filter(op => op.type === 'conflict')[conflictIndex]
 
       let formData = state.formData
-      const stepsToUndo = state.steps
+      const stepsToUndo = state.steps.ids
         .slice(stepIndex, state.currentStepIndex + 1)
         .reverse()
+        .map(sId => state.steps.entities[sId])
       for (const stepToUndo of stepsToUndo) {
         formData = undoStep(stepToUndo, formData)
       }
@@ -552,27 +594,32 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
       state.formData = formData
 
-      for (const step of state.steps.slice(stepIndex).filter(s => s.saveStatus)) {
+      for (const step of Object.values(state.steps.entities).filter(s => s.saveStatus)) {
         step.saveStatus = undefined
       }
     })
     .addCase(actions.unApplyConflict, (state, { payload: { stepId, conflictIndex } }) => {
-      const stepIndex = state.steps.findIndex(s => s.id === stepId)
-      if (stepIndex === -1 || state.steps[stepIndex].mergeBehaviour !== 'merge') {
+      const stepIndex = state.steps.ids.findIndex(sId => sId === stepId)
+      if (stepIndex === -1 || state.steps.entities[stepId].mergeBehaviour !== 'merge') {
         return
       }
-      state.steps.splice(state.currentStepIndex + 1)
+      const undoneStepIds = state.steps.ids.slice(state.currentStepIndex + 1)
+      state.steps.ids.splice(state.currentStepIndex + 1)
+      for (const undoneStepId of undoneStepIds) {
+        delete state.steps.entities[undoneStepId]
+      }
 
       // undo all subsequent steps and the refreshed step
       // then update step's conflict's conflictApplied and apply
       // then redo the refreshed step and subsequent steps
-      const step = state.steps[stepIndex]
+      const step = state.steps.entities[stepId]
       const conflictToApply = step.operations.filter(op => op.type === 'conflict')[conflictIndex]
 
       let formData = state.formData
-      const stepsToUndo = state.steps
+      const stepsToUndo = state.steps.ids
         .slice(stepIndex, state.currentStepIndex + 1)
         .reverse()
+        .map(sId => state.steps.entities[sId])
       for (const stepToUndo of stepsToUndo) {
         formData = undoStep(stepToUndo, formData)
       }
@@ -586,7 +633,7 @@ export const jobSetEditorReducer = createReducer(jobSetEditorInitialState, (buil
       }
       state.formData = formData
 
-      for (const step of state.steps.slice(stepIndex).filter(s => s.saveStatus)) {
+      for (const step of Object.values(state.steps.entities).filter(s => s.saveStatus)) {
         step.saveStatus = undefined
       }
     })
