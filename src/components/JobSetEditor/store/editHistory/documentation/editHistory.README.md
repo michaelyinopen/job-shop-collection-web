@@ -1,24 +1,28 @@
 # Edit History
 
-* [Key concepts](#key-concepts)
-  + [Version Token](#version-token)
-  + [Path](#path)
-  + [Field Change](#field-change)
-  + [Combined Field Change](#combined-field-change)
-  + [Grouped Field Changes](#grouped-field-changes)
-  + [Step](#step)
-  + [Operation](#operation)
-  + [Conflict](#conflict)
-  + [Related Change](#related-change)
-  + [Edit Steps](#edit-steps)
-  + [Refreshed Step](#refreshed-step)
-  + [Use of immer](#use-of-immer)
-* [Concurrency handling](#concurrency-handling)
-  + [Example: merge changes](#example--merge-changes)
-  + [Example: merge changes with conflict resolution](#example--merge-changes-with-conflict-resolution)
-  + [Example: discard local changes](#example--discard-local-changes)
-  + [Example: use local](#example--use-local)
-* [Edit patterns](#edit-patterns)
+- [Edit History](#edit-history)
+  * [Key concepts](#key-concepts)
+    + [Version Token](#version-token)
+    + [Path](#path)
+    + [Field Change](#field-change)
+    + [Combined Field Change](#combined-field-change)
+    + [Grouped Field Changes](#grouped-field-changes)
+    + [Operation](#operation)
+    + [Step](#step)
+      - [Edit Step](#edit-step)
+      - [Refreshed Step](#refreshed-step)
+    + [Conflict](#conflict)
+    + [Related Change](#related-change)
+    + [Edit Step](#edit-step-1)
+    + [Refreshed Step](#refreshed-step-1)
+    + [Use of immer](#use-of-immer)
+  * [Concurrency handling](#concurrency-handling)
+    + [Example: merge changes](#example-merge-changes)
+    + [Example: merge changes with conflict resolution](#example-merge-changes-with-conflict-resolution)
+    + [Example: discard local changes](#example-discard-local-changes)
+    + [Example: use local](#example-use-local)
+  * [Edit patterns](#edit-patterns)
+  * [Test](#test)
 
 ## Key concepts
 
@@ -100,7 +104,7 @@ For action `setActivityFromAppStore`, the App's formData might merge with the lo
 `undoFieldChange` and `redoFieldChange` uses immer to calculate new formData. `produce` is called for each field change, because there can be replacements of an object properties (collection add) and the new part is not drafted.
 "Data not originating from the state will never be drafted"
 
-Immer allows nested produce, note that the form data input might be a draft (from create reducer).
+Immer allows nested produce, note that the form data input might be a draft (from create reducer). Be careful to avoid nested produce capturing part of outer draft object. Used `current` on `formData` and `step` to safely use them in nested produce. 
 
 ## Concurrency handling
 

@@ -1,13 +1,8 @@
 import memoize from 'lodash/memoize'
 import {
   createSelector,
-  createSelectorCreator,
   defaultMemoize,
 } from 'reselect'
-import {
-  arraysEqual,
-  shallowEqualObjects,
-} from '../../../utility'
 import { conflictHasRelatedChanges } from './editHistory'
 import type { Operation, Step } from './editHistory'
 import {
