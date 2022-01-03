@@ -5221,25 +5221,515 @@ describe('Collection move: Procedures', () => {
 })
 
 describe('Procedure MachineId', () => {
-})
-// Procedure's MachineId
-// 
-// local
-// Set procedure's machine
-// Change Procedure's machine to another machine
-// Cleared Procedure's machine
-// Remove machine, thus cleared procedure's machine
-// 
-// Refreshed
-// Cleared Procedure's machine
-// Remove machine, thus cleared procedure's machine
-// Change Procedure's machine to another machine
-// Remove machine, thus cleared procedure's machine, and set procedure to another existing machine
-// Remove machine, thus cleared procedure's machine, and set procedure to a newly added machine
-// Change procedure machine to a newly added machine
-// Set procedure machine to a an existing machine
-// Set procedure machine to a newly added machine
+  const createLoadedEditorStore = (setProcedureMachine) => {
+    const jobSetEditorStore = configureStore({
+      reducer: jobSetEditorReducer,
+      middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+        .concat(editHistoryMiddleware)
+        .concat(autoTimeOptionsMiddleware)
+        .concat(validationMiddleware)
+    })
 
+    jobSetEditorStore.dispatch(actions.setJobSetEditorId(1))
+    jobSetEditorStore.dispatch(actions.setJobSetEditorIsEdit(true))
+    jobSetEditorStore.dispatch(actions.loadedJobSet())
+
+    jobSetEditorStore.dispatch(actions.setJobSetFromAppStore(
+      {
+        id: 1,
+        title: 'A Sample Job Set',
+        description: 'A Job Set contains the machines, jobs and procedures of a schedule.',
+        content: JSON.stringify({
+          machines: [
+            {
+              id: "HsDzur1T_YKl5ODHTeMIx",
+              sequence: 1,
+              title: "M1",
+              description: "Machine 1"
+            },
+            {
+              id: "KkrjXxkjBXRq6-FRtWKgu",
+              sequence: 2,
+              title: "M2",
+              description: "Machine 2"
+            },
+            {
+              id: "mor1EkwJJ-90n7TwAZoz4",
+              sequence: 3,
+              title: "M3",
+              description: "Machine 3"
+            }
+          ],
+          jobs: [
+            {
+              id: 'qfDwuWBUIygzXlR0-1mLY',
+              sequence: 1,
+              title: '1',
+              procedures: [
+                {
+                  id: 'xni5aW_j9EI2FQXx80UYz',
+                  sequence: 1,
+                  jobId: 'qfDwuWBUIygzXlR0-1mLY',
+                  machineId: setProcedureMachine ? "HsDzur1T_YKl5ODHTeMIx" : undefined,
+                  processingTimeMs: 0
+                },
+              ]
+            }
+          ]
+        }),
+        jobColors: JSON.stringify({
+          'qfDwuWBUIygzXlR0-1mLY': {
+            jobId: 'qfDwuWBUIygzXlR0-1mLY',
+            color: '#3cb44b',
+            textColor: '"#000000'
+          }
+        }),
+        isAutoTimeOptions: true,
+        timeOptions: JSON.stringify({
+          maxTimeMs: 0,
+          viewStartTimeMs: 0,
+          viewEndTimeMs: 0,
+          minViewDurationMs: 0,
+          maxViewDurationMs: 0
+        }),
+        isLocked: false,
+        versionToken: '1',
+        hasDetail: true
+      },
+      true
+    ))
+    return jobSetEditorStore
+  }
+  describe('Local Edits', () => {
+    describe("Set procedure's machine", () => {
+      test('Edit', () => {
+        const jobSetEditorStore = createLoadedEditorStore(false)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setProcedureMachineId(
+          'qfDwuWBUIygzXlR0-1mLY',
+          'xni5aW_j9EI2FQXx80UYz',
+          'KkrjXxkjBXRq6-FRtWKgu' // machine 2
+        )) // stepId: 1
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: "Edit procedure's machine",
+              operations: [
+                {
+                  type: "edit",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: null,
+                      newValue: 'KkrjXxkjBXRq6-FRtWKgu',
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+      })
+      test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(false)
+        jobSetEditorStore.dispatch(actions.setProcedureMachineId(
+          'qfDwuWBUIygzXlR0-1mLY',
+          'xni5aW_j9EI2FQXx80UYz',
+          'KkrjXxkjBXRq6-FRtWKgu' // machine 2
+        )) // stepId: 1
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualRedoState.currentStepIndex).toBe(1)
+      })
+    })
+    describe("Change Procedure's machine to another machine", () => {
+      test('Edit', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setProcedureMachineId(
+          'qfDwuWBUIygzXlR0-1mLY',
+          'xni5aW_j9EI2FQXx80UYz',
+          'KkrjXxkjBXRq6-FRtWKgu' // machine 2
+        )) // stepId: 1
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: "Edit procedure's machine",
+              operations: [
+                {
+                  type: "edit",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: 'KkrjXxkjBXRq6-FRtWKgu', // machine 2
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+      })
+      test('Combine Edits', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setProcedureMachineId(
+          'qfDwuWBUIygzXlR0-1mLY',
+          'xni5aW_j9EI2FQXx80UYz',
+          'KkrjXxkjBXRq6-FRtWKgu' // machine 2
+        )) // stepId: 1
+
+        // act
+        jobSetEditorStore.dispatch(actions.setProcedureMachineId(
+          'qfDwuWBUIygzXlR0-1mLY',
+          'xni5aW_j9EI2FQXx80UYz',
+          'mor1EkwJJ-90n7TwAZoz4' // machine 3
+        )) // stepId: 1
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('mor1EkwJJ-90n7TwAZoz4') // machine 3
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: "Edit procedure's machine",
+              operations: [
+                {
+                  type: "edit",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: 'mor1EkwJJ-90n7TwAZoz4', // machine 3
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+      })
+      test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setProcedureMachineId(
+          'qfDwuWBUIygzXlR0-1mLY',
+          'xni5aW_j9EI2FQXx80UYz',
+          'KkrjXxkjBXRq6-FRtWKgu' // machine 2
+        )) // stepId: 1
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('KkrjXxkjBXRq6-FRtWKgu') // machine 2
+        expect(actualRedoState.currentStepIndex).toBe(1)
+      })
+    })
+    describe("Cleared Procedure's machine", () => {
+      test('Edit', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.setProcedureMachineId(
+          'qfDwuWBUIygzXlR0-1mLY',
+          'xni5aW_j9EI2FQXx80UYz',
+          null
+        )) // stepId: 1
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: "Edit procedure's machine",
+              operations: [
+                {
+                  type: "edit",
+                  fieldChanges: [
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: null
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+      })
+      test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.setProcedureMachineId(
+          'qfDwuWBUIygzXlR0-1mLY',
+          'xni5aW_j9EI2FQXx80UYz',
+          null
+        )) // stepId: 1
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualRedoState.currentStepIndex).toBe(1)
+      })
+    })
+    describe("Remove machine, clearing procedure's machine", () => {
+      test('Edit', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+
+        // act
+        jobSetEditorStore.dispatch(actions.removeMachine('HsDzur1T_YKl5ODHTeMIx')) // machine 1,  stepId: 1
+
+        // assert
+        const actualState = jobSetEditorStore.getState()
+        expect(actualState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualState.steps).toEqual({
+          ids: ['initial', '1'],
+          entities: {
+            'initial': {
+              id: 'initial',
+              name: 'initial',
+              operations: []
+            },
+            '1': {
+              id: '1',
+              name: "Remove machine",
+              operations: [
+                {
+                  type: "edit",
+                  fieldChanges: [
+                    {
+                      path: "/machines/ids",
+                      collectionChange: {
+                        type: 'remove',
+                        id: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                        index: 0,
+                      }
+                    },
+                    {
+                      path: "/machines/entities/HsDzur1T_YKl5ODHTeMIx",
+                      previousValue: {
+                        id: 'HsDzur1T_YKl5ODHTeMIx',
+                        title: 'M1',
+                        description: 'Machine 1',
+                      },
+                      newValue: undefined
+                    },
+                    {
+                      path: "/jobs/entities/qfDwuWBUIygzXlR0-1mLY/procedures/entities/xni5aW_j9EI2FQXx80UYz/machineId",
+                      previousValue: 'HsDzur1T_YKl5ODHTeMIx', // machine 1
+                      newValue: null
+                    }
+                  ],
+                  applied: true,
+                },
+              ],
+            },
+          }
+        })
+      })
+      test('Undo Redo', () => {
+        const jobSetEditorStore = createLoadedEditorStore(true)
+        jobSetEditorStore.dispatch(actions.removeMachine('HsDzur1T_YKl5ODHTeMIx')) // machine 1,  stepId: 1
+
+        // act Undo
+        jobSetEditorStore.dispatch(actions.undo())
+
+        // assert Undo
+        const actualUndoState = jobSetEditorStore.getState()
+        expect(actualUndoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toEqual('HsDzur1T_YKl5ODHTeMIx') // machine 1
+        expect(actualUndoState.currentStepIndex).toBe(0)
+
+        // act Redo
+        jobSetEditorStore.dispatch(actions.redo())
+
+        // assert Redo
+        const actualRedoState = jobSetEditorStore.getState()
+        expect(actualRedoState.formData
+          .jobs.entities['qfDwuWBUIygzXlR0-1mLY']
+          .procedures.entities['xni5aW_j9EI2FQXx80UYz']
+          .machineId
+        ).toBeNull()
+        expect(actualRedoState.currentStepIndex).toBe(1)
+      })
+    })
+  })
+  describe('Refreshed Remote Edits', () => {
+    describe("Cleared Procedure's machine", () => {
+      test('Edit', () => {
+      })
+      test('Undo Redo', () => {
+      })
+    })
+    describe("Remove machine, clearing procedure's machine", () => {
+      test('Edit', () => {
+      })
+      test('Undo Redo', () => {
+      })
+    })
+    describe("Change Procedure's machine to another machine", () => {
+      test('Edit', () => {
+      })
+      test('Undo Redo', () => {
+      })
+    })
+    describe("Remove machine, clearing procedure's machine, and set procedure to another existing machine", () => {
+      test('Edit', () => {
+      })
+      test('Undo Redo', () => {
+      })
+    })
+    describe("Remove machine, clearing procedure's machine, and set procedure to a newly added machine", () => {
+      test('Edit', () => {
+      })
+      test('Undo Redo', () => {
+      })
+    })
+    describe("Change procedure machine to a newly added machine", () => {
+      test('Edit', () => {
+      })
+      test('Undo Redo', () => {
+      })
+    })
+    describe("Set procedure machine to a an existing machine", () => {
+      test('Edit', () => {
+      })
+      test('Undo Redo', () => {
+      })
+    })
+    describe("Set procedure machine to a newly added machine", () => {
+      test('Edit', () => {
+      })
+      test('Undo Redo', () => {
+      })
+    })
+  })
+})
+
+// Todo:
 // Jobs and JobColors
 
 // Collection: Job update includes procedure edits
