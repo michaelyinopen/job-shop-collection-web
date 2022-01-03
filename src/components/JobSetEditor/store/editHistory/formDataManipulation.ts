@@ -1,4 +1,3 @@
-import { isDraft, current } from "immer"
 import type {
   FormData,
   Step,
@@ -646,9 +645,7 @@ function redoProcedureIdFieldChangesForJob(
 }
 
 export function redoStep(step: Step, previousFormData: FormData): FormData {
-  let formData = isDraft(previousFormData) //todo: do not need to call current
-    ? current(previousFormData)
-    : previousFormData
+  let formData = previousFormData
 
   const fieldChangeApplied = step.operations
     .flatMap(op => op.fieldChanges.map(fc => ({ fieldChange: fc, applied: op.applied })))
@@ -1282,9 +1279,7 @@ function undoProcedureIdFieldChangesForJob(
 }
 
 export function undoStep(step: Step, previousFormData: FormData): FormData {
-  let formData = isDraft(previousFormData) //todo: do not need to call current
-    ? current(previousFormData)
-    : previousFormData
+  let formData = previousFormData
 
   const fieldChangeApplied = step.operations
     .flatMap(op => op.fieldChanges.map(fc => ({ fieldChange: fc, applied: op.applied })))

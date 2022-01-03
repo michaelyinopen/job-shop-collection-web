@@ -16,7 +16,6 @@ import {
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import {
   useJobSetEditorSelector,
-  createNormalStepSelector,
   createStepDoneStatusSelector,
   createStepSelector,
   useJobSetEditorDispatch,
@@ -105,12 +104,10 @@ const useVersionedStepItemStyles = makeStyles(theme => createStyles({
   }
 }))
 
-const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
-  const stepId = normalStep.id
-  const [expand, setExpand] = useState(false)
+const VersionedStepItem = ({ step, isCurrent, undone }) => {
   const classes = useVersionedStepItemStyles()
   const editorDispatch = useJobSetEditorDispatch()
-  const step = useJobSetEditorSelector(createStepSelector(stepId))
+  const [expand, setExpand] = useState(false)
 
   const showMergeOptions = useMemo(
     () => step.operations.some(op => op.type === 'reverse local' || op.type === 'conflict'),
@@ -169,10 +166,10 @@ const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
             disabled={!isCurrent}
             onChange={e => {
               if (e.target.value === 'discard local changes') {
-                editorDispatch(setMergeBehaviourDiscardLocal(stepId))
+                editorDispatch(setMergeBehaviourDiscardLocal(step.id))
               }
               else if (e.target.value === 'merge') {
-                editorDispatch(setMergeBehaviourMerge(stepId))
+                editorDispatch(setMergeBehaviourMerge(step.id))
               }
             }}
           >
@@ -197,7 +194,7 @@ const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
           </RadioGroup>
           <Collapse in={conflicts.length !== 0} timeout="auto" unmountOnExit>
             <Conflicts
-              stepId={stepId}
+              stepId={step.id}
               conflicts={conflicts}
               undone={undone}
             />
@@ -209,14 +206,14 @@ const VersionedStepItem = ({ normalStep, isCurrent, undone }) => {
 }
 
 export const StepItem = memo(({ id }) => {
-  const normalStepSelector = useRef(createNormalStepSelector(id)).current
-  const normalStep = useJobSetEditorSelector(normalStepSelector)
+  const stepSelector = useRef(createStepSelector(id)).current
+  const step = useJobSetEditorSelector(stepSelector)
   const stepDoneStatusSelector = useRef(createStepDoneStatusSelector(id)).current
   const stepDoneStatus = useJobSetEditorSelector(stepDoneStatusSelector)
-  if (!normalStep?.versionToken) {
+  if (!step?.versionToken) {
     return (
       <NormalStepItem
-        step={normalStep}
+        step={step}
         isCurrent={stepDoneStatus === 'current'}
         undone={stepDoneStatus === 'undone'}
       />
@@ -225,7 +222,7 @@ export const StepItem = memo(({ id }) => {
   else {
     return (
       <VersionedStepItem
-        normalStep={normalStep}
+        step={step}
         isCurrent={stepDoneStatus === 'current'}
         undone={stepDoneStatus === 'undone'}
       />
