@@ -1,48 +1,5 @@
 # Deployment
 
-## Hosted on Azure
-The website can be visited on [azure.job-shop-collection.michael-yin.net](https://azure.job-shop-collection.michael-yin.net).
-
-The React App is hosted with Azure Blob Storage Static Website.
-
-The Static Website is integrated with Azure CDN. An URL rewrite rule is configured for routing of SPA, check Blob Service | Azure CDN | The Endpoint | Rules Engine.
-
-### Manually deploy with VS Code Azure Storage extension
-1. Install the extension `Azure Storage` in VS Code
-2. Set environment variables
-```
-$env:REACT_APP_API_URL = "https://job-shop-collection-api.azurewebsites.net"
-$env:REACT_APP_HOST = "azure"
-$env:CI = $true
-```
-3. Build the react app.
-```
-npm run-script build
-```
-4. Right-click `build` folder and `Deploy to Static Webaite via Azure Storage...`
-
-Check the files with Microsoft Azure Storage Explorer (installed).
-
-### Continuous Deployment by Github Actions
-[This Github Action](https://github.com/michaelyinopen/job-shop-collection-web/actions/workflows/main_azure.yml) workflow
-- Build React App
-- Login to Azure
-- Upload to Blob Storage
-- Purge CDN endpoint
-- Logout of Azure
-
-### Generate Azure credential for github actions secret
-In Azure CLI
-```
-az ad sp create-for-rbac --sdk-auth --name "job-shop-collection-web-publisher" --role contributor --scopes /subscriptions/d1fef207-a33e-4536-bead-9ab97bbf6001/resourceGroups/JobShopCollectionResourceGroup/providers/Microsoft.Storage/storageAccounts/jobshopcollectionblob /subscriptions/d1fef207-a33e-4536-bead-9ab97bbf6001/resourceGroups/JobShopCollectionResourceGroup/providers/Microsoft.Cdn/profiles/jobshopcollection/endpoints/jobshopcollection
-```
-Save the output json as `AZURE_CREDENTIALS` in Github repository secrets.
-
-### Domain azure.job-shop-collection.michael-yin.net
-Using a domain michael-yin.net at Google Domains. Configure the DNS by adding a CNAME record with name `azure.job-shop-collection` and Data `jobshopcollection.azureedge.net.`.
-
-At Blob Service | Azure CDN | The Endpoint | Custom Domains, add a hostname `azure.job-shop-collection.michael-yin.net`, with custom domain HTTPS configured by Azure.
-
 ## Hosted on Linode
 The website can be visited on [job-shop-collection.michael-yin.net](https://job-shop-collection.michael-yin.net).
 
